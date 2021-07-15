@@ -7,6 +7,8 @@ import shutil
 
 GLFW_DIR = HERE / 'libs/glfw'
 GLFW_BUILD_DIR = GLFW_DIR / 'build'
+IMGUI_DIR = HERE / 'libs/imgui_cmake'
+IMGUI_BUILD_DIR = IMGUI_DIR / 'build'
 
 def get_cmake() -> pathlib.Path:
     if platform.system() == "Windows":
@@ -45,6 +47,20 @@ def build_glfw(c):
     with c.cd(GLFW_BUILD_DIR):
         c.run(commandline(cmake, '-DBUILD_SHARED_LIBS=1', '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0', '..'))
         c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
+        # fix
+        (GLFW_BUILD_DIR / 'src/Release/glfw3dll.exp').rename(GLFW_BUILD_DIR / 'src/Release/glfw3.exp')
+        (GLFW_BUILD_DIR / 'src/Release/glfw3dll.lib').rename(GLFW_BUILD_DIR / 'src/Release/glfw3.lib')
+
+@task
+def build_imgui(c):
+    '''
+    build libs/imgui_cmake/build/Release/imgui.dll
+    '''
+    cmake = get_cmake()
+    IMGUI_BUILD_DIR.mkdir(exist_ok=True)
+    with c.cd(IMGUI_BUILD_DIR):
+        c.run(commandline(cmake, '..'))
+        c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
 
 @task
 def clean(c):
@@ -60,7 +76,7 @@ def hererocks(c):
     '''
     c.run('hererocks -j 2.1.0-beta3 -r latest lua')
 
-@task(build_glfw, hererocks)
+@task(build_glfw, build_imgui, hererocks)
 def all(c):
     '''
     build all

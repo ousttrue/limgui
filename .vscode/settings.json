@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "cmake",
-        "glfw"
+        "glfw",
+        "imgui"
     ]
 }
