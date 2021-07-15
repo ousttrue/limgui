@@ -5,12 +5,24 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "limgui",
+            "name": "imgui-lua",
             "type": "lua-local",
             "request": "launch",
             "program": {
                 "lua": "${workspaceFolder}/lua/bin/lua.exe",
-                "file": "${workspaceFolder}/test.lua"
+                "file": "${workspaceFolder}/imgui_test.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\imgui_cmake\\build\\Release",
+            }
+        },
+        {
+            "name": "glfw-lua",
+            "type": "lua-local",
+            "request": "launch",
+            "program": {
+                "lua": "${workspaceFolder}/lua/bin/lua.exe",
+                "file": "${workspaceFolder}/glfw_test.lua"
             },
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release",
