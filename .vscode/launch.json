@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "limgui",
+            "type": "lua-local",
+            "request": "launch",
+            "program": {
+                "lua": "${workspaceFolder}/lua/bin/lua.exe",
+                "file": "${workspaceFolder}/test.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release",
+            }
+        },
+        {
+            "name": "invoke task",
+            "type": "python",
+            "request": "launch",
+            "module": "invoke",
+            "args": [
+                "build-glfw"
+            ],
+            "console": "integratedTerminal"
+        },
+    ]
+}
