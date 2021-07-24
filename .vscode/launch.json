@@ -34,7 +34,7 @@
             "request": "launch",
             "module": "invoke",
             "args": [
-                "build-glfw"
+                "all"
             ],
             "console": "integratedTerminal"
         },

@@ -1,14 +1,15 @@
+import shutil
+import platform
+import os
 from invoke import task, Context
 import pathlib
-HERE =pathlib.Path(__file__).absolute().parent
-import os
-import platform
-import shutil
+HERE = pathlib.Path(__file__).absolute().parent
 
 GLFW_DIR = HERE / 'libs/glfw'
 GLFW_BUILD_DIR = GLFW_DIR / 'build'
 IMGUI_DIR = HERE / 'libs/imgui_cmake'
 IMGUI_BUILD_DIR = IMGUI_DIR / 'build'
+
 
 def get_cmake() -> pathlib.Path:
     if platform.system() == "Windows":
@@ -35,24 +36,30 @@ def commandline(exe: pathlib.Path, *args: str):
     if ' ' in cmd:
         cmd = f'"{cmd}"'
     return f'{cmd} {" ".join(args)}'
-    
+
 
 @task
 def build_glfw(c):
+    # type: (Context) -> None
     '''
     build libs/glfw/build/src/Release/glfw3.dll
     '''
     cmake = get_cmake()
     GLFW_BUILD_DIR.mkdir(exist_ok=True)
     with c.cd(GLFW_BUILD_DIR):
-        c.run(commandline(cmake, '-DBUILD_SHARED_LIBS=1', '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0', '..'))
+        c.run(commandline(cmake, '-DBUILD_SHARED_LIBS=1',
+              '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0', '..'))
         c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
         # fix
-        (GLFW_BUILD_DIR / 'src/Release/glfw3dll.exp').rename(GLFW_BUILD_DIR / 'src/Release/glfw3.exp')
-        (GLFW_BUILD_DIR / 'src/Release/glfw3dll.lib').rename(GLFW_BUILD_DIR / 'src/Release/glfw3.lib')
+        shutil.copy((GLFW_BUILD_DIR / 'src/Release/glfw3dll.exp'),
+                    (GLFW_BUILD_DIR / 'src/Release/glfw3.exp'))
+        shutil.copy((GLFW_BUILD_DIR / 'src/Release/glfw3dll.lib'),
+                    (GLFW_BUILD_DIR / 'src/Release/glfw3.lib'))
+
 
 @task
 def build_imgui(c):
+    # type: (Context) -> None
     '''
     build libs/imgui_cmake/build/Release/imgui.dll
     '''
@@ -62,23 +69,29 @@ def build_imgui(c):
         c.run(commandline(cmake, '..'))
         c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
 
+
 @task
 def clean(c):
+    # type: (Context) -> None
     '''
     remove libs/glfw/build
     '''
     shutil.rmtree(GLFW_BUILD_DIR)
 
+
 @task
 def hererocks(c):
+    # type: (Context) -> None
     '''
     build lua
     '''
-    c.run('hererocks -j 2.1.0-beta3 -r latest lua')
+    c.run('hererocks -v -j 2.1.0-beta3 -r latest lua')
+
 
 @task(build_glfw, build_imgui, hererocks)
 def all(c):
+    # type: (Context) -> None
     '''
     build all
     '''
-    pass
+    print('build all')
