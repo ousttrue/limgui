@@ -2,26 +2,25 @@
 --
 -- * https://www.glfw.org/docs/latest/quick.html
 --
+local ffi = require("ffi")
+
 local glfw = require("glfw")
 local glfwc = glfw.glfwc
+local imgui_ffi = require("imgui_ffi.mod")
+local glad = imgui_ffi.libs.glad
 
 local vertex_shader_text = [[#version 110
-uniform mat4 MVP;
-attribute vec3 vCol;
 attribute vec2 vPos;
-varying vec3 color;
 void main()
 {
-    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
-    color = vCol;
+    gl_Position = vec4(vPos, 0.0, 1.0);
 };
 ]]
 
 local fragment_shader_text = [[#version 110
-varying vec3 color;
 void main()
 {
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(1, 1, 1, 1);
 };
 ]]
 
@@ -34,9 +33,6 @@ local function key_callback(window, key, scancode, action, mods)
         glfw.setWindowShouldClose(window, glfwc.GLFW_TRUE)
     end
 end
-
---     GLuint vertex_buffer, vertex_shader, fragment_shader, program;
---     GLint mvp_location, vpos_location, vcol_location;
 
 glfw.setErrorCallback(error_callback)
 
@@ -55,67 +51,82 @@ end
 
 window:setKeyCallback(key_callback)
 
-window:makeContextCurrent();
-gladLoadGL(glfwGetProcAddress);
---     glfwSwapInterval(1);
+window:makeContextCurrent()
+glad.gladLoadGL(glfw.getProcAddress)
+local gllib = require("gl")
+gllib.set_loader(glfw)
+local gl, glc, glu, glext = gllib.libraries()
+glfw.swapInterval(1)
 
---     // NOTE: OpenGL error checks have been omitted for brevity
+-- NOTE: OpenGL error checks have been omitted for brevity
 
---     glGenBuffers(1, &vertex_buffer);
---     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
---     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+local vertex_buffer = ffi.new("GLuint[1]")
+glext.glGenBuffers(1, vertex_buffer)
+glext.glBindBuffer(glc.GL_ARRAY_BUFFER, vertex_buffer[0])
 
---     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
---     glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
---     glCompileShader(vertex_shader);
+-- static const struct
+-- {
+--     float x, y;
+--     float r, g, b;
+-- } vertices[3] =
+-- {
+--     { -0.6f, -0.4f, 1.f, 0.f, 0.f },
+--     {  0.6f, -0.4f, 0.f, 1.f, 0.f },
+--     {   0.f,  0.6f, 0.f, 0.f, 1.f }
+-- };
+local vertices = ffi.new("float[3][2]")
+-- 0
+vertices[0][0] = -0.6
+vertices[0][1] = -0.4
+-- 1
+vertices[1][0] = 0.6
+vertices[1][1] = -0.4
+-- 2
+vertices[2][0] = 0.0
+vertices[2][1] = 0.6
+glext.glBufferData(glc.GL_ARRAY_BUFFER, ffi.sizeof(vertices), vertices, glc.GL_STATIC_DRAW)
 
---     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
---     glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
---     glCompileShader(fragment_shader);
+local vertex_shader = glext.glCreateShader(glc.GL_VERTEX_SHADER)
+local pp = ffi.new("const char *[1]")
+pp[0] = vertex_shader_text
+glext.glShaderSource(vertex_shader, 1, pp, nil)
+glext.glCompileShader(vertex_shader)
 
---     program = glCreateProgram();
---     glAttachShader(program, vertex_shader);
---     glAttachShader(program, fragment_shader);
---     glLinkProgram(program);
+local fragment_shader = glext.glCreateShader(glc.GL_FRAGMENT_SHADER)
+pp[0] = fragment_shader_text
+glext.glShaderSource(fragment_shader, 1, pp, nil)
+glext.glCompileShader(fragment_shader)
 
---     mvp_location = glGetUniformLocation(program, "MVP");
---     vpos_location = glGetAttribLocation(program, "vPos");
---     vcol_location = glGetAttribLocation(program, "vCol");
+local program = glext.glCreateProgram()
+glext.glAttachShader(program, vertex_shader)
+glext.glAttachShader(program, fragment_shader)
+glext.glLinkProgram(program)
 
---     glEnableVertexAttribArray(vpos_location);
---     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
---                           sizeof(vertices[0]), (void*) 0);
---     glEnableVertexAttribArray(vcol_location);
---     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
---                           sizeof(vertices[0]), (void*) (sizeof(float) * 2));
+-- local mvp_location = glext.glGetUniformLocation(program, "MVP")
+local vpos_location = glext.glGetAttribLocation(program, "vPos")
+glext.glEnableVertexAttribArray(vpos_location)
+glext.glVertexAttribPointer(vpos_location, 2, glc.GL_FLOAT, glc.GL_FALSE, 8, nil)
 
---     while (!glfwWindowShouldClose(window))
---     {
---         float ratio;
---         int width, height;
---         mat4x4 m, p, mvp;
+while not window:shouldClose(window) do
+    --         mat4x4 m, p, mvp;
 
---         glfwGetFramebufferSize(window, &width, &height);
---         ratio = width / (float) height;
+    local width, height = window:getFramebufferSize()
+    local ratio = width / height
 
---         glViewport(0, 0, width, height);
---         glClear(GL_COLOR_BUFFER_BIT);
+    gl.glViewport(0, 0, width, height)
+    gl.glClear(glc.GL_COLOR_BUFFER_BIT)
 
---         mat4x4_identity(m);
---         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
---         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
---         mat4x4_mul(mvp, p, m);
+    --         mat4x4_identity(m);
+    --         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
+    --         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+    --         mat4x4_mul(mvp, p, m);
 
---         glUseProgram(program);
---         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
---         glDrawArrays(GL_TRIANGLES, 0, 3);
+    glext.glUseProgram(program)
+    --         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+    gl.glDrawArrays(glc.GL_TRIANGLES, 0, 3)
 
---         glfwSwapBuffers(window);
---         glfwPollEvents();
---     }
+    window:swapBuffers()
+    glfw.pollEvents()
+end
 
---     glfwDestroyWindow(window);
-
---     glfwTerminate();
---     exit(EXIT_SUCCESS);
--- }
+glfw.terminate()
