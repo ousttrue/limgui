@@ -13,7 +13,7 @@
                 "file": "${workspaceFolder}/imgui_test.lua"
             },
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\imgui_cmake\\build\\Release",
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\glad_cmake\\Release;${workspaceFolder}\\libs\\build\\imgui_cmake\\Release",
             }
         },
         {
