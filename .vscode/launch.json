@@ -9,7 +9,7 @@
             "type": "lua-local",
             "request": "launch",
             "program": {
-                "lua": "${workspaceFolder}/lua/bin/lua.exe",
+                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
                 "file": "${workspaceFolder}/imgui_test.lua"
             },
             "env": {
@@ -21,7 +21,7 @@
             "type": "lua-local",
             "request": "launch",
             "program": {
-                "lua": "${workspaceFolder}/lua/bin/lua.exe",
+                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
                 "file": "${workspaceFolder}/glfw_test.lua"
             },
             "env": {
@@ -34,9 +34,30 @@
             "request": "launch",
             "module": "invoke",
             "args": [
-                "all"
+                "build-all"
+                // "generate-ffi"
             ],
             "console": "integratedTerminal"
+        },
+        {
+            "name": "generate imgui ffi",
+            "type": "lua-local",
+            "request": "launch",
+            "program": {
+                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "file": "${workspaceFolder}/luajitffi/main.lua"
+            },
+            "args": [
+                // Export
+                "-E../libs/imgui/imgui.h,imgui.dll",
+                // OUt
+                "-O../imgui_ffi",
+            ],
+            "cwd": "${workspaceFolder}/luajitffi",
+            "env": {
+                // path to libclang.dll
+                "PATH": "${env:PATH};C:\\Program Files\\LLVM\\bin",
+            },
         },
     ]
 }

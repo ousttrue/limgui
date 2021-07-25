@@ -56,10 +56,11 @@ lj_glfw.swapInterval(1); -- Enable vsync
 --         return 1;
 --     }
 
-ffi.cdef[[
-void* CreateContext(void* shared_font_atlas) asm("?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z");
-]]
-local imgui = ffi.load('imgui')
+-- ffi.cdef[[
+-- void* CreateContext(void* shared_font_atlas) asm("?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z");
+-- ]]
+-- local imgui = ffi.load('imgui')
+local imgui = require('imgui_ffi.mod')
 
 --     // Setup Dear ImGui context
 --     IMGUI_CHECKVERSION();

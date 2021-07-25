@@ -1,14 +1,19 @@
 import shutil
 import platform
 import os
+import io
 from invoke import task, Context
 import pathlib
 HERE = pathlib.Path(__file__).absolute().parent
 
 GLFW_DIR = HERE / 'libs/glfw'
 GLFW_BUILD_DIR = GLFW_DIR / 'build'
-IMGUI_DIR = HERE / 'libs/imgui_cmake'
-IMGUI_BUILD_DIR = IMGUI_DIR / 'build'
+IMGUI_DIR = HERE / 'libs/imgui'
+IMGUI_BUILD_DIR = HERE / 'libs/imgui_cmake/build'
+LUAJITFFI_DIR = HERE / 'luajitffi'
+LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
+LUA_BIN = LUAJIT_DIR / 'luajit.exe'
+IMGUI_FFI_DIR = HERE / 'imgui_ffi'
 
 
 def get_cmake() -> pathlib.Path:
@@ -80,18 +85,37 @@ def clean(c):
 
 
 @task
-def hererocks(c):
+def build_lua(c):
     # type: (Context) -> None
     '''
     build lua
     '''
-    c.run('hererocks -v -j 2.1.0-beta3 -r latest lua')
+    with c.cd(LUAJIT_DIR):
+        c.run(f'{os.environ["COMSPEC"]} /K "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"',
+              in_stream=io.StringIO("msvcbuild.bat\r\nexit\r\n')"))
 
 
-@task(build_glfw, build_imgui, hererocks)
-def all(c):
+@ task(build_glfw, build_imgui, build_lua)
+def build_all(c):
     # type: (Context) -> None
     '''
     build all
     '''
     print('build all')
+
+
+@ task
+def generate_ffi(c):
+    # type: (Context) -> None
+    '''
+    build
+    '''
+    with c.cd(LUAJITFFI_DIR):
+        c.run(commandline(
+            LUA_BIN,
+            "main.lua",
+            f"-E{IMGUI_DIR}/imgui.h,ImGui.dll",
+            f"-O{IMGUI_FFI_DIR}"
+        ), env={
+            'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",
+        })
