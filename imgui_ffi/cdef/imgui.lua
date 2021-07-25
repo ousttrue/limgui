@@ -1,6 +1,6 @@
--- ../libs/imgui/imgui.h
-local ffi = require("ffi")
-ffi.cdef([[
+-- C:/Users/oustt/ghq/github.com/ousttrue/limgui/libs/imgui/imgui.h
+local ffi = require 'ffi'
+ffi.cdef[[
 struct ImDrawListSharedData;
 struct ImFontBuilderIO;
 struct ImGuiContext;
@@ -2393,4 +2393,4 @@ bool SliderScalarN(
     const char* format,
     float power
 ) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20M@Z");
-]])
+]]

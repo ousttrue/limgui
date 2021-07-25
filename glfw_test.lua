@@ -1,88 +1,121 @@
+-- port from
+--
+-- * https://www.glfw.org/docs/latest/quick.html
+--
+local glfw = require("glfw")
+local glfwc = glfw.glfwc
 
--- Load libraries
-local lj_glfw = require "glfw"
-local gllib = require"gl"
-gllib.set_loader(lj_glfw)
-local ffi = require "ffi"
-local bit = require "bit"
--- Localize the FFI libraries
-local gl, glc, glu, glext = gllib.libraries()
+local vertex_shader_text = [[#version 110
+uniform mat4 MVP;
+attribute vec3 vCol;
+attribute vec2 vPos;
+varying vec3 color;
+void main()
+{
+    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
+    color = vCol;
+};
+]]
 
-print(lj_glfw.glfwVersionString())
+local fragment_shader_text = [[#version 110
+varying vec3 color;
+void main()
+{
+    gl_FragColor = vec4(color, 1.0);
+};
+]]
 
-lj_glfw.setErrorCallback(function(error,description)
-    print("GLFW error:",error,ffi.string(description or ""));
-end)
-
-assert(pcall(function() local _ = glc.this_doesnt_exist end) == false)
-
--- Define vertex arrays for the model we will draw
-local CubeVerticies = {}
-CubeVerticies.v = ffi.new("const float[8][3]", {
-	{0,0,1}, {0,0,0}, {0,1,0}, {0,1,1},
-	{1,0,1}, {1,0,0}, {1,1,0}, {1,1,1}
-})
-
-CubeVerticies.n = ffi.new("const float[6][3]", {
-	{-1.0, 0.0, 0.0}, {0.0, 1.0, 0.0}, {1.0, 0.0, 0.0},
-	{0.0, -1.0, 0.0}, {0.0, 0.0, -1.0}, {0.0, 0.0, 1.0}
-})
-
-CubeVerticies.f = ffi.new("const float[6][4]", { 
-	{0, 1, 2, 3}, {3, 2, 6, 7}, {7, 6, 5, 4},
-	{4, 5, 1, 0}, {5, 6, 2, 1}, {7, 4, 0, 3}
-})
-
--- Initialize GLFW. Unline glfwInit, this throws an error on failure
-lj_glfw.init()
-
--- Creates a new window. lj_glfw.Window is a ctype object with a __new metamethod that
--- runs glfwCreateWindow.
--- The window ctype has most of the windows functions as methods
-local window = lj_glfw.Window(1024, 768, "LuaJIT-GLFW Test")
-
--- Initialize the context. This needs to be called before any OpenGL calls.
-window:makeContextCurrent()
-
-local w, h = window:getFramebufferSize()
-
--- Set up OpenGL
-gl.glEnable(glc.GL_DEPTH_TEST);
-
-gl.glMatrixMode(glc.GL_PROJECTION)
-glu.gluPerspective(60, w/h, 0.01, 1000)
-gl.glMatrixMode(glc.GL_MODELVIEW)
-glu.gluLookAt(0,0,5,
-	0,0,0,
-	0,1,0)
-
--- Set up some values
-local rotx, roty, rotz = 1/math.sqrt(2), 1/math.sqrt(2), 0
-local boxx, boxy, boxz = -0.5,-0.5,2
-
--- Main loop
-while not window:shouldClose() do
-	lj_glfw.pollEvents()
-	gl.glClear(bit.bor(glc.GL_COLOR_BUFFER_BIT, glc.GL_DEPTH_BUFFER_BIT))
-	
-	gl.glPushMatrix()
-	gl.glColor3d(1,1,1)
-	gl.glTranslated(boxx, boxy, boxz)
-	gl.glRotated(lj_glfw.getTime()*10, rotx, roty, rotz)
-	for i=0,5 do
-		gl.glBegin(glc.GL_QUADS)
-		gl.glNormal3fv(CubeVerticies.n[i])
-		for j=0,3 do
-			gl.glVertex3fv(CubeVerticies.v[CubeVerticies.f[i][j]])
-		end
-		gl.glEnd()
-	end
-	gl.glPopMatrix()
-	
-	window:swapBuffers()
-	
+local function error_callback(error, description)
+    print(string.format("Error: %s\n", description))
 end
 
--- Destroy the window and deinitialize GLFW.
-window:destroy()
-lj_glfw.terminate()
+local function key_callback(window, key, scancode, action, mods)
+    if key == glfwc.GLFW_KEY_ESCAPE and action == glfwc.GLFW_PRESS then
+        glfw.setWindowShouldClose(window, glfwc.GLFW_TRUE)
+    end
+end
+
+--     GLuint vertex_buffer, vertex_shader, fragment_shader, program;
+--     GLint mvp_location, vpos_location, vcol_location;
+
+glfw.setErrorCallback(error_callback)
+
+if glfw.init() == 0 then
+    assert(false)
+end
+
+glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MAJOR, 2)
+glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MINOR, 0)
+
+local window = glfw.Window:__new(640, 480, "Simple example", nil, nil)
+if not window then
+    glfw.terminate()
+    assert(false)
+end
+
+window:setKeyCallback(key_callback)
+
+window:makeContextCurrent();
+gladLoadGL(glfwGetProcAddress);
+--     glfwSwapInterval(1);
+
+--     // NOTE: OpenGL error checks have been omitted for brevity
+
+--     glGenBuffers(1, &vertex_buffer);
+--     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer);
+--     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+--     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+--     glShaderSource(vertex_shader, 1, &vertex_shader_text, NULL);
+--     glCompileShader(vertex_shader);
+
+--     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+--     glShaderSource(fragment_shader, 1, &fragment_shader_text, NULL);
+--     glCompileShader(fragment_shader);
+
+--     program = glCreateProgram();
+--     glAttachShader(program, vertex_shader);
+--     glAttachShader(program, fragment_shader);
+--     glLinkProgram(program);
+
+--     mvp_location = glGetUniformLocation(program, "MVP");
+--     vpos_location = glGetAttribLocation(program, "vPos");
+--     vcol_location = glGetAttribLocation(program, "vCol");
+
+--     glEnableVertexAttribArray(vpos_location);
+--     glVertexAttribPointer(vpos_location, 2, GL_FLOAT, GL_FALSE,
+--                           sizeof(vertices[0]), (void*) 0);
+--     glEnableVertexAttribArray(vcol_location);
+--     glVertexAttribPointer(vcol_location, 3, GL_FLOAT, GL_FALSE,
+--                           sizeof(vertices[0]), (void*) (sizeof(float) * 2));
+
+--     while (!glfwWindowShouldClose(window))
+--     {
+--         float ratio;
+--         int width, height;
+--         mat4x4 m, p, mvp;
+
+--         glfwGetFramebufferSize(window, &width, &height);
+--         ratio = width / (float) height;
+
+--         glViewport(0, 0, width, height);
+--         glClear(GL_COLOR_BUFFER_BIT);
+
+--         mat4x4_identity(m);
+--         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
+--         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
+--         mat4x4_mul(mvp, p, m);
+
+--         glUseProgram(program);
+--         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
+--         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+--         glfwSwapBuffers(window);
+--         glfwPollEvents();
+--     }
+
+--     glfwDestroyWindow(window);
+
+--     glfwTerminate();
+--     exit(EXIT_SUCCESS);
+-- }

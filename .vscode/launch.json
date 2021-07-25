@@ -52,6 +52,8 @@
                 "-DIMGUI_API=__declspec(dllexport)",
                 // Export
                 "-E../libs/imgui/imgui.h,imgui.dll",
+                "-E../libs/imgui/backends/imgui_impl_opengl3.h,imgui.dll",
+                "-E../libs/imgui/backends/imgui_impl_glfw.h,imgui.dll",
                 // OUt
                 "-O../imgui_ffi",
             ],

@@ -9,9 +9,11 @@ local M = {
 }
 
 -- cdef
+require('imgui_ffi.cdef.vcruntime')
+require('imgui_ffi.cdef.imgui_impl_opengl3')
 require('imgui_ffi.cdef.vadefs')
 require('imgui_ffi.cdef.imgui')
-require('imgui_ffi.cdef.vcruntime')
+require('imgui_ffi.cdef.imgui_impl_glfw')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -561,6 +563,7 @@ M.enums = {
         ImDrawCornerFlags_Right = C.ImDrawCornerFlags_Right,
     },
 }
+---@class size_t
 ---@class va_list
 ---@class ImDrawListSharedData
 ---@class ImFontBuilderIO
@@ -635,7 +638,8 @@ M.enums = {
 ---@class ImFontAtlas
 ---@class ImFont
 ---@class ImGuiViewport
----@class size_t
+---@class GLFWwindow
+---@class GLFWmonitor
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -643,6 +647,22 @@ M.enums = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
+    ---@type fun(glsl_version:string):bool
+    ImGui_ImplOpenGL3_Init = imgui.ImGui_ImplOpenGL3_Init,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
+    ---@type fun(draw_data:any):nil
+    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
+    ---@type fun():bool
+    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
+    ---@type fun():bool
+    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
     ---@type fun(shared_font_atlas:any):any
     CreateContext = imgui.CreateContext,
     ---@type fun(ctx:any):nil
@@ -1393,5 +1413,25 @@ M.libs.imgui = {
     SliderScalar = imgui.SliderScalar,
     ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_min:any, p_max:any, format:string, power:float):bool
     SliderScalarN = imgui.SliderScalarN,
+    ---@type fun(window:any, install_callbacks:bool):bool
+    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
+    ---@type fun(window:any, install_callbacks:bool):bool
+    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
+    ---@type fun(window:any, install_callbacks:bool):bool
+    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
+    ---@type fun():nil
+    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
+    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
+    ---@type fun(window:any, xoffset:number, yoffset:number):nil
+    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
+    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
+    ---@type fun(window:any, c:integer):nil
+    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
+    ---@type fun(monitor:any, event:integer):nil
+    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
 }
 return M

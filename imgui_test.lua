@@ -10,7 +10,7 @@ local gl, glc, glu, glext = gllib.libraries()
 print(lj_glfw.glfwVersionString())
 
 lj_glfw.setErrorCallback(function(error, description)
-	print("GLFW error:", error, ffi.string(description or ""))
+    print("GLFW error:", error, ffi.string(description or ""))
 end)
 
 -- Initialize GLFW. Unline glfwInit, this throws an error on failure
@@ -19,18 +19,18 @@ lj_glfw.init()
 local const = lj_glfw.glfwc
 
 -- GL 3.0 + GLSL 130
--- const char* glsl_version = "#version 130";
+local glsl_version = "#version 130"
 lj_glfw.hint(const.GLFW_CONTEXT_VERSION_MAJOR, 3)
 lj_glfw.hint(const.GLFW_CONTEXT_VERSION_MINOR, 0)
 -- glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
 -- glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 
 -- Create window with graphics context
-local window = lj_glfw.Window(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nil, nil);
+local window = lj_glfw.Window(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nil, nil)
 -- if window == NULL
 --     return 1;
 window:makeContextCurrent()
-lj_glfw.swapInterval(1); -- Enable vsync
+lj_glfw.swapInterval(1) -- Enable vsync
 
 -- Initialize OpenGL loader
 -- #if defined(IMGUI_IMPL_OPENGL_LOADER_GL3W)
@@ -60,13 +60,13 @@ lj_glfw.swapInterval(1); -- Enable vsync
 -- void* CreateContext(void* shared_font_atlas) asm("?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z");
 -- ]]
 -- local imgui = ffi.load('imgui')
-local imgui = require('imgui_ffi.mod').libs.imgui
+local imgui = require("imgui_ffi.mod").libs.imgui
 
 --     // Setup Dear ImGui context
 --     IMGUI_CHECKVERSION();
-       local context = imgui.CreateContext(nil);
-       local a=0
---     ImGuiIO& io = ImGui::GetIO(); (void)io;
+local context = imgui.CreateContext(nil)
+local a = 0
+local io = imgui.GetIO()
 --     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 --     //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
@@ -75,8 +75,8 @@ local imgui = require('imgui_ffi.mod').libs.imgui
 --     //ImGui::StyleColorsClassic();
 
 --     // Setup Platform/Renderer backends
---     ImGui_ImplGlfw_InitForOpenGL(window, true);
---     ImGui_ImplOpenGL3_Init(glsl_version);
+imgui.ImGui_ImplGlfw_InitForOpenGL(window, true)
+imgui.ImGui_ImplOpenGL3_Init(glsl_version)
 
 --     // Load Fonts
 --     // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -93,10 +93,14 @@ local imgui = require('imgui_ffi.mod').libs.imgui
 --     //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 --     //IM_ASSERT(font != NULL);
 
---     // Our state
---     bool show_demo_window = true;
---     bool show_another_window = false;
---     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+-- Our state
+local show_demo_window = true
+local show_another_window = false
+local clear_color = ffi.new("float[4]")
+clear_color[0] = 0.45
+clear_color[1] = 0.55
+clear_color[2] = 0.60
+clear_color[3] = 1.00
 
 --     // Main loop
 --     while (!glfwWindowShouldClose(window))

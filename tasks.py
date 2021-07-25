@@ -8,8 +8,8 @@ HERE = pathlib.Path(__file__).absolute().parent
 
 GLFW_DIR = HERE / 'libs/glfw'
 GLFW_BUILD_DIR = GLFW_DIR / 'build'
-IMGUI_DIR = HERE / 'libs/imgui'
-IMGUI_BUILD_DIR = HERE / 'libs/imgui_cmake/build'
+LIBS_DIR = HERE / 'libs'
+LIBS_BUILD_DIR = HERE / 'libs/build'
 LUAJITFFI_DIR = HERE / 'luajitffi'
 LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
 LUA_BIN = LUAJIT_DIR / 'luajit.exe'
@@ -66,11 +66,12 @@ def build_glfw(c):
 def build_imgui(c):
     # type: (Context) -> None
     '''
-    build libs/imgui_cmake/build/Release/imgui.dll
+    build libs/build/Release/glad.dll
+    build libs/build/Release/imgui.dll
     '''
     cmake = get_cmake()
-    IMGUI_BUILD_DIR.mkdir(exist_ok=True)
-    with c.cd(IMGUI_BUILD_DIR):
+    LIBS_BUILD_DIR.mkdir(exist_ok=True)
+    with c.cd(LIBS_BUILD_DIR):
         c.run(commandline(cmake, '..'))
         c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
 
