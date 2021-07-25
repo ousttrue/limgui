@@ -48,6 +48,8 @@
                 "file": "${workspaceFolder}/luajitffi/main.lua"
             },
             "args": [
+                // CFLAGS
+                "-DIMGUI_API=__declspec(dllexport)",
                 // Export
                 "-E../libs/imgui/imgui.h,imgui.dll",
                 // OUt

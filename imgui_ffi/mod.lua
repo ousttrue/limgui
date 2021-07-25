@@ -10,8 +10,8 @@ local M = {
 
 -- cdef
 require('imgui_ffi.cdef.vadefs')
-require('imgui_ffi.cdef.vcruntime')
 require('imgui_ffi.cdef.imgui')
+require('imgui_ffi.cdef.vcruntime')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -562,7 +562,6 @@ M.enums = {
     },
 }
 ---@class va_list
----@class size_t
 ---@class ImDrawListSharedData
 ---@class ImFontBuilderIO
 ---@class ImGuiContext
@@ -636,6 +635,7 @@ M.enums = {
 ---@class ImFontAtlas
 ---@class ImFont
 ---@class ImGuiViewport
+---@class size_t
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -1385,45 +1385,13 @@ M.libs.imgui = {
     MemFree = imgui.MemFree,
     ---@type fun(label:string, items_count:integer, height_in_items:integer):bool
     ListBoxHeader = imgui.ListBoxHeader,
-    ---@type fun(label:string, size:any):bool
-    ListBoxHeader = imgui.ListBoxHeader,
-    ---@type fun():nil
-    ListBoxFooter = imgui.ListBoxFooter,
-    ---@type fun(str_id:string, mb:ImGuiMouseButton):nil
-    OpenPopupContextItem = imgui.OpenPopupContextItem,
     ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, v_speed:float, p_min:any, p_max:any, format:string, power:float):bool
     DragScalar = imgui.DragScalar,
     ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, v_speed:float, p_min:any, p_max:any, format:string, power:float):bool
     DragScalarN = imgui.DragScalarN,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, power:float):bool
-    DragFloat = imgui.DragFloat,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, power:float):bool
-    DragFloat2 = imgui.DragFloat2,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, power:float):bool
-    DragFloat3 = imgui.DragFloat3,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, power:float):bool
-    DragFloat4 = imgui.DragFloat4,
     ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, p_min:any, p_max:any, format:string, power:float):bool
     SliderScalar = imgui.SliderScalar,
     ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_min:any, p_max:any, format:string, power:float):bool
     SliderScalarN = imgui.SliderScalarN,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, power:float):bool
-    SliderFloat = imgui.SliderFloat,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, power:float):bool
-    SliderFloat2 = imgui.SliderFloat2,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, power:float):bool
-    SliderFloat3 = imgui.SliderFloat3,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, power:float):bool
-    SliderFloat4 = imgui.SliderFloat4,
-    ---@type fun(str_id:string, mb:ImGuiMouseButton, over_items:bool):bool
-    BeginPopupContextWindow = imgui.BeginPopupContextWindow,
-    ---@type fun():nil
-    TreeAdvanceToLabelPos = imgui.TreeAdvanceToLabelPos,
-    ---@type fun(open:bool, cond:ImGuiCond):nil
-    SetNextTreeNodeOpen = imgui.SetNextTreeNodeOpen,
-    ---@type fun():float
-    GetContentRegionAvailWidth = imgui.GetContentRegionAvailWidth,
-    ---@type fun():any
-    GetOverlayDrawList = imgui.GetOverlayDrawList,
 }
 return M

@@ -60,7 +60,7 @@ lj_glfw.swapInterval(1); -- Enable vsync
 -- void* CreateContext(void* shared_font_atlas) asm("?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z");
 -- ]]
 -- local imgui = ffi.load('imgui')
-local imgui = require('imgui_ffi.mod')
+local imgui = require('imgui_ffi.mod').libs.imgui
 
 --     // Setup Dear ImGui context
 --     IMGUI_CHECKVERSION();

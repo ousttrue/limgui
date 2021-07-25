@@ -885,4 +885,1512 @@ enum ImDrawCornerFlags_{
     ImDrawCornerFlags_Left = ImDrawCornerFlags_TopLeft | ImDrawCornerFlags_BotLeft,
     ImDrawCornerFlags_Right = ImDrawCornerFlags_TopRight | ImDrawCornerFlags_BotRight,
 };
+struct ImGuiContext* CreateContext(
+    struct ImFontAtlas* shared_font_atlas
+) asm("?CreateContext@ImGui@@YAPEAUImGuiContext@@PEAUImFontAtlas@@@Z");
+void DestroyContext(
+    struct ImGuiContext* ctx
+) asm("?DestroyContext@ImGui@@YAXPEAUImGuiContext@@@Z");
+struct ImGuiContext* GetCurrentContext(
+) asm("?GetCurrentContext@ImGui@@YAPEAUImGuiContext@@XZ");
+void SetCurrentContext(
+    struct ImGuiContext* ctx
+) asm("?SetCurrentContext@ImGui@@YAXPEAUImGuiContext@@@Z");
+struct ImGuiIO* GetIO(
+) asm("?GetIO@ImGui@@YAAEAUImGuiIO@@XZ");
+struct ImGuiStyle* GetStyle(
+) asm("?GetStyle@ImGui@@YAAEAUImGuiStyle@@XZ");
+void NewFrame(
+) asm("?NewFrame@ImGui@@YAXXZ");
+void EndFrame(
+) asm("?EndFrame@ImGui@@YAXXZ");
+void Render(
+) asm("?Render@ImGui@@YAXXZ");
+struct ImDrawData* GetDrawData(
+) asm("?GetDrawData@ImGui@@YAPEAUImDrawData@@XZ");
+void ShowDemoWindow(
+    bool* p_open
+) asm("?ShowDemoWindow@ImGui@@YAXPEA_N@Z");
+void ShowMetricsWindow(
+    bool* p_open
+) asm("?ShowMetricsWindow@ImGui@@YAXPEA_N@Z");
+void ShowAboutWindow(
+    bool* p_open
+) asm("?ShowAboutWindow@ImGui@@YAXPEA_N@Z");
+void ShowStyleEditor(
+    struct ImGuiStyle* ref
+) asm("?ShowStyleEditor@ImGui@@YAXPEAUImGuiStyle@@@Z");
+bool ShowStyleSelector(
+    const char* label
+) asm("?ShowStyleSelector@ImGui@@YA_NPEBD@Z");
+void ShowFontSelector(
+    const char* label
+) asm("?ShowFontSelector@ImGui@@YAXPEBD@Z");
+void ShowUserGuide(
+) asm("?ShowUserGuide@ImGui@@YAXXZ");
+const char* GetVersion(
+) asm("?GetVersion@ImGui@@YAPEBDXZ");
+void StyleColorsDark(
+    struct ImGuiStyle* dst
+) asm("?StyleColorsDark@ImGui@@YAXPEAUImGuiStyle@@@Z");
+void StyleColorsLight(
+    struct ImGuiStyle* dst
+) asm("?StyleColorsLight@ImGui@@YAXPEAUImGuiStyle@@@Z");
+void StyleColorsClassic(
+    struct ImGuiStyle* dst
+) asm("?StyleColorsClassic@ImGui@@YAXPEAUImGuiStyle@@@Z");
+bool Begin(
+    const char* name,
+    bool* p_open,
+    ImGuiWindowFlags flags
+) asm("?Begin@ImGui@@YA_NPEBDPEA_NH@Z");
+void End(
+) asm("?End@ImGui@@YAXXZ");
+bool BeginChild(
+    const char* str_id,
+    const struct ImVec2* size,
+    bool border,
+    ImGuiWindowFlags flags
+) asm("?BeginChild@ImGui@@YA_NPEBDAEBUImVec2@@_NH@Z");
+bool BeginChild(
+    ImGuiID id,
+    const struct ImVec2* size,
+    bool border,
+    ImGuiWindowFlags flags
+) asm("?BeginChild@ImGui@@YA_NIAEBUImVec2@@_NH@Z");
+void EndChild(
+) asm("?EndChild@ImGui@@YAXXZ");
+bool IsWindowAppearing(
+) asm("?IsWindowAppearing@ImGui@@YA_NXZ");
+bool IsWindowCollapsed(
+) asm("?IsWindowCollapsed@ImGui@@YA_NXZ");
+bool IsWindowFocused(
+    ImGuiFocusedFlags flags
+) asm("?IsWindowFocused@ImGui@@YA_NH@Z");
+bool IsWindowHovered(
+    ImGuiHoveredFlags flags
+) asm("?IsWindowHovered@ImGui@@YA_NH@Z");
+struct ImDrawList* GetWindowDrawList(
+) asm("?GetWindowDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+struct ImVec2 GetWindowPos(
+) asm("?GetWindowPos@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetWindowSize(
+) asm("?GetWindowSize@ImGui@@YA?AUImVec2@@XZ");
+float GetWindowWidth(
+) asm("?GetWindowWidth@ImGui@@YAMXZ");
+float GetWindowHeight(
+) asm("?GetWindowHeight@ImGui@@YAMXZ");
+void SetNextWindowPos(
+    const struct ImVec2* pos,
+    ImGuiCond cond,
+    const struct ImVec2* pivot
+) asm("?SetNextWindowPos@ImGui@@YAXAEBUImVec2@@H0@Z");
+void SetNextWindowSize(
+    const struct ImVec2* size,
+    ImGuiCond cond
+) asm("?SetNextWindowSize@ImGui@@YAXAEBUImVec2@@H@Z");
+void SetNextWindowSizeConstraints(
+    const struct ImVec2* size_min,
+    const struct ImVec2* size_max,
+    ImGuiSizeCallback custom_callback,
+    void* custom_callback_data
+) asm("?SetNextWindowSizeConstraints@ImGui@@YAXAEBUImVec2@@0P6AXPEAUImGuiSizeCallbackData@@@ZPEAX@Z");
+void SetNextWindowContentSize(
+    const struct ImVec2* size
+) asm("?SetNextWindowContentSize@ImGui@@YAXAEBUImVec2@@@Z");
+void SetNextWindowCollapsed(
+    bool collapsed,
+    ImGuiCond cond
+) asm("?SetNextWindowCollapsed@ImGui@@YAX_NH@Z");
+void SetNextWindowFocus(
+) asm("?SetNextWindowFocus@ImGui@@YAXXZ");
+void SetNextWindowBgAlpha(
+    float alpha
+) asm("?SetNextWindowBgAlpha@ImGui@@YAXM@Z");
+void SetWindowPos(
+    const struct ImVec2* pos,
+    ImGuiCond cond
+) asm("?SetWindowPos@ImGui@@YAXAEBUImVec2@@H@Z");
+void SetWindowSize(
+    const struct ImVec2* size,
+    ImGuiCond cond
+) asm("?SetWindowSize@ImGui@@YAXAEBUImVec2@@H@Z");
+void SetWindowCollapsed(
+    bool collapsed,
+    ImGuiCond cond
+) asm("?SetWindowCollapsed@ImGui@@YAX_NH@Z");
+void SetWindowFocus(
+) asm("?SetWindowFocus@ImGui@@YAXXZ");
+void SetWindowFontScale(
+    float scale
+) asm("?SetWindowFontScale@ImGui@@YAXM@Z");
+void SetWindowPos(
+    const char* name,
+    const struct ImVec2* pos,
+    ImGuiCond cond
+) asm("?SetWindowPos@ImGui@@YAXPEBDAEBUImVec2@@H@Z");
+void SetWindowSize(
+    const char* name,
+    const struct ImVec2* size,
+    ImGuiCond cond
+) asm("?SetWindowSize@ImGui@@YAXPEBDAEBUImVec2@@H@Z");
+void SetWindowCollapsed(
+    const char* name,
+    bool collapsed,
+    ImGuiCond cond
+) asm("?SetWindowCollapsed@ImGui@@YAXPEBD_NH@Z");
+void SetWindowFocus(
+    const char* name
+) asm("?SetWindowFocus@ImGui@@YAXPEBD@Z");
+struct ImVec2 GetContentRegionAvail(
+) asm("?GetContentRegionAvail@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetContentRegionMax(
+) asm("?GetContentRegionMax@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetWindowContentRegionMin(
+) asm("?GetWindowContentRegionMin@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetWindowContentRegionMax(
+) asm("?GetWindowContentRegionMax@ImGui@@YA?AUImVec2@@XZ");
+float GetWindowContentRegionWidth(
+) asm("?GetWindowContentRegionWidth@ImGui@@YAMXZ");
+float GetScrollX(
+) asm("?GetScrollX@ImGui@@YAMXZ");
+float GetScrollY(
+) asm("?GetScrollY@ImGui@@YAMXZ");
+void SetScrollX(
+    float scroll_x
+) asm("?SetScrollX@ImGui@@YAXM@Z");
+void SetScrollY(
+    float scroll_y
+) asm("?SetScrollY@ImGui@@YAXM@Z");
+float GetScrollMaxX(
+) asm("?GetScrollMaxX@ImGui@@YAMXZ");
+float GetScrollMaxY(
+) asm("?GetScrollMaxY@ImGui@@YAMXZ");
+void SetScrollHereX(
+    float center_x_ratio
+) asm("?SetScrollHereX@ImGui@@YAXM@Z");
+void SetScrollHereY(
+    float center_y_ratio
+) asm("?SetScrollHereY@ImGui@@YAXM@Z");
+void SetScrollFromPosX(
+    float local_x,
+    float center_x_ratio
+) asm("?SetScrollFromPosX@ImGui@@YAXMM@Z");
+void SetScrollFromPosY(
+    float local_y,
+    float center_y_ratio
+) asm("?SetScrollFromPosY@ImGui@@YAXMM@Z");
+void PushFont(
+    struct ImFont* font
+) asm("?PushFont@ImGui@@YAXPEAUImFont@@@Z");
+void PopFont(
+) asm("?PopFont@ImGui@@YAXXZ");
+void PushStyleColor(
+    ImGuiCol idx,
+    ImU32 col
+) asm("?PushStyleColor@ImGui@@YAXHI@Z");
+void PushStyleColor(
+    ImGuiCol idx,
+    const struct ImVec4* col
+) asm("?PushStyleColor@ImGui@@YAXHAEBUImVec4@@@Z");
+void PopStyleColor(
+    int count
+) asm("?PopStyleColor@ImGui@@YAXH@Z");
+void PushStyleVar(
+    ImGuiStyleVar idx,
+    float val
+) asm("?PushStyleVar@ImGui@@YAXHM@Z");
+void PushStyleVar(
+    ImGuiStyleVar idx,
+    const struct ImVec2* val
+) asm("?PushStyleVar@ImGui@@YAXHAEBUImVec2@@@Z");
+void PopStyleVar(
+    int count
+) asm("?PopStyleVar@ImGui@@YAXH@Z");
+void PushAllowKeyboardFocus(
+    bool allow_keyboard_focus
+) asm("?PushAllowKeyboardFocus@ImGui@@YAX_N@Z");
+void PopAllowKeyboardFocus(
+) asm("?PopAllowKeyboardFocus@ImGui@@YAXXZ");
+void PushButtonRepeat(
+    bool repeat
+) asm("?PushButtonRepeat@ImGui@@YAX_N@Z");
+void PopButtonRepeat(
+) asm("?PopButtonRepeat@ImGui@@YAXXZ");
+void PushItemWidth(
+    float item_width
+) asm("?PushItemWidth@ImGui@@YAXM@Z");
+void PopItemWidth(
+) asm("?PopItemWidth@ImGui@@YAXXZ");
+void SetNextItemWidth(
+    float item_width
+) asm("?SetNextItemWidth@ImGui@@YAXM@Z");
+float CalcItemWidth(
+) asm("?CalcItemWidth@ImGui@@YAMXZ");
+void PushTextWrapPos(
+    float wrap_local_pos_x
+) asm("?PushTextWrapPos@ImGui@@YAXM@Z");
+void PopTextWrapPos(
+) asm("?PopTextWrapPos@ImGui@@YAXXZ");
+struct ImFont* GetFont(
+) asm("?GetFont@ImGui@@YAPEAUImFont@@XZ");
+float GetFontSize(
+) asm("?GetFontSize@ImGui@@YAMXZ");
+struct ImVec2 GetFontTexUvWhitePixel(
+) asm("?GetFontTexUvWhitePixel@ImGui@@YA?AUImVec2@@XZ");
+ImU32 GetColorU32(
+    ImGuiCol idx,
+    float alpha_mul
+) asm("?GetColorU32@ImGui@@YAIHM@Z");
+ImU32 GetColorU32(
+    const struct ImVec4* col
+) asm("?GetColorU32@ImGui@@YAIAEBUImVec4@@@Z");
+ImU32 GetColorU32(
+    ImU32 col
+) asm("?GetColorU32@ImGui@@YAII@Z");
+const struct ImVec4* GetStyleColorVec4(
+    ImGuiCol idx
+) asm("?GetStyleColorVec4@ImGui@@YAAEBUImVec4@@H@Z");
+void Separator(
+) asm("?Separator@ImGui@@YAXXZ");
+void SameLine(
+    float offset_from_start_x,
+    float spacing
+) asm("?SameLine@ImGui@@YAXMM@Z");
+void NewLine(
+) asm("?NewLine@ImGui@@YAXXZ");
+void Spacing(
+) asm("?Spacing@ImGui@@YAXXZ");
+void Dummy(
+    const struct ImVec2* size
+) asm("?Dummy@ImGui@@YAXAEBUImVec2@@@Z");
+void Indent(
+    float indent_w
+) asm("?Indent@ImGui@@YAXM@Z");
+void Unindent(
+    float indent_w
+) asm("?Unindent@ImGui@@YAXM@Z");
+void BeginGroup(
+) asm("?BeginGroup@ImGui@@YAXXZ");
+void EndGroup(
+) asm("?EndGroup@ImGui@@YAXXZ");
+struct ImVec2 GetCursorPos(
+) asm("?GetCursorPos@ImGui@@YA?AUImVec2@@XZ");
+float GetCursorPosX(
+) asm("?GetCursorPosX@ImGui@@YAMXZ");
+float GetCursorPosY(
+) asm("?GetCursorPosY@ImGui@@YAMXZ");
+void SetCursorPos(
+    const struct ImVec2* local_pos
+) asm("?SetCursorPos@ImGui@@YAXAEBUImVec2@@@Z");
+void SetCursorPosX(
+    float local_x
+) asm("?SetCursorPosX@ImGui@@YAXM@Z");
+void SetCursorPosY(
+    float local_y
+) asm("?SetCursorPosY@ImGui@@YAXM@Z");
+struct ImVec2 GetCursorStartPos(
+) asm("?GetCursorStartPos@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetCursorScreenPos(
+) asm("?GetCursorScreenPos@ImGui@@YA?AUImVec2@@XZ");
+void SetCursorScreenPos(
+    const struct ImVec2* pos
+) asm("?SetCursorScreenPos@ImGui@@YAXAEBUImVec2@@@Z");
+void AlignTextToFramePadding(
+) asm("?AlignTextToFramePadding@ImGui@@YAXXZ");
+float GetTextLineHeight(
+) asm("?GetTextLineHeight@ImGui@@YAMXZ");
+float GetTextLineHeightWithSpacing(
+) asm("?GetTextLineHeightWithSpacing@ImGui@@YAMXZ");
+float GetFrameHeight(
+) asm("?GetFrameHeight@ImGui@@YAMXZ");
+float GetFrameHeightWithSpacing(
+) asm("?GetFrameHeightWithSpacing@ImGui@@YAMXZ");
+void PushID(
+    const char* str_id
+) asm("?PushID@ImGui@@YAXPEBD@Z");
+void PushID(
+    const char* str_id_begin,
+    const char* str_id_end
+) asm("?PushID@ImGui@@YAXPEBD0@Z");
+void PushID(
+    const void* ptr_id
+) asm("?PushID@ImGui@@YAXPEBX@Z");
+void PushID(
+    int int_id
+) asm("?PushID@ImGui@@YAXH@Z");
+void PopID(
+) asm("?PopID@ImGui@@YAXXZ");
+ImGuiID GetID(
+    const char* str_id
+) asm("?GetID@ImGui@@YAIPEBD@Z");
+ImGuiID GetID(
+    const char* str_id_begin,
+    const char* str_id_end
+) asm("?GetID@ImGui@@YAIPEBD0@Z");
+ImGuiID GetID(
+    const void* ptr_id
+) asm("?GetID@ImGui@@YAIPEBX@Z");
+void TextUnformatted(
+    const char* text,
+    const char* text_end
+) asm("?TextUnformatted@ImGui@@YAXPEBD0@Z");
+void Text(
+    const char* fmt
+) asm("?Text@ImGui@@YAXPEBDZZ");
+void TextV(
+    const char* fmt,
+    va_list args
+) asm("?TextV@ImGui@@YAXPEBDPEAD@Z");
+void TextColored(
+    const struct ImVec4* col,
+    const char* fmt
+) asm("?TextColored@ImGui@@YAXAEBUImVec4@@PEBDZZ");
+void TextColoredV(
+    const struct ImVec4* col,
+    const char* fmt,
+    va_list args
+) asm("?TextColoredV@ImGui@@YAXAEBUImVec4@@PEBDPEAD@Z");
+void TextDisabled(
+    const char* fmt
+) asm("?TextDisabled@ImGui@@YAXPEBDZZ");
+void TextDisabledV(
+    const char* fmt,
+    va_list args
+) asm("?TextDisabledV@ImGui@@YAXPEBDPEAD@Z");
+void TextWrapped(
+    const char* fmt
+) asm("?TextWrapped@ImGui@@YAXPEBDZZ");
+void TextWrappedV(
+    const char* fmt,
+    va_list args
+) asm("?TextWrappedV@ImGui@@YAXPEBDPEAD@Z");
+void LabelText(
+    const char* label,
+    const char* fmt
+) asm("?LabelText@ImGui@@YAXPEBD0ZZ");
+void LabelTextV(
+    const char* label,
+    const char* fmt,
+    va_list args
+) asm("?LabelTextV@ImGui@@YAXPEBD0PEAD@Z");
+void BulletText(
+    const char* fmt
+) asm("?BulletText@ImGui@@YAXPEBDZZ");
+void BulletTextV(
+    const char* fmt,
+    va_list args
+) asm("?BulletTextV@ImGui@@YAXPEBDPEAD@Z");
+bool Button(
+    const char* label,
+    const struct ImVec2* size
+) asm("?Button@ImGui@@YA_NPEBDAEBUImVec2@@@Z");
+bool SmallButton(
+    const char* label
+) asm("?SmallButton@ImGui@@YA_NPEBD@Z");
+bool InvisibleButton(
+    const char* str_id,
+    const struct ImVec2* size,
+    ImGuiButtonFlags flags
+) asm("?InvisibleButton@ImGui@@YA_NPEBDAEBUImVec2@@H@Z");
+bool ArrowButton(
+    const char* str_id,
+    ImGuiDir dir
+) asm("?ArrowButton@ImGui@@YA_NPEBDH@Z");
+void Image(
+    ImTextureID user_texture_id,
+    const struct ImVec2* size,
+    const struct ImVec2* uv0,
+    const struct ImVec2* uv1,
+    const struct ImVec4* tint_col,
+    const struct ImVec4* border_col
+) asm("?Image@ImGui@@YAXPEAXAEBUImVec2@@11AEBUImVec4@@2@Z");
+bool ImageButton(
+    ImTextureID user_texture_id,
+    const struct ImVec2* size,
+    const struct ImVec2* uv0,
+    const struct ImVec2* uv1,
+    int frame_padding,
+    const struct ImVec4* bg_col,
+    const struct ImVec4* tint_col
+) asm("?ImageButton@ImGui@@YA_NPEAXAEBUImVec2@@11HAEBUImVec4@@2@Z");
+bool Checkbox(
+    const char* label,
+    bool* v
+) asm("?Checkbox@ImGui@@YA_NPEBDPEA_N@Z");
+bool CheckboxFlags(
+    const char* label,
+    int* flags,
+    int flags_value
+) asm("?CheckboxFlags@ImGui@@YA_NPEBDPEAHH@Z");
+bool CheckboxFlags(
+    const char* label,
+    unsigned int* flags,
+    unsigned int flags_value
+) asm("?CheckboxFlags@ImGui@@YA_NPEBDPEAII@Z");
+bool RadioButton(
+    const char* label,
+    bool active
+) asm("?RadioButton@ImGui@@YA_NPEBD_N@Z");
+bool RadioButton(
+    const char* label,
+    int* v,
+    int v_button
+) asm("?RadioButton@ImGui@@YA_NPEBDPEAHH@Z");
+void ProgressBar(
+    float fraction,
+    const struct ImVec2* size_arg,
+    const char* overlay
+) asm("?ProgressBar@ImGui@@YAXMAEBUImVec2@@PEBD@Z");
+void Bullet(
+) asm("?Bullet@ImGui@@YAXXZ");
+bool BeginCombo(
+    const char* label,
+    const char* preview_value,
+    ImGuiComboFlags flags
+) asm("?BeginCombo@ImGui@@YA_NPEBD0H@Z");
+void EndCombo(
+) asm("?EndCombo@ImGui@@YAXXZ");
+bool Combo(
+    const char* label,
+    int* current_item,
+    const char* const* items,
+    int items_count,
+    int popup_max_height_in_items
+) asm("?Combo@ImGui@@YA_NPEBDPEAHQEBQEBDHH@Z");
+bool Combo(
+    const char* label,
+    int* current_item,
+    const char* items_separated_by_zeros,
+    int popup_max_height_in_items
+) asm("?Combo@ImGui@@YA_NPEBDPEAH0H@Z");
+bool Combo(
+    const char* label,
+    int* current_item,
+    bool(*items_getter)(void* data, int idx, const char** out_text),
+    void* data,
+    int items_count,
+    int popup_max_height_in_items
+) asm("?Combo@ImGui@@YA_NPEBDPEAHP6A_NPEAXHPEAPEBD@Z2HH@Z");
+bool DragFloat(
+    const char* label,
+    float* v,
+    float v_speed,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragFloat@ImGui@@YA_NPEBDPEAMMMM0H@Z");
+bool DragFloat2(
+    const char* label,
+    float v[2],
+    float v_speed,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragFloat2@ImGui@@YA_NPEBDQEAMMMM0H@Z");
+bool DragFloat3(
+    const char* label,
+    float v[3],
+    float v_speed,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragFloat3@ImGui@@YA_NPEBDQEAMMMM0H@Z");
+bool DragFloat4(
+    const char* label,
+    float v[4],
+    float v_speed,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragFloat4@ImGui@@YA_NPEBDQEAMMMM0H@Z");
+bool DragFloatRange2(
+    const char* label,
+    float* v_current_min,
+    float* v_current_max,
+    float v_speed,
+    float v_min,
+    float v_max,
+    const char* format,
+    const char* format_max,
+    ImGuiSliderFlags flags
+) asm("?DragFloatRange2@ImGui@@YA_NPEBDPEAM1MMM00H@Z");
+bool DragInt(
+    const char* label,
+    int* v,
+    float v_speed,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragInt@ImGui@@YA_NPEBDPEAHMHH0H@Z");
+bool DragInt2(
+    const char* label,
+    int v[2],
+    float v_speed,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragInt2@ImGui@@YA_NPEBDQEAHMHH0H@Z");
+bool DragInt3(
+    const char* label,
+    int v[3],
+    float v_speed,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragInt3@ImGui@@YA_NPEBDQEAHMHH0H@Z");
+bool DragInt4(
+    const char* label,
+    int v[4],
+    float v_speed,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragInt4@ImGui@@YA_NPEBDQEAHMHH0H@Z");
+bool DragIntRange2(
+    const char* label,
+    int* v_current_min,
+    int* v_current_max,
+    float v_speed,
+    int v_min,
+    int v_max,
+    const char* format,
+    const char* format_max,
+    ImGuiSliderFlags flags
+) asm("?DragIntRange2@ImGui@@YA_NPEBDPEAH1MHH00H@Z");
+bool DragScalar(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragScalar@ImGui@@YA_NPEBDHPEAXMPEBX20H@Z");
+bool DragScalarN(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?DragScalarN@ImGui@@YA_NPEBDHPEAXHMPEBX20H@Z");
+bool SliderFloat(
+    const char* label,
+    float* v,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderFloat@ImGui@@YA_NPEBDPEAMMM0H@Z");
+bool SliderFloat2(
+    const char* label,
+    float v[2],
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderFloat2@ImGui@@YA_NPEBDQEAMMM0H@Z");
+bool SliderFloat3(
+    const char* label,
+    float v[3],
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderFloat3@ImGui@@YA_NPEBDQEAMMM0H@Z");
+bool SliderFloat4(
+    const char* label,
+    float v[4],
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderFloat4@ImGui@@YA_NPEBDQEAMMM0H@Z");
+bool SliderAngle(
+    const char* label,
+    float* v_rad,
+    float v_degrees_min,
+    float v_degrees_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderAngle@ImGui@@YA_NPEBDPEAMMM0H@Z");
+bool SliderInt(
+    const char* label,
+    int* v,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderInt@ImGui@@YA_NPEBDPEAHHH0H@Z");
+bool SliderInt2(
+    const char* label,
+    int v[2],
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderInt2@ImGui@@YA_NPEBDQEAHHH0H@Z");
+bool SliderInt3(
+    const char* label,
+    int v[3],
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderInt3@ImGui@@YA_NPEBDQEAHHH0H@Z");
+bool SliderInt4(
+    const char* label,
+    int v[4],
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderInt4@ImGui@@YA_NPEBDQEAHHH0H@Z");
+bool SliderScalar(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderScalar@ImGui@@YA_NPEBDHPEAXPEBX20H@Z");
+bool SliderScalarN(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20H@Z");
+bool VSliderFloat(
+    const char* label,
+    const struct ImVec2* size,
+    float* v,
+    float v_min,
+    float v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?VSliderFloat@ImGui@@YA_NPEBDAEBUImVec2@@PEAMMM0H@Z");
+bool VSliderInt(
+    const char* label,
+    const struct ImVec2* size,
+    int* v,
+    int v_min,
+    int v_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?VSliderInt@ImGui@@YA_NPEBDAEBUImVec2@@PEAHHH0H@Z");
+bool VSliderScalar(
+    const char* label,
+    const struct ImVec2* size,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    ImGuiSliderFlags flags
+) asm("?VSliderScalar@ImGui@@YA_NPEBDAEBUImVec2@@HPEAXPEBX30H@Z");
+bool InputText(
+    const char* label,
+    char* buf,
+    size_t buf_size,
+    ImGuiInputTextFlags flags,
+    ImGuiInputTextCallback callback,
+    void* user_data
+) asm("?InputText@ImGui@@YA_NPEBDPEAD_KHP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z");
+bool InputTextMultiline(
+    const char* label,
+    char* buf,
+    size_t buf_size,
+    const struct ImVec2* size,
+    ImGuiInputTextFlags flags,
+    ImGuiInputTextCallback callback,
+    void* user_data
+) asm("?InputTextMultiline@ImGui@@YA_NPEBDPEAD_KAEBUImVec2@@HP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z");
+bool InputTextWithHint(
+    const char* label,
+    const char* hint,
+    char* buf,
+    size_t buf_size,
+    ImGuiInputTextFlags flags,
+    ImGuiInputTextCallback callback,
+    void* user_data
+) asm("?InputTextWithHint@ImGui@@YA_NPEBD0PEAD_KHP6AHPEAUImGuiInputTextCallbackData@@@ZPEAX@Z");
+bool InputFloat(
+    const char* label,
+    float* v,
+    float step,
+    float step_fast,
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputFloat@ImGui@@YA_NPEBDPEAMMM0H@Z");
+bool InputFloat2(
+    const char* label,
+    float v[2],
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputFloat2@ImGui@@YA_NPEBDQEAM0H@Z");
+bool InputFloat3(
+    const char* label,
+    float v[3],
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputFloat3@ImGui@@YA_NPEBDQEAM0H@Z");
+bool InputFloat4(
+    const char* label,
+    float v[4],
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputFloat4@ImGui@@YA_NPEBDQEAM0H@Z");
+bool InputInt(
+    const char* label,
+    int* v,
+    int step,
+    int step_fast,
+    ImGuiInputTextFlags flags
+) asm("?InputInt@ImGui@@YA_NPEBDPEAHHHH@Z");
+bool InputInt2(
+    const char* label,
+    int v[2],
+    ImGuiInputTextFlags flags
+) asm("?InputInt2@ImGui@@YA_NPEBDQEAHH@Z");
+bool InputInt3(
+    const char* label,
+    int v[3],
+    ImGuiInputTextFlags flags
+) asm("?InputInt3@ImGui@@YA_NPEBDQEAHH@Z");
+bool InputInt4(
+    const char* label,
+    int v[4],
+    ImGuiInputTextFlags flags
+) asm("?InputInt4@ImGui@@YA_NPEBDQEAHH@Z");
+bool InputDouble(
+    const char* label,
+    double* v,
+    double step,
+    double step_fast,
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputDouble@ImGui@@YA_NPEBDPEANNN0H@Z");
+bool InputScalar(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_step,
+    const void* p_step_fast,
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputScalar@ImGui@@YA_NPEBDHPEAXPEBX20H@Z");
+bool InputScalarN(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    const void* p_step,
+    const void* p_step_fast,
+    const char* format,
+    ImGuiInputTextFlags flags
+) asm("?InputScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20H@Z");
+bool ColorEdit3(
+    const char* label,
+    float col[3],
+    ImGuiColorEditFlags flags
+) asm("?ColorEdit3@ImGui@@YA_NPEBDQEAMH@Z");
+bool ColorEdit4(
+    const char* label,
+    float col[4],
+    ImGuiColorEditFlags flags
+) asm("?ColorEdit4@ImGui@@YA_NPEBDQEAMH@Z");
+bool ColorPicker3(
+    const char* label,
+    float col[3],
+    ImGuiColorEditFlags flags
+) asm("?ColorPicker3@ImGui@@YA_NPEBDQEAMH@Z");
+bool ColorPicker4(
+    const char* label,
+    float col[4],
+    ImGuiColorEditFlags flags,
+    const float* ref_col
+) asm("?ColorPicker4@ImGui@@YA_NPEBDQEAMHPEBM@Z");
+bool ColorButton(
+    const char* desc_id,
+    const struct ImVec4* col,
+    ImGuiColorEditFlags flags,
+    struct ImVec2 size
+) asm("?ColorButton@ImGui@@YA_NPEBDAEBUImVec4@@HUImVec2@@@Z");
+void SetColorEditOptions(
+    ImGuiColorEditFlags flags
+) asm("?SetColorEditOptions@ImGui@@YAXH@Z");
+bool TreeNode(
+    const char* label
+) asm("?TreeNode@ImGui@@YA_NPEBD@Z");
+bool TreeNode(
+    const char* str_id,
+    const char* fmt
+) asm("?TreeNode@ImGui@@YA_NPEBD0ZZ");
+bool TreeNode(
+    const void* ptr_id,
+    const char* fmt
+) asm("?TreeNode@ImGui@@YA_NPEBXPEBDZZ");
+bool TreeNodeV(
+    const char* str_id,
+    const char* fmt,
+    va_list args
+) asm("?TreeNodeV@ImGui@@YA_NPEBD0PEAD@Z");
+bool TreeNodeV(
+    const void* ptr_id,
+    const char* fmt,
+    va_list args
+) asm("?TreeNodeV@ImGui@@YA_NPEBXPEBDPEAD@Z");
+bool TreeNodeEx(
+    const char* label,
+    ImGuiTreeNodeFlags flags
+) asm("?TreeNodeEx@ImGui@@YA_NPEBDH@Z");
+bool TreeNodeEx(
+    const char* str_id,
+    ImGuiTreeNodeFlags flags,
+    const char* fmt
+) asm("?TreeNodeEx@ImGui@@YA_NPEBDH0ZZ");
+bool TreeNodeEx(
+    const void* ptr_id,
+    ImGuiTreeNodeFlags flags,
+    const char* fmt
+) asm("?TreeNodeEx@ImGui@@YA_NPEBXHPEBDZZ");
+bool TreeNodeExV(
+    const char* str_id,
+    ImGuiTreeNodeFlags flags,
+    const char* fmt,
+    va_list args
+) asm("?TreeNodeExV@ImGui@@YA_NPEBDH0PEAD@Z");
+bool TreeNodeExV(
+    const void* ptr_id,
+    ImGuiTreeNodeFlags flags,
+    const char* fmt,
+    va_list args
+) asm("?TreeNodeExV@ImGui@@YA_NPEBXHPEBDPEAD@Z");
+void TreePush(
+    const char* str_id
+) asm("?TreePush@ImGui@@YAXPEBD@Z");
+void TreePush(
+    const void* ptr_id
+) asm("?TreePush@ImGui@@YAXPEBX@Z");
+void TreePop(
+) asm("?TreePop@ImGui@@YAXXZ");
+float GetTreeNodeToLabelSpacing(
+) asm("?GetTreeNodeToLabelSpacing@ImGui@@YAMXZ");
+bool CollapsingHeader(
+    const char* label,
+    ImGuiTreeNodeFlags flags
+) asm("?CollapsingHeader@ImGui@@YA_NPEBDH@Z");
+bool CollapsingHeader(
+    const char* label,
+    bool* p_visible,
+    ImGuiTreeNodeFlags flags
+) asm("?CollapsingHeader@ImGui@@YA_NPEBDPEA_NH@Z");
+void SetNextItemOpen(
+    bool is_open,
+    ImGuiCond cond
+) asm("?SetNextItemOpen@ImGui@@YAX_NH@Z");
+bool Selectable(
+    const char* label,
+    bool selected,
+    ImGuiSelectableFlags flags,
+    const struct ImVec2* size
+) asm("?Selectable@ImGui@@YA_NPEBD_NHAEBUImVec2@@@Z");
+bool Selectable(
+    const char* label,
+    bool* p_selected,
+    ImGuiSelectableFlags flags,
+    const struct ImVec2* size
+) asm("?Selectable@ImGui@@YA_NPEBDPEA_NHAEBUImVec2@@@Z");
+bool BeginListBox(
+    const char* label,
+    const struct ImVec2* size
+) asm("?BeginListBox@ImGui@@YA_NPEBDAEBUImVec2@@@Z");
+void EndListBox(
+) asm("?EndListBox@ImGui@@YAXXZ");
+bool ListBox(
+    const char* label,
+    int* current_item,
+    const char* const* items,
+    int items_count,
+    int height_in_items
+) asm("?ListBox@ImGui@@YA_NPEBDPEAHQEBQEBDHH@Z");
+bool ListBox(
+    const char* label,
+    int* current_item,
+    bool(*items_getter)(void* data, int idx, const char** out_text),
+    void* data,
+    int items_count,
+    int height_in_items
+) asm("?ListBox@ImGui@@YA_NPEBDPEAHP6A_NPEAXHPEAPEBD@Z2HH@Z");
+void PlotLines(
+    const char* label,
+    const float* values,
+    int values_count,
+    int values_offset,
+    const char* overlay_text,
+    float scale_min,
+    float scale_max,
+    struct ImVec2 graph_size,
+    int stride
+) asm("?PlotLines@ImGui@@YAXPEBDPEBMHH0MMUImVec2@@H@Z");
+void PlotLines(
+    const char* label,
+    float(*values_getter)(void* data, int idx),
+    void* data,
+    int values_count,
+    int values_offset,
+    const char* overlay_text,
+    float scale_min,
+    float scale_max,
+    struct ImVec2 graph_size
+) asm("?PlotLines@ImGui@@YAXPEBDP6AMPEAXH@Z1HH0MMUImVec2@@@Z");
+void PlotHistogram(
+    const char* label,
+    const float* values,
+    int values_count,
+    int values_offset,
+    const char* overlay_text,
+    float scale_min,
+    float scale_max,
+    struct ImVec2 graph_size,
+    int stride
+) asm("?PlotHistogram@ImGui@@YAXPEBDPEBMHH0MMUImVec2@@H@Z");
+void PlotHistogram(
+    const char* label,
+    float(*values_getter)(void* data, int idx),
+    void* data,
+    int values_count,
+    int values_offset,
+    const char* overlay_text,
+    float scale_min,
+    float scale_max,
+    struct ImVec2 graph_size
+) asm("?PlotHistogram@ImGui@@YAXPEBDP6AMPEAXH@Z1HH0MMUImVec2@@@Z");
+void Value(
+    const char* prefix,
+    bool b
+) asm("?Value@ImGui@@YAXPEBD_N@Z");
+void Value(
+    const char* prefix,
+    int v
+) asm("?Value@ImGui@@YAXPEBDH@Z");
+void Value(
+    const char* prefix,
+    unsigned int v
+) asm("?Value@ImGui@@YAXPEBDI@Z");
+void Value(
+    const char* prefix,
+    float v,
+    const char* float_format
+) asm("?Value@ImGui@@YAXPEBDM0@Z");
+bool BeginMenuBar(
+) asm("?BeginMenuBar@ImGui@@YA_NXZ");
+void EndMenuBar(
+) asm("?EndMenuBar@ImGui@@YAXXZ");
+bool BeginMainMenuBar(
+) asm("?BeginMainMenuBar@ImGui@@YA_NXZ");
+void EndMainMenuBar(
+) asm("?EndMainMenuBar@ImGui@@YAXXZ");
+bool BeginMenu(
+    const char* label,
+    bool enabled
+) asm("?BeginMenu@ImGui@@YA_NPEBD_N@Z");
+void EndMenu(
+) asm("?EndMenu@ImGui@@YAXXZ");
+bool MenuItem(
+    const char* label,
+    const char* shortcut,
+    bool selected,
+    bool enabled
+) asm("?MenuItem@ImGui@@YA_NPEBD0_N1@Z");
+bool MenuItem(
+    const char* label,
+    const char* shortcut,
+    bool* p_selected,
+    bool enabled
+) asm("?MenuItem@ImGui@@YA_NPEBD0PEA_N_N@Z");
+void BeginTooltip(
+) asm("?BeginTooltip@ImGui@@YAXXZ");
+void EndTooltip(
+) asm("?EndTooltip@ImGui@@YAXXZ");
+void SetTooltip(
+    const char* fmt
+) asm("?SetTooltip@ImGui@@YAXPEBDZZ");
+void SetTooltipV(
+    const char* fmt,
+    va_list args
+) asm("?SetTooltipV@ImGui@@YAXPEBDPEAD@Z");
+bool BeginPopup(
+    const char* str_id,
+    ImGuiWindowFlags flags
+) asm("?BeginPopup@ImGui@@YA_NPEBDH@Z");
+bool BeginPopupModal(
+    const char* name,
+    bool* p_open,
+    ImGuiWindowFlags flags
+) asm("?BeginPopupModal@ImGui@@YA_NPEBDPEA_NH@Z");
+void EndPopup(
+) asm("?EndPopup@ImGui@@YAXXZ");
+void OpenPopup(
+    const char* str_id,
+    ImGuiPopupFlags popup_flags
+) asm("?OpenPopup@ImGui@@YAXPEBDH@Z");
+void OpenPopup(
+    ImGuiID id,
+    ImGuiPopupFlags popup_flags
+) asm("?OpenPopup@ImGui@@YAXIH@Z");
+void OpenPopupOnItemClick(
+    const char* str_id,
+    ImGuiPopupFlags popup_flags
+) asm("?OpenPopupOnItemClick@ImGui@@YAXPEBDH@Z");
+void CloseCurrentPopup(
+) asm("?CloseCurrentPopup@ImGui@@YAXXZ");
+bool BeginPopupContextItem(
+    const char* str_id,
+    ImGuiPopupFlags popup_flags
+) asm("?BeginPopupContextItem@ImGui@@YA_NPEBDH@Z");
+bool BeginPopupContextWindow(
+    const char* str_id,
+    ImGuiPopupFlags popup_flags
+) asm("?BeginPopupContextWindow@ImGui@@YA_NPEBDH@Z");
+bool BeginPopupContextVoid(
+    const char* str_id,
+    ImGuiPopupFlags popup_flags
+) asm("?BeginPopupContextVoid@ImGui@@YA_NPEBDH@Z");
+bool IsPopupOpen(
+    const char* str_id,
+    ImGuiPopupFlags flags
+) asm("?IsPopupOpen@ImGui@@YA_NPEBDH@Z");
+bool BeginTable(
+    const char* str_id,
+    int column,
+    ImGuiTableFlags flags,
+    const struct ImVec2* outer_size,
+    float inner_width
+) asm("?BeginTable@ImGui@@YA_NPEBDHHAEBUImVec2@@M@Z");
+void EndTable(
+) asm("?EndTable@ImGui@@YAXXZ");
+void TableNextRow(
+    ImGuiTableRowFlags row_flags,
+    float min_row_height
+) asm("?TableNextRow@ImGui@@YAXHM@Z");
+bool TableNextColumn(
+) asm("?TableNextColumn@ImGui@@YA_NXZ");
+bool TableSetColumnIndex(
+    int column_n
+) asm("?TableSetColumnIndex@ImGui@@YA_NH@Z");
+void TableSetupColumn(
+    const char* label,
+    ImGuiTableColumnFlags flags,
+    float init_width_or_weight,
+    ImGuiID user_id
+) asm("?TableSetupColumn@ImGui@@YAXPEBDHMI@Z");
+void TableSetupScrollFreeze(
+    int cols,
+    int rows
+) asm("?TableSetupScrollFreeze@ImGui@@YAXHH@Z");
+void TableHeadersRow(
+) asm("?TableHeadersRow@ImGui@@YAXXZ");
+void TableHeader(
+    const char* label
+) asm("?TableHeader@ImGui@@YAXPEBD@Z");
+struct ImGuiTableSortSpecs* TableGetSortSpecs(
+) asm("?TableGetSortSpecs@ImGui@@YAPEAUImGuiTableSortSpecs@@XZ");
+int TableGetColumnCount(
+) asm("?TableGetColumnCount@ImGui@@YAHXZ");
+int TableGetColumnIndex(
+) asm("?TableGetColumnIndex@ImGui@@YAHXZ");
+int TableGetRowIndex(
+) asm("?TableGetRowIndex@ImGui@@YAHXZ");
+const char* TableGetColumnName(
+    int column_n
+) asm("?TableGetColumnName@ImGui@@YAPEBDH@Z");
+ImGuiTableColumnFlags TableGetColumnFlags(
+    int column_n
+) asm("?TableGetColumnFlags@ImGui@@YAHH@Z");
+void TableSetColumnEnabled(
+    int column_n,
+    bool v
+) asm("?TableSetColumnEnabled@ImGui@@YAXH_N@Z");
+void TableSetBgColor(
+    ImGuiTableBgTarget target,
+    ImU32 color,
+    int column_n
+) asm("?TableSetBgColor@ImGui@@YAXHIH@Z");
+void Columns(
+    int count,
+    const char* id,
+    bool border
+) asm("?Columns@ImGui@@YAXHPEBD_N@Z");
+void NextColumn(
+) asm("?NextColumn@ImGui@@YAXXZ");
+int GetColumnIndex(
+) asm("?GetColumnIndex@ImGui@@YAHXZ");
+float GetColumnWidth(
+    int column_index
+) asm("?GetColumnWidth@ImGui@@YAMH@Z");
+void SetColumnWidth(
+    int column_index,
+    float width
+) asm("?SetColumnWidth@ImGui@@YAXHM@Z");
+float GetColumnOffset(
+    int column_index
+) asm("?GetColumnOffset@ImGui@@YAMH@Z");
+void SetColumnOffset(
+    int column_index,
+    float offset_x
+) asm("?SetColumnOffset@ImGui@@YAXHM@Z");
+int GetColumnsCount(
+) asm("?GetColumnsCount@ImGui@@YAHXZ");
+bool BeginTabBar(
+    const char* str_id,
+    ImGuiTabBarFlags flags
+) asm("?BeginTabBar@ImGui@@YA_NPEBDH@Z");
+void EndTabBar(
+) asm("?EndTabBar@ImGui@@YAXXZ");
+bool BeginTabItem(
+    const char* label,
+    bool* p_open,
+    ImGuiTabItemFlags flags
+) asm("?BeginTabItem@ImGui@@YA_NPEBDPEA_NH@Z");
+void EndTabItem(
+) asm("?EndTabItem@ImGui@@YAXXZ");
+bool TabItemButton(
+    const char* label,
+    ImGuiTabItemFlags flags
+) asm("?TabItemButton@ImGui@@YA_NPEBDH@Z");
+void SetTabItemClosed(
+    const char* tab_or_docked_window_label
+) asm("?SetTabItemClosed@ImGui@@YAXPEBD@Z");
+void LogToTTY(
+    int auto_open_depth
+) asm("?LogToTTY@ImGui@@YAXH@Z");
+void LogToFile(
+    int auto_open_depth,
+    const char* filename
+) asm("?LogToFile@ImGui@@YAXHPEBD@Z");
+void LogToClipboard(
+    int auto_open_depth
+) asm("?LogToClipboard@ImGui@@YAXH@Z");
+void LogFinish(
+) asm("?LogFinish@ImGui@@YAXXZ");
+void LogButtons(
+) asm("?LogButtons@ImGui@@YAXXZ");
+void LogText(
+    const char* fmt
+) asm("?LogText@ImGui@@YAXPEBDZZ");
+void LogTextV(
+    const char* fmt,
+    va_list args
+) asm("?LogTextV@ImGui@@YAXPEBDPEAD@Z");
+bool BeginDragDropSource(
+    ImGuiDragDropFlags flags
+) asm("?BeginDragDropSource@ImGui@@YA_NH@Z");
+bool SetDragDropPayload(
+    const char* type,
+    const void* data,
+    size_t sz,
+    ImGuiCond cond
+) asm("?SetDragDropPayload@ImGui@@YA_NPEBDPEBX_KH@Z");
+void EndDragDropSource(
+) asm("?EndDragDropSource@ImGui@@YAXXZ");
+bool BeginDragDropTarget(
+) asm("?BeginDragDropTarget@ImGui@@YA_NXZ");
+const struct ImGuiPayload* AcceptDragDropPayload(
+    const char* type,
+    ImGuiDragDropFlags flags
+) asm("?AcceptDragDropPayload@ImGui@@YAPEBUImGuiPayload@@PEBDH@Z");
+void EndDragDropTarget(
+) asm("?EndDragDropTarget@ImGui@@YAXXZ");
+const struct ImGuiPayload* GetDragDropPayload(
+) asm("?GetDragDropPayload@ImGui@@YAPEBUImGuiPayload@@XZ");
+void PushClipRect(
+    const struct ImVec2* clip_rect_min,
+    const struct ImVec2* clip_rect_max,
+    bool intersect_with_current_clip_rect
+) asm("?PushClipRect@ImGui@@YAXAEBUImVec2@@0_N@Z");
+void PopClipRect(
+) asm("?PopClipRect@ImGui@@YAXXZ");
+void SetItemDefaultFocus(
+) asm("?SetItemDefaultFocus@ImGui@@YAXXZ");
+void SetKeyboardFocusHere(
+    int offset
+) asm("?SetKeyboardFocusHere@ImGui@@YAXH@Z");
+bool IsItemHovered(
+    ImGuiHoveredFlags flags
+) asm("?IsItemHovered@ImGui@@YA_NH@Z");
+bool IsItemActive(
+) asm("?IsItemActive@ImGui@@YA_NXZ");
+bool IsItemFocused(
+) asm("?IsItemFocused@ImGui@@YA_NXZ");
+bool IsItemClicked(
+    ImGuiMouseButton mouse_button
+) asm("?IsItemClicked@ImGui@@YA_NH@Z");
+bool IsItemVisible(
+) asm("?IsItemVisible@ImGui@@YA_NXZ");
+bool IsItemEdited(
+) asm("?IsItemEdited@ImGui@@YA_NXZ");
+bool IsItemActivated(
+) asm("?IsItemActivated@ImGui@@YA_NXZ");
+bool IsItemDeactivated(
+) asm("?IsItemDeactivated@ImGui@@YA_NXZ");
+bool IsItemDeactivatedAfterEdit(
+) asm("?IsItemDeactivatedAfterEdit@ImGui@@YA_NXZ");
+bool IsItemToggledOpen(
+) asm("?IsItemToggledOpen@ImGui@@YA_NXZ");
+bool IsAnyItemHovered(
+) asm("?IsAnyItemHovered@ImGui@@YA_NXZ");
+bool IsAnyItemActive(
+) asm("?IsAnyItemActive@ImGui@@YA_NXZ");
+bool IsAnyItemFocused(
+) asm("?IsAnyItemFocused@ImGui@@YA_NXZ");
+struct ImVec2 GetItemRectMin(
+) asm("?GetItemRectMin@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetItemRectMax(
+) asm("?GetItemRectMax@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetItemRectSize(
+) asm("?GetItemRectSize@ImGui@@YA?AUImVec2@@XZ");
+void SetItemAllowOverlap(
+) asm("?SetItemAllowOverlap@ImGui@@YAXXZ");
+struct ImGuiViewport* GetMainViewport(
+) asm("?GetMainViewport@ImGui@@YAPEAUImGuiViewport@@XZ");
+bool IsRectVisible(
+    const struct ImVec2* size
+) asm("?IsRectVisible@ImGui@@YA_NAEBUImVec2@@@Z");
+bool IsRectVisible(
+    const struct ImVec2* rect_min,
+    const struct ImVec2* rect_max
+) asm("?IsRectVisible@ImGui@@YA_NAEBUImVec2@@0@Z");
+double GetTime(
+) asm("?GetTime@ImGui@@YANXZ");
+int GetFrameCount(
+) asm("?GetFrameCount@ImGui@@YAHXZ");
+struct ImDrawList* GetBackgroundDrawList(
+) asm("?GetBackgroundDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+struct ImDrawList* GetForegroundDrawList(
+) asm("?GetForegroundDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+struct ImDrawListSharedData* GetDrawListSharedData(
+) asm("?GetDrawListSharedData@ImGui@@YAPEAUImDrawListSharedData@@XZ");
+const char* GetStyleColorName(
+    ImGuiCol idx
+) asm("?GetStyleColorName@ImGui@@YAPEBDH@Z");
+void SetStateStorage(
+    struct ImGuiStorage* storage
+) asm("?SetStateStorage@ImGui@@YAXPEAUImGuiStorage@@@Z");
+struct ImGuiStorage* GetStateStorage(
+) asm("?GetStateStorage@ImGui@@YAPEAUImGuiStorage@@XZ");
+void CalcListClipping(
+    int items_count,
+    float items_height,
+    int* out_items_display_start,
+    int* out_items_display_end
+) asm("?CalcListClipping@ImGui@@YAXHMPEAH0@Z");
+bool BeginChildFrame(
+    ImGuiID id,
+    const struct ImVec2* size,
+    ImGuiWindowFlags flags
+) asm("?BeginChildFrame@ImGui@@YA_NIAEBUImVec2@@H@Z");
+void EndChildFrame(
+) asm("?EndChildFrame@ImGui@@YAXXZ");
+struct ImVec2 CalcTextSize(
+    const char* text,
+    const char* text_end,
+    bool hide_text_after_double_hash,
+    float wrap_width
+) asm("?CalcTextSize@ImGui@@YA?AUImVec2@@PEBD0_NM@Z");
+struct ImVec4 ColorConvertU32ToFloat4(
+    ImU32 in
+) asm("?ColorConvertU32ToFloat4@ImGui@@YA?AUImVec4@@I@Z");
+ImU32 ColorConvertFloat4ToU32(
+    const struct ImVec4* in
+) asm("?ColorConvertFloat4ToU32@ImGui@@YAIAEBUImVec4@@@Z");
+void ColorConvertRGBtoHSV(
+    float r,
+    float g,
+    float b,
+    float* out_h,
+    float* out_s,
+    float* out_v
+) asm("?ColorConvertRGBtoHSV@ImGui@@YAXMMMAEAM00@Z");
+void ColorConvertHSVtoRGB(
+    float h,
+    float s,
+    float v,
+    float* out_r,
+    float* out_g,
+    float* out_b
+) asm("?ColorConvertHSVtoRGB@ImGui@@YAXMMMAEAM00@Z");
+int GetKeyIndex(
+    ImGuiKey imgui_key
+) asm("?GetKeyIndex@ImGui@@YAHH@Z");
+bool IsKeyDown(
+    int user_key_index
+) asm("?IsKeyDown@ImGui@@YA_NH@Z");
+bool IsKeyPressed(
+    int user_key_index,
+    bool repeat
+) asm("?IsKeyPressed@ImGui@@YA_NH_N@Z");
+bool IsKeyReleased(
+    int user_key_index
+) asm("?IsKeyReleased@ImGui@@YA_NH@Z");
+int GetKeyPressedAmount(
+    int key_index,
+    float repeat_delay,
+    float rate
+) asm("?GetKeyPressedAmount@ImGui@@YAHHMM@Z");
+void CaptureKeyboardFromApp(
+    bool want_capture_keyboard_value
+) asm("?CaptureKeyboardFromApp@ImGui@@YAX_N@Z");
+bool IsMouseDown(
+    ImGuiMouseButton button
+) asm("?IsMouseDown@ImGui@@YA_NH@Z");
+bool IsMouseClicked(
+    ImGuiMouseButton button,
+    bool repeat
+) asm("?IsMouseClicked@ImGui@@YA_NH_N@Z");
+bool IsMouseReleased(
+    ImGuiMouseButton button
+) asm("?IsMouseReleased@ImGui@@YA_NH@Z");
+bool IsMouseDoubleClicked(
+    ImGuiMouseButton button
+) asm("?IsMouseDoubleClicked@ImGui@@YA_NH@Z");
+bool IsMouseHoveringRect(
+    const struct ImVec2* r_min,
+    const struct ImVec2* r_max,
+    bool clip
+) asm("?IsMouseHoveringRect@ImGui@@YA_NAEBUImVec2@@0_N@Z");
+bool IsMousePosValid(
+    const struct ImVec2* mouse_pos
+) asm("?IsMousePosValid@ImGui@@YA_NPEBUImVec2@@@Z");
+bool IsAnyMouseDown(
+) asm("?IsAnyMouseDown@ImGui@@YA_NXZ");
+struct ImVec2 GetMousePos(
+) asm("?GetMousePos@ImGui@@YA?AUImVec2@@XZ");
+struct ImVec2 GetMousePosOnOpeningCurrentPopup(
+) asm("?GetMousePosOnOpeningCurrentPopup@ImGui@@YA?AUImVec2@@XZ");
+bool IsMouseDragging(
+    ImGuiMouseButton button,
+    float lock_threshold
+) asm("?IsMouseDragging@ImGui@@YA_NHM@Z");
+struct ImVec2 GetMouseDragDelta(
+    ImGuiMouseButton button,
+    float lock_threshold
+) asm("?GetMouseDragDelta@ImGui@@YA?AUImVec2@@HM@Z");
+void ResetMouseDragDelta(
+    ImGuiMouseButton button
+) asm("?ResetMouseDragDelta@ImGui@@YAXH@Z");
+ImGuiMouseCursor GetMouseCursor(
+) asm("?GetMouseCursor@ImGui@@YAHXZ");
+void SetMouseCursor(
+    ImGuiMouseCursor cursor_type
+) asm("?SetMouseCursor@ImGui@@YAXH@Z");
+void CaptureMouseFromApp(
+    bool want_capture_mouse_value
+) asm("?CaptureMouseFromApp@ImGui@@YAX_N@Z");
+const char* GetClipboardText(
+) asm("?GetClipboardText@ImGui@@YAPEBDXZ");
+void SetClipboardText(
+    const char* text
+) asm("?SetClipboardText@ImGui@@YAXPEBD@Z");
+void LoadIniSettingsFromDisk(
+    const char* ini_filename
+) asm("?LoadIniSettingsFromDisk@ImGui@@YAXPEBD@Z");
+void LoadIniSettingsFromMemory(
+    const char* ini_data,
+    size_t ini_size
+) asm("?LoadIniSettingsFromMemory@ImGui@@YAXPEBD_K@Z");
+void SaveIniSettingsToDisk(
+    const char* ini_filename
+) asm("?SaveIniSettingsToDisk@ImGui@@YAXPEBD@Z");
+const char* SaveIniSettingsToMemory(
+    size_t* out_ini_size
+) asm("?SaveIniSettingsToMemory@ImGui@@YAPEBDPEA_K@Z");
+bool DebugCheckVersionAndDataLayout(
+    const char* version_str,
+    size_t sz_io,
+    size_t sz_style,
+    size_t sz_vec2,
+    size_t sz_vec4,
+    size_t sz_drawvert,
+    size_t sz_drawidx
+) asm("?DebugCheckVersionAndDataLayout@ImGui@@YA_NPEBD_K11111@Z");
+void SetAllocatorFunctions(
+    ImGuiMemAllocFunc alloc_func,
+    ImGuiMemFreeFunc free_func,
+    void* user_data
+) asm("?SetAllocatorFunctions@ImGui@@YAXP6APEAX_KPEAX@ZP6AX11@Z1@Z");
+void GetAllocatorFunctions(
+    ImGuiMemAllocFunc* p_alloc_func,
+    ImGuiMemFreeFunc* p_free_func,
+    void** p_user_data
+) asm("?GetAllocatorFunctions@ImGui@@YAXPEAP6APEAX_KPEAX@ZPEAP6AX11@ZPEAPEAX@Z");
+void* MemAlloc(
+    size_t size
+) asm("?MemAlloc@ImGui@@YAPEAX_K@Z");
+void MemFree(
+    void* ptr
+) asm("?MemFree@ImGui@@YAXPEAX@Z");
+bool ListBoxHeader(
+    const char* label,
+    int items_count,
+    int height_in_items
+) asm("?ListBoxHeader@ImGui@@YA_NPEBDHH@Z");
+bool DragScalar(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?DragScalar@ImGui@@YA_NPEBDHPEAXMPEBX20M@Z");
+bool DragScalarN(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?DragScalarN@ImGui@@YA_NPEBDHPEAXHMPEBX20M@Z");
+bool SliderScalar(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?SliderScalar@ImGui@@YA_NPEBDHPEAXPEBX20M@Z");
+bool SliderScalarN(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20M@Z");
 ]])
