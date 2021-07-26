@@ -117,7 +117,7 @@ def generate_ffi(c):
         c.run(commandline(
             LUA_BIN,
             "main.lua",
-            f"-E{IMGUI_DIR}/imgui.h,ImGui.dll",
+            f"-E{LIBS_DIR}/imgui/imgui.h,ImGui.dll",
             f"-O{IMGUI_FFI_DIR}"
         ), env={
             'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",

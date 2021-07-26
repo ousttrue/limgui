@@ -9,12 +9,12 @@ local M = {
 }
 
 -- cdef
+require('imgui_ffi.cdef.imgui_impl_glfw')
+require('imgui_ffi.cdef.vadefs')
+require('imgui_ffi.cdef.imgui')
+require('imgui_ffi.cdef.vcruntime')
 require('imgui_ffi.cdef.imgui_impl_opengl3')
 require('imgui_ffi.cdef.gl')
-require('imgui_ffi.cdef.imgui_impl_glfw')
-require('imgui_ffi.cdef.vcruntime')
-require('imgui_ffi.cdef.imgui')
-require('imgui_ffi.cdef.vadefs')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -38,6 +38,7 @@ M.enums = {
         ImGuiWindowFlags_NoNavInputs = C.ImGuiWindowFlags_NoNavInputs,
         ImGuiWindowFlags_NoNavFocus = C.ImGuiWindowFlags_NoNavFocus,
         ImGuiWindowFlags_UnsavedDocument = C.ImGuiWindowFlags_UnsavedDocument,
+        ImGuiWindowFlags_NoDocking = C.ImGuiWindowFlags_NoDocking,
         ImGuiWindowFlags_NoNav = C.ImGuiWindowFlags_NoNav,
         ImGuiWindowFlags_NoDecoration = C.ImGuiWindowFlags_NoDecoration,
         ImGuiWindowFlags_NoInputs = C.ImGuiWindowFlags_NoInputs,
@@ -47,6 +48,7 @@ M.enums = {
         ImGuiWindowFlags_Popup = C.ImGuiWindowFlags_Popup,
         ImGuiWindowFlags_Modal = C.ImGuiWindowFlags_Modal,
         ImGuiWindowFlags_ChildMenu = C.ImGuiWindowFlags_ChildMenu,
+        ImGuiWindowFlags_DockNodeHost = C.ImGuiWindowFlags_DockNodeHost,
     },
     ImGuiInputTextFlags_ = {
         ImGuiInputTextFlags_None = C.ImGuiInputTextFlags_None,
@@ -242,6 +244,15 @@ M.enums = {
         ImGuiHoveredFlags_RectOnly = C.ImGuiHoveredFlags_RectOnly,
         ImGuiHoveredFlags_RootAndChildWindows = C.ImGuiHoveredFlags_RootAndChildWindows,
     },
+    ImGuiDockNodeFlags_ = {
+        ImGuiDockNodeFlags_None = C.ImGuiDockNodeFlags_None,
+        ImGuiDockNodeFlags_KeepAliveOnly = C.ImGuiDockNodeFlags_KeepAliveOnly,
+        ImGuiDockNodeFlags_NoDockingInCentralNode = C.ImGuiDockNodeFlags_NoDockingInCentralNode,
+        ImGuiDockNodeFlags_PassthruCentralNode = C.ImGuiDockNodeFlags_PassthruCentralNode,
+        ImGuiDockNodeFlags_NoSplit = C.ImGuiDockNodeFlags_NoSplit,
+        ImGuiDockNodeFlags_NoResize = C.ImGuiDockNodeFlags_NoResize,
+        ImGuiDockNodeFlags_AutoHideTabBar = C.ImGuiDockNodeFlags_AutoHideTabBar,
+    },
     ImGuiDragDropFlags_ = {
         ImGuiDragDropFlags_None = C.ImGuiDragDropFlags_None,
         ImGuiDragDropFlags_SourceNoPreviewTooltip = C.ImGuiDragDropFlags_SourceNoPreviewTooltip,
@@ -346,6 +357,10 @@ M.enums = {
         ImGuiConfigFlags_NavNoCaptureKeyboard = C.ImGuiConfigFlags_NavNoCaptureKeyboard,
         ImGuiConfigFlags_NoMouse = C.ImGuiConfigFlags_NoMouse,
         ImGuiConfigFlags_NoMouseCursorChange = C.ImGuiConfigFlags_NoMouseCursorChange,
+        ImGuiConfigFlags_DockingEnable = C.ImGuiConfigFlags_DockingEnable,
+        ImGuiConfigFlags_ViewportsEnable = C.ImGuiConfigFlags_ViewportsEnable,
+        ImGuiConfigFlags_DpiEnableScaleViewports = C.ImGuiConfigFlags_DpiEnableScaleViewports,
+        ImGuiConfigFlags_DpiEnableScaleFonts = C.ImGuiConfigFlags_DpiEnableScaleFonts,
         ImGuiConfigFlags_IsSRGB = C.ImGuiConfigFlags_IsSRGB,
         ImGuiConfigFlags_IsTouchScreen = C.ImGuiConfigFlags_IsTouchScreen,
     },
@@ -355,6 +370,9 @@ M.enums = {
         ImGuiBackendFlags_HasMouseCursors = C.ImGuiBackendFlags_HasMouseCursors,
         ImGuiBackendFlags_HasSetMousePos = C.ImGuiBackendFlags_HasSetMousePos,
         ImGuiBackendFlags_RendererHasVtxOffset = C.ImGuiBackendFlags_RendererHasVtxOffset,
+        ImGuiBackendFlags_PlatformHasViewports = C.ImGuiBackendFlags_PlatformHasViewports,
+        ImGuiBackendFlags_HasMouseHoveredViewport = C.ImGuiBackendFlags_HasMouseHoveredViewport,
+        ImGuiBackendFlags_RendererHasViewports = C.ImGuiBackendFlags_RendererHasViewports,
     },
     ImGuiCol_ = {
         ImGuiCol_Text = C.ImGuiCol_Text,
@@ -395,6 +413,8 @@ M.enums = {
         ImGuiCol_TabActive = C.ImGuiCol_TabActive,
         ImGuiCol_TabUnfocused = C.ImGuiCol_TabUnfocused,
         ImGuiCol_TabUnfocusedActive = C.ImGuiCol_TabUnfocusedActive,
+        ImGuiCol_DockingPreview = C.ImGuiCol_DockingPreview,
+        ImGuiCol_DockingEmptyBg = C.ImGuiCol_DockingEmptyBg,
         ImGuiCol_PlotLines = C.ImGuiCol_PlotLines,
         ImGuiCol_PlotLinesHovered = C.ImGuiCol_PlotLinesHovered,
         ImGuiCol_PlotHistogram = C.ImGuiCol_PlotHistogram,
@@ -550,6 +570,16 @@ M.enums = {
         ImGuiViewportFlags_IsPlatformWindow = C.ImGuiViewportFlags_IsPlatformWindow,
         ImGuiViewportFlags_IsPlatformMonitor = C.ImGuiViewportFlags_IsPlatformMonitor,
         ImGuiViewportFlags_OwnedByApp = C.ImGuiViewportFlags_OwnedByApp,
+        ImGuiViewportFlags_NoDecoration = C.ImGuiViewportFlags_NoDecoration,
+        ImGuiViewportFlags_NoTaskBarIcon = C.ImGuiViewportFlags_NoTaskBarIcon,
+        ImGuiViewportFlags_NoFocusOnAppearing = C.ImGuiViewportFlags_NoFocusOnAppearing,
+        ImGuiViewportFlags_NoFocusOnClick = C.ImGuiViewportFlags_NoFocusOnClick,
+        ImGuiViewportFlags_NoInputs = C.ImGuiViewportFlags_NoInputs,
+        ImGuiViewportFlags_NoRendererClear = C.ImGuiViewportFlags_NoRendererClear,
+        ImGuiViewportFlags_TopMost = C.ImGuiViewportFlags_TopMost,
+        ImGuiViewportFlags_Minimized = C.ImGuiViewportFlags_Minimized,
+        ImGuiViewportFlags_NoAutoMerge = C.ImGuiViewportFlags_NoAutoMerge,
+        ImGuiViewportFlags_CanHostOtherWindows = C.ImGuiViewportFlags_CanHostOtherWindows,
     },
     ImDrawCornerFlags_ = {
         ImDrawCornerFlags_None = C.ImDrawCornerFlags_None,
@@ -564,12 +594,9 @@ M.enums = {
         ImDrawCornerFlags_Right = C.ImDrawCornerFlags_Right,
     },
 }
----@class GLADapiproc
----@class GLADloadfunc
----@class GLADuserptrloadfunc
 ---@class GLFWwindow
 ---@class GLFWmonitor
----@class size_t
+---@class va_list
 ---@class ImDrawListSharedData
 ---@class ImFontBuilderIO
 ---@class ImGuiContext
@@ -590,6 +617,7 @@ M.enums = {
 ---@class ImGuiColorEditFlags
 ---@class ImGuiConfigFlags
 ---@class ImGuiComboFlags
+---@class ImGuiDockNodeFlags
 ---@class ImGuiDragDropFlags
 ---@class ImGuiFocusedFlags
 ---@class ImGuiHoveredFlags
@@ -617,12 +645,14 @@ M.enums = {
 ---@class ImU8
 ---@class ImS16
 ---@class ImU32
+---@class ImU64
 ---@class ImVec2
 ---@class ImVec4
 ---@class ImGuiStyle
 ---@class ImGuiIO
 ---@class ImGuiInputTextCallbackData
 ---@class ImGuiSizeCallbackData
+---@class ImGuiWindowClass
 ---@class ImGuiPayload
 ---@class ImGuiTableColumnSortSpecs
 ---@class ImGuiTableSortSpecs
@@ -643,7 +673,12 @@ M.enums = {
 ---@class ImFontAtlas
 ---@class ImFont
 ---@class ImGuiViewport
----@class va_list
+---@class ImGuiPlatformIO
+---@class ImGuiPlatformMonitor
+---@class size_t
+---@class GLADapiproc
+---@class GLADloadfunc
+---@class GLADuserptrloadfunc
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -651,27 +686,11 @@ M.enums = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
-    ---@type fun(glsl_version:string):bool
-    ImGui_ImplOpenGL3_Init = imgui.ImGui_ImplOpenGL3_Init,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
-    ---@type fun(draw_data:any):nil
-    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
-    ---@type fun():bool
-    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
-    ---@type fun():bool
-    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
-    ---@type fun(window:any, install_callbacks:bool):bool
+    ---@type fun(window:any, install_callbacks:boolean):boolean
     ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
-    ---@type fun(window:any, install_callbacks:bool):bool
+    ---@type fun(window:any, install_callbacks:boolean):boolean
     ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
-    ---@type fun(window:any, install_callbacks:bool):bool
+    ---@type fun(window:any, install_callbacks:boolean):boolean
     ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
     ---@type fun():nil
     ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
@@ -687,10 +706,14 @@ M.libs.imgui = {
     ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
     ---@type fun(monitor:any, event:integer):nil
     ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
-    ---@type fun(shared_font_atlas:any):any
-    CreateContext = imgui.CreateContext,
-    ---@type fun(ctx:any):nil
-    DestroyContext = imgui.DestroyContext,
+    ---@param shared_font_atlas any
+    CreateContext = function(shared_font_atlas)
+        return imgui.CreateContext(shared_font_atlas)
+    end,
+    ---@param ctx any
+    DestroyContext = function(ctx)
+        return imgui.DestroyContext(ctx)
+    end,
     ---@type fun():any
     GetCurrentContext = imgui.GetCurrentContext,
     ---@type fun(ctx:any):nil
@@ -707,15 +730,23 @@ M.libs.imgui = {
     Render = imgui.Render,
     ---@type fun():any
     GetDrawData = imgui.GetDrawData,
-    ---@type fun(p_open:any):nil
-    ShowDemoWindow = imgui.ShowDemoWindow,
-    ---@type fun(p_open:any):nil
-    ShowMetricsWindow = imgui.ShowMetricsWindow,
-    ---@type fun(p_open:any):nil
-    ShowAboutWindow = imgui.ShowAboutWindow,
-    ---@type fun(ref:any):nil
-    ShowStyleEditor = imgui.ShowStyleEditor,
-    ---@type fun(label:string):bool
+    ---@param p_open any
+    ShowDemoWindow = function(p_open)
+        return imgui.ShowDemoWindow(p_open)
+    end,
+    ---@param p_open any
+    ShowMetricsWindow = function(p_open)
+        return imgui.ShowMetricsWindow(p_open)
+    end,
+    ---@param p_open any
+    ShowAboutWindow = function(p_open)
+        return imgui.ShowAboutWindow(p_open)
+    end,
+    ---@param ref any
+    ShowStyleEditor = function(ref)
+        return imgui.ShowStyleEditor(ref)
+    end,
+    ---@type fun(label:string):boolean
     ShowStyleSelector = imgui.ShowStyleSelector,
     ---@type fun(label:string):nil
     ShowFontSelector = imgui.ShowFontSelector,
@@ -723,72 +754,157 @@ M.libs.imgui = {
     ShowUserGuide = imgui.ShowUserGuide,
     ---@type fun():string
     GetVersion = imgui.GetVersion,
-    ---@type fun(dst:any):nil
-    StyleColorsDark = imgui.StyleColorsDark,
-    ---@type fun(dst:any):nil
-    StyleColorsLight = imgui.StyleColorsLight,
-    ---@type fun(dst:any):nil
-    StyleColorsClassic = imgui.StyleColorsClassic,
-    ---@type fun(name:string, p_open:any, flags:ImGuiWindowFlags):bool
-    Begin = imgui.Begin,
+    ---@param dst any
+    StyleColorsDark = function(dst)
+        return imgui.StyleColorsDark(dst)
+    end,
+    ---@param dst any
+    StyleColorsLight = function(dst)
+        return imgui.StyleColorsLight(dst)
+    end,
+    ---@param dst any
+    StyleColorsClassic = function(dst)
+        return imgui.StyleColorsClassic(dst)
+    end,
+    ---@param name string
+    ---@param p_open any
+    ---@param flags ImGuiWindowFlags
+    Begin = function(name, p_open, flags)
+        flags = flags or 0
+        return imgui.Begin(name, p_open, flags)
+    end,
     ---@type fun():nil
     End = imgui.End,
-    ---@type fun(str_id:string, size:any, border:bool, flags:ImGuiWindowFlags):bool
-    BeginChild = imgui.BeginChild,
-    ---@type fun(id:ImGuiID, size:any, border:bool, flags:ImGuiWindowFlags):bool
-    BeginChild = imgui.BeginChild,
+    ---@param str_id string
+    ---@param size any
+    ---@param border boolean
+    ---@param flags ImGuiWindowFlags
+    BeginChild = function(str_id, size, border, flags)
+        size = size or ffi.new('struct ImVec2')
+        border = border or false
+        flags = flags or 0
+        return imgui.BeginChild(str_id, size, border, flags)
+    end,
+    ---@param id ImGuiID
+    ---@param size any
+    ---@param border boolean
+    ---@param flags ImGuiWindowFlags
+    BeginChild__1 = function(id, size, border, flags)
+        size = size or ffi.new('struct ImVec2')
+        border = border or false
+        flags = flags or 0
+        return imgui.BeginChild__1(id, size, border, flags)
+    end,
     ---@type fun():nil
     EndChild = imgui.EndChild,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsWindowAppearing = imgui.IsWindowAppearing,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsWindowCollapsed = imgui.IsWindowCollapsed,
-    ---@type fun(flags:ImGuiFocusedFlags):bool
-    IsWindowFocused = imgui.IsWindowFocused,
-    ---@type fun(flags:ImGuiHoveredFlags):bool
-    IsWindowHovered = imgui.IsWindowHovered,
+    ---@param flags ImGuiFocusedFlags
+    IsWindowFocused = function(flags)
+        flags = flags or 0
+        return imgui.IsWindowFocused(flags)
+    end,
+    ---@param flags ImGuiHoveredFlags
+    IsWindowHovered = function(flags)
+        flags = flags or 0
+        return imgui.IsWindowHovered(flags)
+    end,
     ---@type fun():any
     GetWindowDrawList = imgui.GetWindowDrawList,
+    ---@type fun():number
+    GetWindowDpiScale = imgui.GetWindowDpiScale,
     ---@type fun():ImVec2
     GetWindowPos = imgui.GetWindowPos,
     ---@type fun():ImVec2
     GetWindowSize = imgui.GetWindowSize,
-    ---@type fun():float
+    ---@type fun():number
     GetWindowWidth = imgui.GetWindowWidth,
-    ---@type fun():float
+    ---@type fun():number
     GetWindowHeight = imgui.GetWindowHeight,
-    ---@type fun(pos:any, cond:ImGuiCond, pivot:any):nil
-    SetNextWindowPos = imgui.SetNextWindowPos,
-    ---@type fun(size:any, cond:ImGuiCond):nil
-    SetNextWindowSize = imgui.SetNextWindowSize,
-    ---@type fun(size_min:any, size_max:any, custom_callback:ImGuiSizeCallback, custom_callback_data:any):nil
-    SetNextWindowSizeConstraints = imgui.SetNextWindowSizeConstraints,
+    ---@type fun():any
+    GetWindowViewport = imgui.GetWindowViewport,
+    ---@param pos any
+    ---@param cond ImGuiCond
+    ---@param pivot any
+    SetNextWindowPos = function(pos, cond, pivot)
+        cond = cond or 0
+        pivot = pivot or ffi.new('struct ImVec2')
+        return imgui.SetNextWindowPos(pos, cond, pivot)
+    end,
+    ---@param size any
+    ---@param cond ImGuiCond
+    SetNextWindowSize = function(size, cond)
+        cond = cond or 0
+        return imgui.SetNextWindowSize(size, cond)
+    end,
+    ---@param size_min any
+    ---@param size_max any
+    ---@param custom_callback ImGuiSizeCallback
+    ---@param custom_callback_data any
+    SetNextWindowSizeConstraints = function(size_min, size_max, custom_callback, custom_callback_data)
+        return imgui.SetNextWindowSizeConstraints(size_min, size_max, custom_callback, custom_callback_data)
+    end,
     ---@type fun(size:any):nil
     SetNextWindowContentSize = imgui.SetNextWindowContentSize,
-    ---@type fun(collapsed:bool, cond:ImGuiCond):nil
-    SetNextWindowCollapsed = imgui.SetNextWindowCollapsed,
+    ---@param collapsed boolean
+    ---@param cond ImGuiCond
+    SetNextWindowCollapsed = function(collapsed, cond)
+        cond = cond or 0
+        return imgui.SetNextWindowCollapsed(collapsed, cond)
+    end,
     ---@type fun():nil
     SetNextWindowFocus = imgui.SetNextWindowFocus,
-    ---@type fun(alpha:float):nil
+    ---@type fun(alpha:number):nil
     SetNextWindowBgAlpha = imgui.SetNextWindowBgAlpha,
-    ---@type fun(pos:any, cond:ImGuiCond):nil
-    SetWindowPos = imgui.SetWindowPos,
-    ---@type fun(size:any, cond:ImGuiCond):nil
-    SetWindowSize = imgui.SetWindowSize,
-    ---@type fun(collapsed:bool, cond:ImGuiCond):nil
-    SetWindowCollapsed = imgui.SetWindowCollapsed,
+    ---@type fun(viewport_id:ImGuiID):nil
+    SetNextWindowViewport = imgui.SetNextWindowViewport,
+    ---@param pos any
+    ---@param cond ImGuiCond
+    SetWindowPos = function(pos, cond)
+        cond = cond or 0
+        return imgui.SetWindowPos(pos, cond)
+    end,
+    ---@param name string
+    ---@param pos any
+    ---@param cond ImGuiCond
+    SetWindowPos__1 = function(name, pos, cond)
+        cond = cond or 0
+        return imgui.SetWindowPos__1(name, pos, cond)
+    end,
+    ---@param size any
+    ---@param cond ImGuiCond
+    SetWindowSize = function(size, cond)
+        cond = cond or 0
+        return imgui.SetWindowSize(size, cond)
+    end,
+    ---@param name string
+    ---@param size any
+    ---@param cond ImGuiCond
+    SetWindowSize__1 = function(name, size, cond)
+        cond = cond or 0
+        return imgui.SetWindowSize__1(name, size, cond)
+    end,
+    ---@param collapsed boolean
+    ---@param cond ImGuiCond
+    SetWindowCollapsed = function(collapsed, cond)
+        cond = cond or 0
+        return imgui.SetWindowCollapsed(collapsed, cond)
+    end,
+    ---@param name string
+    ---@param collapsed boolean
+    ---@param cond ImGuiCond
+    SetWindowCollapsed__1 = function(name, collapsed, cond)
+        cond = cond or 0
+        return imgui.SetWindowCollapsed__1(name, collapsed, cond)
+    end,
     ---@type fun():nil
     SetWindowFocus = imgui.SetWindowFocus,
-    ---@type fun(scale:float):nil
-    SetWindowFontScale = imgui.SetWindowFontScale,
-    ---@type fun(name:string, pos:any, cond:ImGuiCond):nil
-    SetWindowPos = imgui.SetWindowPos,
-    ---@type fun(name:string, size:any, cond:ImGuiCond):nil
-    SetWindowSize = imgui.SetWindowSize,
-    ---@type fun(name:string, collapsed:bool, cond:ImGuiCond):nil
-    SetWindowCollapsed = imgui.SetWindowCollapsed,
     ---@type fun(name:string):nil
-    SetWindowFocus = imgui.SetWindowFocus,
+    SetWindowFocus__1 = imgui.SetWindowFocus__1,
+    ---@type fun(scale:number):nil
+    SetWindowFontScale = imgui.SetWindowFontScale,
     ---@type fun():ImVec2
     GetContentRegionAvail = imgui.GetContentRegionAvail,
     ---@type fun():ImVec2
@@ -797,28 +913,42 @@ M.libs.imgui = {
     GetWindowContentRegionMin = imgui.GetWindowContentRegionMin,
     ---@type fun():ImVec2
     GetWindowContentRegionMax = imgui.GetWindowContentRegionMax,
-    ---@type fun():float
+    ---@type fun():number
     GetWindowContentRegionWidth = imgui.GetWindowContentRegionWidth,
-    ---@type fun():float
+    ---@type fun():number
     GetScrollX = imgui.GetScrollX,
-    ---@type fun():float
+    ---@type fun():number
     GetScrollY = imgui.GetScrollY,
-    ---@type fun(scroll_x:float):nil
+    ---@type fun(scroll_x:number):nil
     SetScrollX = imgui.SetScrollX,
-    ---@type fun(scroll_y:float):nil
+    ---@type fun(scroll_y:number):nil
     SetScrollY = imgui.SetScrollY,
-    ---@type fun():float
+    ---@type fun():number
     GetScrollMaxX = imgui.GetScrollMaxX,
-    ---@type fun():float
+    ---@type fun():number
     GetScrollMaxY = imgui.GetScrollMaxY,
-    ---@type fun(center_x_ratio:float):nil
-    SetScrollHereX = imgui.SetScrollHereX,
-    ---@type fun(center_y_ratio:float):nil
-    SetScrollHereY = imgui.SetScrollHereY,
-    ---@type fun(local_x:float, center_x_ratio:float):nil
-    SetScrollFromPosX = imgui.SetScrollFromPosX,
-    ---@type fun(local_y:float, center_y_ratio:float):nil
-    SetScrollFromPosY = imgui.SetScrollFromPosY,
+    ---@param center_x_ratio number
+    SetScrollHereX = function(center_x_ratio)
+        center_x_ratio = center_x_ratio or 0.5
+        return imgui.SetScrollHereX(center_x_ratio)
+    end,
+    ---@param center_y_ratio number
+    SetScrollHereY = function(center_y_ratio)
+        center_y_ratio = center_y_ratio or 0.5
+        return imgui.SetScrollHereY(center_y_ratio)
+    end,
+    ---@param local_x number
+    ---@param center_x_ratio number
+    SetScrollFromPosX = function(local_x, center_x_ratio)
+        center_x_ratio = center_x_ratio or 0.5
+        return imgui.SetScrollFromPosX(local_x, center_x_ratio)
+    end,
+    ---@param local_y number
+    ---@param center_y_ratio number
+    SetScrollFromPosY = function(local_y, center_y_ratio)
+        center_y_ratio = center_y_ratio or 0.5
+        return imgui.SetScrollFromPosY(local_y, center_y_ratio)
+    end,
     ---@type fun(font:any):nil
     PushFont = imgui.PushFont,
     ---@type fun():nil
@@ -826,78 +956,102 @@ M.libs.imgui = {
     ---@type fun(idx:ImGuiCol, col:ImU32):nil
     PushStyleColor = imgui.PushStyleColor,
     ---@type fun(idx:ImGuiCol, col:any):nil
-    PushStyleColor = imgui.PushStyleColor,
-    ---@type fun(count:integer):nil
-    PopStyleColor = imgui.PopStyleColor,
-    ---@type fun(idx:ImGuiStyleVar, val:float):nil
+    PushStyleColor__1 = imgui.PushStyleColor__1,
+    ---@param count integer
+    PopStyleColor = function(count)
+        count = count or 1
+        return imgui.PopStyleColor(count)
+    end,
+    ---@type fun(idx:ImGuiStyleVar, val:number):nil
     PushStyleVar = imgui.PushStyleVar,
     ---@type fun(idx:ImGuiStyleVar, val:any):nil
-    PushStyleVar = imgui.PushStyleVar,
-    ---@type fun(count:integer):nil
-    PopStyleVar = imgui.PopStyleVar,
-    ---@type fun(allow_keyboard_focus:bool):nil
+    PushStyleVar__1 = imgui.PushStyleVar__1,
+    ---@param count integer
+    PopStyleVar = function(count)
+        count = count or 1
+        return imgui.PopStyleVar(count)
+    end,
+    ---@type fun(allow_keyboard_focus:boolean):nil
     PushAllowKeyboardFocus = imgui.PushAllowKeyboardFocus,
     ---@type fun():nil
     PopAllowKeyboardFocus = imgui.PopAllowKeyboardFocus,
-    ---@type fun(repeat:bool):nil
+    ---@type fun(repeat_:boolean):nil
     PushButtonRepeat = imgui.PushButtonRepeat,
     ---@type fun():nil
     PopButtonRepeat = imgui.PopButtonRepeat,
-    ---@type fun(item_width:float):nil
+    ---@type fun(item_width:number):nil
     PushItemWidth = imgui.PushItemWidth,
     ---@type fun():nil
     PopItemWidth = imgui.PopItemWidth,
-    ---@type fun(item_width:float):nil
+    ---@type fun(item_width:number):nil
     SetNextItemWidth = imgui.SetNextItemWidth,
-    ---@type fun():float
+    ---@type fun():number
     CalcItemWidth = imgui.CalcItemWidth,
-    ---@type fun(wrap_local_pos_x:float):nil
-    PushTextWrapPos = imgui.PushTextWrapPos,
+    ---@param wrap_local_pos_x number
+    PushTextWrapPos = function(wrap_local_pos_x)
+        wrap_local_pos_x = wrap_local_pos_x or 0.0
+        return imgui.PushTextWrapPos(wrap_local_pos_x)
+    end,
     ---@type fun():nil
     PopTextWrapPos = imgui.PopTextWrapPos,
     ---@type fun():any
     GetFont = imgui.GetFont,
-    ---@type fun():float
+    ---@type fun():number
     GetFontSize = imgui.GetFontSize,
     ---@type fun():ImVec2
     GetFontTexUvWhitePixel = imgui.GetFontTexUvWhitePixel,
-    ---@type fun(idx:ImGuiCol, alpha_mul:float):ImU32
-    GetColorU32 = imgui.GetColorU32,
+    ---@param idx ImGuiCol
+    ---@param alpha_mul number
+    GetColorU32 = function(idx, alpha_mul)
+        alpha_mul = alpha_mul or 1.0
+        return imgui.GetColorU32(idx, alpha_mul)
+    end,
     ---@type fun(col:any):ImU32
-    GetColorU32 = imgui.GetColorU32,
+    GetColorU32__1 = imgui.GetColorU32__1,
     ---@type fun(col:ImU32):ImU32
-    GetColorU32 = imgui.GetColorU32,
+    GetColorU32__2 = imgui.GetColorU32__2,
     ---@type fun(idx:ImGuiCol):any
     GetStyleColorVec4 = imgui.GetStyleColorVec4,
     ---@type fun():nil
     Separator = imgui.Separator,
-    ---@type fun(offset_from_start_x:float, spacing:float):nil
-    SameLine = imgui.SameLine,
+    ---@param offset_from_start_x number
+    ---@param spacing number
+    SameLine = function(offset_from_start_x, spacing)
+        offset_from_start_x = offset_from_start_x or 0.0
+        spacing = spacing or 1.0
+        return imgui.SameLine(offset_from_start_x, spacing)
+    end,
     ---@type fun():nil
     NewLine = imgui.NewLine,
     ---@type fun():nil
     Spacing = imgui.Spacing,
     ---@type fun(size:any):nil
     Dummy = imgui.Dummy,
-    ---@type fun(indent_w:float):nil
-    Indent = imgui.Indent,
-    ---@type fun(indent_w:float):nil
-    Unindent = imgui.Unindent,
+    ---@param indent_w number
+    Indent = function(indent_w)
+        indent_w = indent_w or 0.0
+        return imgui.Indent(indent_w)
+    end,
+    ---@param indent_w number
+    Unindent = function(indent_w)
+        indent_w = indent_w or 0.0
+        return imgui.Unindent(indent_w)
+    end,
     ---@type fun():nil
     BeginGroup = imgui.BeginGroup,
     ---@type fun():nil
     EndGroup = imgui.EndGroup,
     ---@type fun():ImVec2
     GetCursorPos = imgui.GetCursorPos,
-    ---@type fun():float
+    ---@type fun():number
     GetCursorPosX = imgui.GetCursorPosX,
-    ---@type fun():float
+    ---@type fun():number
     GetCursorPosY = imgui.GetCursorPosY,
     ---@type fun(local_pos:any):nil
     SetCursorPos = imgui.SetCursorPos,
-    ---@type fun(local_x:float):nil
+    ---@type fun(local_x:number):nil
     SetCursorPosX = imgui.SetCursorPosX,
-    ---@type fun(local_y:float):nil
+    ---@type fun(local_y:number):nil
     SetCursorPosY = imgui.SetCursorPosY,
     ---@type fun():ImVec2
     GetCursorStartPos = imgui.GetCursorStartPos,
@@ -907,32 +1061,35 @@ M.libs.imgui = {
     SetCursorScreenPos = imgui.SetCursorScreenPos,
     ---@type fun():nil
     AlignTextToFramePadding = imgui.AlignTextToFramePadding,
-    ---@type fun():float
+    ---@type fun():number
     GetTextLineHeight = imgui.GetTextLineHeight,
-    ---@type fun():float
+    ---@type fun():number
     GetTextLineHeightWithSpacing = imgui.GetTextLineHeightWithSpacing,
-    ---@type fun():float
+    ---@type fun():number
     GetFrameHeight = imgui.GetFrameHeight,
-    ---@type fun():float
+    ---@type fun():number
     GetFrameHeightWithSpacing = imgui.GetFrameHeightWithSpacing,
     ---@type fun(str_id:string):nil
     PushID = imgui.PushID,
     ---@type fun(str_id_begin:string, str_id_end:string):nil
-    PushID = imgui.PushID,
+    PushID__1 = imgui.PushID__1,
     ---@type fun(ptr_id:any):nil
-    PushID = imgui.PushID,
+    PushID__2 = imgui.PushID__2,
     ---@type fun(int_id:integer):nil
-    PushID = imgui.PushID,
+    PushID__3 = imgui.PushID__3,
     ---@type fun():nil
     PopID = imgui.PopID,
     ---@type fun(str_id:string):ImGuiID
     GetID = imgui.GetID,
     ---@type fun(str_id_begin:string, str_id_end:string):ImGuiID
-    GetID = imgui.GetID,
+    GetID__1 = imgui.GetID__1,
     ---@type fun(ptr_id:any):ImGuiID
-    GetID = imgui.GetID,
-    ---@type fun(text:string, text_end:string):nil
-    TextUnformatted = imgui.TextUnformatted,
+    GetID__2 = imgui.GetID__2,
+    ---@param text string
+    ---@param text_end string
+    TextUnformatted = function(text, text_end)
+        return imgui.TextUnformatted(text, text_end)
+    end,
     ---@type fun(fmt:string):nil
     Text = imgui.Text,
     ---@type fun(fmt:string, args:va_list):nil
@@ -957,212 +1114,846 @@ M.libs.imgui = {
     BulletText = imgui.BulletText,
     ---@type fun(fmt:string, args:va_list):nil
     BulletTextV = imgui.BulletTextV,
-    ---@type fun(label:string, size:any):bool
-    Button = imgui.Button,
-    ---@type fun(label:string):bool
+    ---@param label string
+    ---@param size any
+    Button = function(label, size)
+        size = size or ffi.new('struct ImVec2')
+        return imgui.Button(label, size)
+    end,
+    ---@type fun(label:string):boolean
     SmallButton = imgui.SmallButton,
-    ---@type fun(str_id:string, size:any, flags:ImGuiButtonFlags):bool
-    InvisibleButton = imgui.InvisibleButton,
-    ---@type fun(str_id:string, dir:ImGuiDir):bool
+    ---@param str_id string
+    ---@param size any
+    ---@param flags ImGuiButtonFlags
+    InvisibleButton = function(str_id, size, flags)
+        flags = flags or 0
+        return imgui.InvisibleButton(str_id, size, flags)
+    end,
+    ---@type fun(str_id:string, dir:ImGuiDir):boolean
     ArrowButton = imgui.ArrowButton,
-    ---@type fun(user_texture_id:ImTextureID, size:any, uv0:any, uv1:any, tint_col:any, border_col:any):nil
-    Image = imgui.Image,
-    ---@type fun(user_texture_id:ImTextureID, size:any, uv0:any, uv1:any, frame_padding:integer, bg_col:any, tint_col:any):bool
-    ImageButton = imgui.ImageButton,
-    ---@type fun(label:string, v:any):bool
+    ---@param user_texture_id ImTextureID
+    ---@param size any
+    ---@param uv0 any
+    ---@param uv1 any
+    ---@param tint_col any
+    ---@param border_col any
+    Image = function(user_texture_id, size, uv0, uv1, tint_col, border_col)
+        uv0 = uv0 or ffi.new('struct ImVec2')
+        uv1 = uv1 or ffi.new('struct ImVec2', 1, 1)
+        tint_col = tint_col or ffi.new('struct ImVec4', 1, 1, 1, 1)
+        border_col = border_col or ffi.new('struct ImVec4')
+        return imgui.Image(user_texture_id, size, uv0, uv1, tint_col, border_col)
+    end,
+    ---@param user_texture_id ImTextureID
+    ---@param size any
+    ---@param uv0 any
+    ---@param uv1 any
+    ---@param frame_padding integer
+    ---@param bg_col any
+    ---@param tint_col any
+    ImageButton = function(user_texture_id, size, uv0, uv1, frame_padding, bg_col, tint_col)
+        uv0 = uv0 or ffi.new('struct ImVec2')
+        uv1 = uv1 or ffi.new('struct ImVec2', 1, 1)
+        frame_padding = frame_padding or 1
+        bg_col = bg_col or ffi.new('struct ImVec4')
+        tint_col = tint_col or ffi.new('struct ImVec4', 1, 1, 1, 1)
+        return imgui.ImageButton(user_texture_id, size, uv0, uv1, frame_padding, bg_col, tint_col)
+    end,
+    ---@type fun(label:string, v:any):boolean
     Checkbox = imgui.Checkbox,
-    ---@type fun(label:string, flags:any, flags_value:integer):bool
+    ---@type fun(label:string, flags:any, flags_value:integer):boolean
     CheckboxFlags = imgui.CheckboxFlags,
-    ---@type fun(label:string, flags:any, flags_value:integer):bool
-    CheckboxFlags = imgui.CheckboxFlags,
-    ---@type fun(label:string, active:bool):bool
+    ---@type fun(label:string, flags:any, flags_value:integer):boolean
+    CheckboxFlags__1 = imgui.CheckboxFlags__1,
+    ---@type fun(label:string, active:boolean):boolean
     RadioButton = imgui.RadioButton,
-    ---@type fun(label:string, v:any, v_button:integer):bool
-    RadioButton = imgui.RadioButton,
-    ---@type fun(fraction:float, size_arg:any, overlay:string):nil
-    ProgressBar = imgui.ProgressBar,
+    ---@type fun(label:string, v:any, v_button:integer):boolean
+    RadioButton__1 = imgui.RadioButton__1,
+    ---@param fraction number
+    ---@param size_arg any
+    ---@param overlay string
+    ProgressBar = function(fraction, size_arg, overlay)
+        size_arg = size_arg or ffi.new('struct ImVec2', -1.175494351e-38, 0)
+        return imgui.ProgressBar(fraction, size_arg, overlay)
+    end,
     ---@type fun():nil
     Bullet = imgui.Bullet,
-    ---@type fun(label:string, preview_value:string, flags:ImGuiComboFlags):bool
-    BeginCombo = imgui.BeginCombo,
+    ---@param label string
+    ---@param preview_value string
+    ---@param flags ImGuiComboFlags
+    BeginCombo = function(label, preview_value, flags)
+        flags = flags or 0
+        return imgui.BeginCombo(label, preview_value, flags)
+    end,
     ---@type fun():nil
     EndCombo = imgui.EndCombo,
-    ---@type fun(label:string, current_item:any, items:any, items_count:integer, popup_max_height_in_items:integer):bool
-    Combo = imgui.Combo,
-    ---@type fun(label:string, current_item:any, items_separated_by_zeros:string, popup_max_height_in_items:integer):bool
-    Combo = imgui.Combo,
-    ---@type fun(label:string, current_item:any, items_getter:any, data:any, items_count:integer, popup_max_height_in_items:integer):bool
-    Combo = imgui.Combo,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    DragFloat = imgui.DragFloat,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    DragFloat2 = imgui.DragFloat2,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    DragFloat3 = imgui.DragFloat3,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    DragFloat4 = imgui.DragFloat4,
-    ---@type fun(label:string, v_current_min:any, v_current_max:any, v_speed:float, v_min:float, v_max:float, format:string, format_max:string, flags:ImGuiSliderFlags):bool
-    DragFloatRange2 = imgui.DragFloatRange2,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    DragInt = imgui.DragInt,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    DragInt2 = imgui.DragInt2,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    DragInt3 = imgui.DragInt3,
-    ---@type fun(label:string, v:any, v_speed:float, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    DragInt4 = imgui.DragInt4,
-    ---@type fun(label:string, v_current_min:any, v_current_max:any, v_speed:float, v_min:integer, v_max:integer, format:string, format_max:string, flags:ImGuiSliderFlags):bool
-    DragIntRange2 = imgui.DragIntRange2,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, v_speed:float, p_min:any, p_max:any, format:string, flags:ImGuiSliderFlags):bool
-    DragScalar = imgui.DragScalar,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, v_speed:float, p_min:any, p_max:any, format:string, flags:ImGuiSliderFlags):bool
-    DragScalarN = imgui.DragScalarN,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    SliderFloat = imgui.SliderFloat,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    SliderFloat2 = imgui.SliderFloat2,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    SliderFloat3 = imgui.SliderFloat3,
-    ---@type fun(label:string, v:any, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    SliderFloat4 = imgui.SliderFloat4,
-    ---@type fun(label:string, v_rad:any, v_degrees_min:float, v_degrees_max:float, format:string, flags:ImGuiSliderFlags):bool
-    SliderAngle = imgui.SliderAngle,
-    ---@type fun(label:string, v:any, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    SliderInt = imgui.SliderInt,
-    ---@type fun(label:string, v:any, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    SliderInt2 = imgui.SliderInt2,
-    ---@type fun(label:string, v:any, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    SliderInt3 = imgui.SliderInt3,
-    ---@type fun(label:string, v:any, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    SliderInt4 = imgui.SliderInt4,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, p_min:any, p_max:any, format:string, flags:ImGuiSliderFlags):bool
-    SliderScalar = imgui.SliderScalar,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_min:any, p_max:any, format:string, flags:ImGuiSliderFlags):bool
-    SliderScalarN = imgui.SliderScalarN,
-    ---@type fun(label:string, size:any, v:any, v_min:float, v_max:float, format:string, flags:ImGuiSliderFlags):bool
-    VSliderFloat = imgui.VSliderFloat,
-    ---@type fun(label:string, size:any, v:any, v_min:integer, v_max:integer, format:string, flags:ImGuiSliderFlags):bool
-    VSliderInt = imgui.VSliderInt,
-    ---@type fun(label:string, size:any, data_type:ImGuiDataType, p_data:any, p_min:any, p_max:any, format:string, flags:ImGuiSliderFlags):bool
-    VSliderScalar = imgui.VSliderScalar,
-    ---@type fun(label:string, buf:any, buf_size:size_t, flags:ImGuiInputTextFlags, callback:ImGuiInputTextCallback, user_data:any):bool
-    InputText = imgui.InputText,
-    ---@type fun(label:string, buf:any, buf_size:size_t, size:any, flags:ImGuiInputTextFlags, callback:ImGuiInputTextCallback, user_data:any):bool
-    InputTextMultiline = imgui.InputTextMultiline,
-    ---@type fun(label:string, hint:string, buf:any, buf_size:size_t, flags:ImGuiInputTextFlags, callback:ImGuiInputTextCallback, user_data:any):bool
-    InputTextWithHint = imgui.InputTextWithHint,
-    ---@type fun(label:string, v:any, step:float, step_fast:float, format:string, flags:ImGuiInputTextFlags):bool
-    InputFloat = imgui.InputFloat,
-    ---@type fun(label:string, v:any, format:string, flags:ImGuiInputTextFlags):bool
-    InputFloat2 = imgui.InputFloat2,
-    ---@type fun(label:string, v:any, format:string, flags:ImGuiInputTextFlags):bool
-    InputFloat3 = imgui.InputFloat3,
-    ---@type fun(label:string, v:any, format:string, flags:ImGuiInputTextFlags):bool
-    InputFloat4 = imgui.InputFloat4,
-    ---@type fun(label:string, v:any, step:integer, step_fast:integer, flags:ImGuiInputTextFlags):bool
-    InputInt = imgui.InputInt,
-    ---@type fun(label:string, v:any, flags:ImGuiInputTextFlags):bool
-    InputInt2 = imgui.InputInt2,
-    ---@type fun(label:string, v:any, flags:ImGuiInputTextFlags):bool
-    InputInt3 = imgui.InputInt3,
-    ---@type fun(label:string, v:any, flags:ImGuiInputTextFlags):bool
-    InputInt4 = imgui.InputInt4,
-    ---@type fun(label:string, v:any, step:number, step_fast:number, format:string, flags:ImGuiInputTextFlags):bool
-    InputDouble = imgui.InputDouble,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, p_step:any, p_step_fast:any, format:string, flags:ImGuiInputTextFlags):bool
-    InputScalar = imgui.InputScalar,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_step:any, p_step_fast:any, format:string, flags:ImGuiInputTextFlags):bool
-    InputScalarN = imgui.InputScalarN,
-    ---@type fun(label:string, col:any, flags:ImGuiColorEditFlags):bool
-    ColorEdit3 = imgui.ColorEdit3,
-    ---@type fun(label:string, col:any, flags:ImGuiColorEditFlags):bool
-    ColorEdit4 = imgui.ColorEdit4,
-    ---@type fun(label:string, col:any, flags:ImGuiColorEditFlags):bool
-    ColorPicker3 = imgui.ColorPicker3,
-    ---@type fun(label:string, col:any, flags:ImGuiColorEditFlags, ref_col:any):bool
-    ColorPicker4 = imgui.ColorPicker4,
-    ---@type fun(desc_id:string, col:any, flags:ImGuiColorEditFlags, size:ImVec2):bool
-    ColorButton = imgui.ColorButton,
+    ---@param label string
+    ---@param current_item any
+    ---@param items any
+    ---@param items_count integer
+    ---@param popup_max_height_in_items integer
+    Combo = function(label, current_item, items, items_count, popup_max_height_in_items)
+        popup_max_height_in_items = popup_max_height_in_items or 1
+        return imgui.Combo(label, current_item, items, items_count, popup_max_height_in_items)
+    end,
+    ---@param label string
+    ---@param current_item any
+    ---@param items_separated_by_zeros string
+    ---@param popup_max_height_in_items integer
+    Combo__1 = function(label, current_item, items_separated_by_zeros, popup_max_height_in_items)
+        popup_max_height_in_items = popup_max_height_in_items or 1
+        return imgui.Combo__1(label, current_item, items_separated_by_zeros, popup_max_height_in_items)
+    end,
+    ---@param label string
+    ---@param current_item any
+    ---@param items_getter any
+    ---@param data any
+    ---@param items_count integer
+    ---@param popup_max_height_in_items integer
+    Combo__2 = function(label, current_item, items_getter, data, items_count, popup_max_height_in_items)
+        popup_max_height_in_items = popup_max_height_in_items or 1
+        return imgui.Combo__2(label, current_item, items_getter, data, items_count, popup_max_height_in_items)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragFloat = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0.0
+        v_max = v_max or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.DragFloat(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragFloat2 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0.0
+        v_max = v_max or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.DragFloat2(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragFloat3 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0.0
+        v_max = v_max or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.DragFloat3(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragFloat4 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0.0
+        v_max = v_max or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.DragFloat4(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v_current_min any
+    ---@param v_current_max any
+    ---@param v_speed number
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param format_max string
+    ---@param flags ImGuiSliderFlags
+    DragFloatRange2 = function(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0.0
+        v_max = v_max or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.DragFloatRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragInt = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0
+        v_max = v_max or 0
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.DragInt(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragInt2 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0
+        v_max = v_max or 0
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.DragInt2(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragInt3 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0
+        v_max = v_max or 0
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.DragInt3(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_speed number
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragInt4 = function(label, v, v_speed, v_min, v_max, format, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0
+        v_max = v_max or 0
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.DragInt4(label, v, v_speed, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v_current_min any
+    ---@param v_current_max any
+    ---@param v_speed number
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param format_max string
+    ---@param flags ImGuiSliderFlags
+    DragIntRange2 = function(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags)
+        v_speed = v_speed or 1.0
+        v_min = v_min or 0
+        v_max = v_max or 0
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.DragIntRange2(label, v_current_min, v_current_max, v_speed, v_min, v_max, format, format_max, flags)
+    end,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param v_speed number
+    ---@param p_min any
+    ---@param p_max any
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragScalar = function(label, data_type, p_data, v_speed, p_min, p_max, format, flags)
+        v_speed = v_speed or 1.0
+        flags = flags or 0
+        return imgui.DragScalar(label, data_type, p_data, v_speed, p_min, p_max, format, flags)
+    end,
+    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, v_speed:number, p_min:any, p_max:any, format:string, power:number):boolean
+    DragScalar__1 = imgui.DragScalar__1,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param components integer
+    ---@param v_speed number
+    ---@param p_min any
+    ---@param p_max any
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    DragScalarN = function(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags)
+        v_speed = v_speed or 1.0
+        flags = flags or 0
+        return imgui.DragScalarN(label, data_type, p_data, components, v_speed, p_min, p_max, format, flags)
+    end,
+    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, v_speed:number, p_min:any, p_max:any, format:string, power:number):boolean
+    DragScalarN__1 = imgui.DragScalarN__1,
+    ---@param label string
+    ---@param v any
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderFloat = function(label, v, v_min, v_max, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.SliderFloat(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderFloat2 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.SliderFloat2(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderFloat3 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.SliderFloat3(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderFloat4 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.SliderFloat4(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v_rad any
+    ---@param v_degrees_min number
+    ---@param v_degrees_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderAngle = function(label, v_rad, v_degrees_min, v_degrees_max, format, flags)
+        v_degrees_min = v_degrees_min or 360.0
+        v_degrees_max = v_degrees_max or 360.0
+        format = format or "%.0f deg"
+        flags = flags or 0
+        return imgui.SliderAngle(label, v_rad, v_degrees_min, v_degrees_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderInt = function(label, v, v_min, v_max, format, flags)
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.SliderInt(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderInt2 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.SliderInt2(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderInt3 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.SliderInt3(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderInt4 = function(label, v, v_min, v_max, format, flags)
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.SliderInt4(label, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param p_min any
+    ---@param p_max any
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderScalar = function(label, data_type, p_data, p_min, p_max, format, flags)
+        flags = flags or 0
+        return imgui.SliderScalar(label, data_type, p_data, p_min, p_max, format, flags)
+    end,
+    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, p_min:any, p_max:any, format:string, power:number):boolean
+    SliderScalar__1 = imgui.SliderScalar__1,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param components integer
+    ---@param p_min any
+    ---@param p_max any
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    SliderScalarN = function(label, data_type, p_data, components, p_min, p_max, format, flags)
+        flags = flags or 0
+        return imgui.SliderScalarN(label, data_type, p_data, components, p_min, p_max, format, flags)
+    end,
+    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_min:any, p_max:any, format:string, power:number):boolean
+    SliderScalarN__1 = imgui.SliderScalarN__1,
+    ---@param label string
+    ---@param size any
+    ---@param v any
+    ---@param v_min number
+    ---@param v_max number
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    VSliderFloat = function(label, size, v, v_min, v_max, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.VSliderFloat(label, size, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param size any
+    ---@param v any
+    ---@param v_min integer
+    ---@param v_max integer
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    VSliderInt = function(label, size, v, v_min, v_max, format, flags)
+        format = format or "%d"
+        flags = flags or 0
+        return imgui.VSliderInt(label, size, v, v_min, v_max, format, flags)
+    end,
+    ---@param label string
+    ---@param size any
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param p_min any
+    ---@param p_max any
+    ---@param format string
+    ---@param flags ImGuiSliderFlags
+    VSliderScalar = function(label, size, data_type, p_data, p_min, p_max, format, flags)
+        flags = flags or 0
+        return imgui.VSliderScalar(label, size, data_type, p_data, p_min, p_max, format, flags)
+    end,
+    ---@param label string
+    ---@param buf any
+    ---@param buf_size size_t
+    ---@param flags ImGuiInputTextFlags
+    ---@param callback ImGuiInputTextCallback
+    ---@param user_data any
+    InputText = function(label, buf, buf_size, flags, callback, user_data)
+        flags = flags or 0
+        return imgui.InputText(label, buf, buf_size, flags, callback, user_data)
+    end,
+    ---@param label string
+    ---@param buf any
+    ---@param buf_size size_t
+    ---@param size any
+    ---@param flags ImGuiInputTextFlags
+    ---@param callback ImGuiInputTextCallback
+    ---@param user_data any
+    InputTextMultiline = function(label, buf, buf_size, size, flags, callback, user_data)
+        size = size or ffi.new('struct ImVec2')
+        flags = flags or 0
+        return imgui.InputTextMultiline(label, buf, buf_size, size, flags, callback, user_data)
+    end,
+    ---@param label string
+    ---@param hint string
+    ---@param buf any
+    ---@param buf_size size_t
+    ---@param flags ImGuiInputTextFlags
+    ---@param callback ImGuiInputTextCallback
+    ---@param user_data any
+    InputTextWithHint = function(label, hint, buf, buf_size, flags, callback, user_data)
+        flags = flags or 0
+        return imgui.InputTextWithHint(label, hint, buf, buf_size, flags, callback, user_data)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param step number
+    ---@param step_fast number
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputFloat = function(label, v, step, step_fast, format, flags)
+        step = step or 0.0
+        step_fast = step_fast or 0.0
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.InputFloat(label, v, step, step_fast, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputFloat2 = function(label, v, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.InputFloat2(label, v, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputFloat3 = function(label, v, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.InputFloat3(label, v, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputFloat4 = function(label, v, format, flags)
+        format = format or "%.3f"
+        flags = flags or 0
+        return imgui.InputFloat4(label, v, format, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param step integer
+    ---@param step_fast integer
+    ---@param flags ImGuiInputTextFlags
+    InputInt = function(label, v, step, step_fast, flags)
+        step = step or 1
+        step_fast = step_fast or 100
+        flags = flags or 0
+        return imgui.InputInt(label, v, step, step_fast, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param flags ImGuiInputTextFlags
+    InputInt2 = function(label, v, flags)
+        flags = flags or 0
+        return imgui.InputInt2(label, v, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param flags ImGuiInputTextFlags
+    InputInt3 = function(label, v, flags)
+        flags = flags or 0
+        return imgui.InputInt3(label, v, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param flags ImGuiInputTextFlags
+    InputInt4 = function(label, v, flags)
+        flags = flags or 0
+        return imgui.InputInt4(label, v, flags)
+    end,
+    ---@param label string
+    ---@param v any
+    ---@param step number
+    ---@param step_fast number
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputDouble = function(label, v, step, step_fast, format, flags)
+        step = step or 0.0
+        step_fast = step_fast or 0.0
+        format = format or "%.6f"
+        flags = flags or 0
+        return imgui.InputDouble(label, v, step, step_fast, format, flags)
+    end,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param p_step any
+    ---@param p_step_fast any
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputScalar = function(label, data_type, p_data, p_step, p_step_fast, format, flags)
+        flags = flags or 0
+        return imgui.InputScalar(label, data_type, p_data, p_step, p_step_fast, format, flags)
+    end,
+    ---@param label string
+    ---@param data_type ImGuiDataType
+    ---@param p_data any
+    ---@param components integer
+    ---@param p_step any
+    ---@param p_step_fast any
+    ---@param format string
+    ---@param flags ImGuiInputTextFlags
+    InputScalarN = function(label, data_type, p_data, components, p_step, p_step_fast, format, flags)
+        flags = flags or 0
+        return imgui.InputScalarN(label, data_type, p_data, components, p_step, p_step_fast, format, flags)
+    end,
+    ---@param label string
+    ---@param col any
+    ---@param flags ImGuiColorEditFlags
+    ColorEdit3 = function(label, col, flags)
+        flags = flags or 0
+        return imgui.ColorEdit3(label, col, flags)
+    end,
+    ---@param label string
+    ---@param col any
+    ---@param flags ImGuiColorEditFlags
+    ColorEdit4 = function(label, col, flags)
+        flags = flags or 0
+        return imgui.ColorEdit4(label, col, flags)
+    end,
+    ---@param label string
+    ---@param col any
+    ---@param flags ImGuiColorEditFlags
+    ColorPicker3 = function(label, col, flags)
+        flags = flags or 0
+        return imgui.ColorPicker3(label, col, flags)
+    end,
+    ---@param label string
+    ---@param col any
+    ---@param flags ImGuiColorEditFlags
+    ---@param ref_col any
+    ColorPicker4 = function(label, col, flags, ref_col)
+        flags = flags or 0
+        return imgui.ColorPicker4(label, col, flags, ref_col)
+    end,
+    ---@param desc_id string
+    ---@param col any
+    ---@param flags ImGuiColorEditFlags
+    ---@param size ImVec2
+    ColorButton = function(desc_id, col, flags, size)
+        flags = flags or 0
+        size = size or ffi.new('struct ImVec2')
+        return imgui.ColorButton(desc_id, col, flags, size)
+    end,
     ---@type fun(flags:ImGuiColorEditFlags):nil
     SetColorEditOptions = imgui.SetColorEditOptions,
-    ---@type fun(label:string):bool
+    ---@type fun(label:string):boolean
     TreeNode = imgui.TreeNode,
-    ---@type fun(str_id:string, fmt:string):bool
-    TreeNode = imgui.TreeNode,
-    ---@type fun(ptr_id:any, fmt:string):bool
-    TreeNode = imgui.TreeNode,
-    ---@type fun(str_id:string, fmt:string, args:va_list):bool
+    ---@type fun(str_id:string, fmt:string):boolean
+    TreeNode__1 = imgui.TreeNode__1,
+    ---@type fun(ptr_id:any, fmt:string):boolean
+    TreeNode__2 = imgui.TreeNode__2,
+    ---@type fun(str_id:string, fmt:string, args:va_list):boolean
     TreeNodeV = imgui.TreeNodeV,
-    ---@type fun(ptr_id:any, fmt:string, args:va_list):bool
-    TreeNodeV = imgui.TreeNodeV,
-    ---@type fun(label:string, flags:ImGuiTreeNodeFlags):bool
-    TreeNodeEx = imgui.TreeNodeEx,
-    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string):bool
-    TreeNodeEx = imgui.TreeNodeEx,
-    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string):bool
-    TreeNodeEx = imgui.TreeNodeEx,
-    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string, args:va_list):bool
+    ---@type fun(ptr_id:any, fmt:string, args:va_list):boolean
+    TreeNodeV__1 = imgui.TreeNodeV__1,
+    ---@param label string
+    ---@param flags ImGuiTreeNodeFlags
+    TreeNodeEx = function(label, flags)
+        flags = flags or 0
+        return imgui.TreeNodeEx(label, flags)
+    end,
+    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string):boolean
+    TreeNodeEx__1 = imgui.TreeNodeEx__1,
+    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string):boolean
+    TreeNodeEx__2 = imgui.TreeNodeEx__2,
+    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string, args:va_list):boolean
     TreeNodeExV = imgui.TreeNodeExV,
-    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string, args:va_list):bool
-    TreeNodeExV = imgui.TreeNodeExV,
+    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string, args:va_list):boolean
+    TreeNodeExV__1 = imgui.TreeNodeExV__1,
     ---@type fun(str_id:string):nil
     TreePush = imgui.TreePush,
-    ---@type fun(ptr_id:any):nil
-    TreePush = imgui.TreePush,
+    ---@param ptr_id any
+    TreePush__1 = function(ptr_id)
+        return imgui.TreePush__1(ptr_id)
+    end,
     ---@type fun():nil
     TreePop = imgui.TreePop,
-    ---@type fun():float
+    ---@type fun():number
     GetTreeNodeToLabelSpacing = imgui.GetTreeNodeToLabelSpacing,
-    ---@type fun(label:string, flags:ImGuiTreeNodeFlags):bool
-    CollapsingHeader = imgui.CollapsingHeader,
-    ---@type fun(label:string, p_visible:any, flags:ImGuiTreeNodeFlags):bool
-    CollapsingHeader = imgui.CollapsingHeader,
-    ---@type fun(is_open:bool, cond:ImGuiCond):nil
-    SetNextItemOpen = imgui.SetNextItemOpen,
-    ---@type fun(label:string, selected:bool, flags:ImGuiSelectableFlags, size:any):bool
-    Selectable = imgui.Selectable,
-    ---@type fun(label:string, p_selected:any, flags:ImGuiSelectableFlags, size:any):bool
-    Selectable = imgui.Selectable,
-    ---@type fun(label:string, size:any):bool
-    BeginListBox = imgui.BeginListBox,
+    ---@param label string
+    ---@param flags ImGuiTreeNodeFlags
+    CollapsingHeader = function(label, flags)
+        flags = flags or 0
+        return imgui.CollapsingHeader(label, flags)
+    end,
+    ---@param label string
+    ---@param p_visible any
+    ---@param flags ImGuiTreeNodeFlags
+    CollapsingHeader__1 = function(label, p_visible, flags)
+        flags = flags or 0
+        return imgui.CollapsingHeader__1(label, p_visible, flags)
+    end,
+    ---@param is_open boolean
+    ---@param cond ImGuiCond
+    SetNextItemOpen = function(is_open, cond)
+        cond = cond or 0
+        return imgui.SetNextItemOpen(is_open, cond)
+    end,
+    ---@param label string
+    ---@param selected boolean
+    ---@param flags ImGuiSelectableFlags
+    ---@param size any
+    Selectable = function(label, selected, flags, size)
+        selected = selected or false
+        flags = flags or 0
+        size = size or ffi.new('struct ImVec2')
+        return imgui.Selectable(label, selected, flags, size)
+    end,
+    ---@param label string
+    ---@param p_selected any
+    ---@param flags ImGuiSelectableFlags
+    ---@param size any
+    Selectable__1 = function(label, p_selected, flags, size)
+        flags = flags or 0
+        size = size or ffi.new('struct ImVec2')
+        return imgui.Selectable__1(label, p_selected, flags, size)
+    end,
+    ---@param label string
+    ---@param size any
+    BeginListBox = function(label, size)
+        size = size or ffi.new('struct ImVec2')
+        return imgui.BeginListBox(label, size)
+    end,
     ---@type fun():nil
     EndListBox = imgui.EndListBox,
-    ---@type fun(label:string, current_item:any, items:any, items_count:integer, height_in_items:integer):bool
-    ListBox = imgui.ListBox,
-    ---@type fun(label:string, current_item:any, items_getter:any, data:any, items_count:integer, height_in_items:integer):bool
-    ListBox = imgui.ListBox,
-    ---@type fun(label:string, values:any, values_count:integer, values_offset:integer, overlay_text:string, scale_min:float, scale_max:float, graph_size:ImVec2, stride:integer):nil
-    PlotLines = imgui.PlotLines,
-    ---@type fun(label:string, values_getter:any, data:any, values_count:integer, values_offset:integer, overlay_text:string, scale_min:float, scale_max:float, graph_size:ImVec2):nil
-    PlotLines = imgui.PlotLines,
-    ---@type fun(label:string, values:any, values_count:integer, values_offset:integer, overlay_text:string, scale_min:float, scale_max:float, graph_size:ImVec2, stride:integer):nil
-    PlotHistogram = imgui.PlotHistogram,
-    ---@type fun(label:string, values_getter:any, data:any, values_count:integer, values_offset:integer, overlay_text:string, scale_min:float, scale_max:float, graph_size:ImVec2):nil
-    PlotHistogram = imgui.PlotHistogram,
-    ---@type fun(prefix:string, b:bool):nil
+    ---@param label string
+    ---@param current_item any
+    ---@param items any
+    ---@param items_count integer
+    ---@param height_in_items integer
+    ListBox = function(label, current_item, items, items_count, height_in_items)
+        height_in_items = height_in_items or 1
+        return imgui.ListBox(label, current_item, items, items_count, height_in_items)
+    end,
+    ---@param label string
+    ---@param current_item any
+    ---@param items_getter any
+    ---@param data any
+    ---@param items_count integer
+    ---@param height_in_items integer
+    ListBox__1 = function(label, current_item, items_getter, data, items_count, height_in_items)
+        height_in_items = height_in_items or 1
+        return imgui.ListBox__1(label, current_item, items_getter, data, items_count, height_in_items)
+    end,
+    ---@param label string
+    ---@param values any
+    ---@param values_count integer
+    ---@param values_offset integer
+    ---@param overlay_text string
+    ---@param scale_min number
+    ---@param scale_max number
+    ---@param graph_size ImVec2
+    ---@param stride integer
+    PlotLines = function(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride)
+        values_offset = values_offset or 0
+        scale_min = scale_min or 3.402823466e+38
+        scale_max = scale_max or 3.402823466e+38
+        graph_size = graph_size or ffi.new('struct ImVec2')
+        stride = stride or 4
+        return imgui.PlotLines(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride)
+    end,
+    ---@param label string
+    ---@param values_getter any
+    ---@param data any
+    ---@param values_count integer
+    ---@param values_offset integer
+    ---@param overlay_text string
+    ---@param scale_min number
+    ---@param scale_max number
+    ---@param graph_size ImVec2
+    PlotLines__1 = function(label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size)
+        values_offset = values_offset or 0
+        scale_min = scale_min or 3.402823466e+38
+        scale_max = scale_max or 3.402823466e+38
+        graph_size = graph_size or ffi.new('struct ImVec2')
+        return imgui.PlotLines__1(label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size)
+    end,
+    ---@param label string
+    ---@param values any
+    ---@param values_count integer
+    ---@param values_offset integer
+    ---@param overlay_text string
+    ---@param scale_min number
+    ---@param scale_max number
+    ---@param graph_size ImVec2
+    ---@param stride integer
+    PlotHistogram = function(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride)
+        values_offset = values_offset or 0
+        scale_min = scale_min or 3.402823466e+38
+        scale_max = scale_max or 3.402823466e+38
+        graph_size = graph_size or ffi.new('struct ImVec2')
+        stride = stride or 4
+        return imgui.PlotHistogram(label, values, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size, stride)
+    end,
+    ---@param label string
+    ---@param values_getter any
+    ---@param data any
+    ---@param values_count integer
+    ---@param values_offset integer
+    ---@param overlay_text string
+    ---@param scale_min number
+    ---@param scale_max number
+    ---@param graph_size ImVec2
+    PlotHistogram__1 = function(label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size)
+        values_offset = values_offset or 0
+        scale_min = scale_min or 3.402823466e+38
+        scale_max = scale_max or 3.402823466e+38
+        graph_size = graph_size or ffi.new('struct ImVec2')
+        return imgui.PlotHistogram__1(label, values_getter, data, values_count, values_offset, overlay_text, scale_min, scale_max, graph_size)
+    end,
+    ---@type fun(prefix:string, b:boolean):nil
     Value = imgui.Value,
     ---@type fun(prefix:string, v:integer):nil
-    Value = imgui.Value,
+    Value__1 = imgui.Value__1,
     ---@type fun(prefix:string, v:integer):nil
-    Value = imgui.Value,
-    ---@type fun(prefix:string, v:float, float_format:string):nil
-    Value = imgui.Value,
-    ---@type fun():bool
+    Value__2 = imgui.Value__2,
+    ---@param prefix string
+    ---@param v number
+    ---@param float_format string
+    Value__3 = function(prefix, v, float_format)
+        return imgui.Value__3(prefix, v, float_format)
+    end,
+    ---@type fun():boolean
     BeginMenuBar = imgui.BeginMenuBar,
     ---@type fun():nil
     EndMenuBar = imgui.EndMenuBar,
-    ---@type fun():bool
+    ---@type fun():boolean
     BeginMainMenuBar = imgui.BeginMainMenuBar,
     ---@type fun():nil
     EndMainMenuBar = imgui.EndMainMenuBar,
-    ---@type fun(label:string, enabled:bool):bool
-    BeginMenu = imgui.BeginMenu,
+    ---@param label string
+    ---@param enabled boolean
+    BeginMenu = function(label, enabled)
+        enabled = enabled or true
+        return imgui.BeginMenu(label, enabled)
+    end,
     ---@type fun():nil
     EndMenu = imgui.EndMenu,
-    ---@type fun(label:string, shortcut:string, selected:bool, enabled:bool):bool
-    MenuItem = imgui.MenuItem,
-    ---@type fun(label:string, shortcut:string, p_selected:any, enabled:bool):bool
-    MenuItem = imgui.MenuItem,
+    ---@param label string
+    ---@param shortcut string
+    ---@param selected boolean
+    ---@param enabled boolean
+    MenuItem = function(label, shortcut, selected, enabled)
+        selected = selected or false
+        enabled = enabled or true
+        return imgui.MenuItem(label, shortcut, selected, enabled)
+    end,
+    ---@param label string
+    ---@param shortcut string
+    ---@param p_selected any
+    ---@param enabled boolean
+    MenuItem__1 = function(label, shortcut, p_selected, enabled)
+        enabled = enabled or true
+        return imgui.MenuItem__1(label, shortcut, p_selected, enabled)
+    end,
     ---@type fun():nil
     BeginTooltip = imgui.BeginTooltip,
     ---@type fun():nil
@@ -1171,40 +1962,99 @@ M.libs.imgui = {
     SetTooltip = imgui.SetTooltip,
     ---@type fun(fmt:string, args:va_list):nil
     SetTooltipV = imgui.SetTooltipV,
-    ---@type fun(str_id:string, flags:ImGuiWindowFlags):bool
-    BeginPopup = imgui.BeginPopup,
-    ---@type fun(name:string, p_open:any, flags:ImGuiWindowFlags):bool
-    BeginPopupModal = imgui.BeginPopupModal,
+    ---@param str_id string
+    ---@param flags ImGuiWindowFlags
+    BeginPopup = function(str_id, flags)
+        flags = flags or 0
+        return imgui.BeginPopup(str_id, flags)
+    end,
+    ---@param name string
+    ---@param p_open any
+    ---@param flags ImGuiWindowFlags
+    BeginPopupModal = function(name, p_open, flags)
+        flags = flags or 0
+        return imgui.BeginPopupModal(name, p_open, flags)
+    end,
     ---@type fun():nil
     EndPopup = imgui.EndPopup,
-    ---@type fun(str_id:string, popup_flags:ImGuiPopupFlags):nil
-    OpenPopup = imgui.OpenPopup,
-    ---@type fun(id:ImGuiID, popup_flags:ImGuiPopupFlags):nil
-    OpenPopup = imgui.OpenPopup,
-    ---@type fun(str_id:string, popup_flags:ImGuiPopupFlags):nil
-    OpenPopupOnItemClick = imgui.OpenPopupOnItemClick,
+    ---@param str_id string
+    ---@param popup_flags ImGuiPopupFlags
+    OpenPopup = function(str_id, popup_flags)
+        popup_flags = popup_flags or 0
+        return imgui.OpenPopup(str_id, popup_flags)
+    end,
+    ---@param id ImGuiID
+    ---@param popup_flags ImGuiPopupFlags
+    OpenPopup__1 = function(id, popup_flags)
+        popup_flags = popup_flags or 0
+        return imgui.OpenPopup__1(id, popup_flags)
+    end,
+    ---@param str_id string
+    ---@param popup_flags ImGuiPopupFlags
+    OpenPopupOnItemClick = function(str_id, popup_flags)
+        popup_flags = popup_flags or 1
+        return imgui.OpenPopupOnItemClick(str_id, popup_flags)
+    end,
     ---@type fun():nil
     CloseCurrentPopup = imgui.CloseCurrentPopup,
-    ---@type fun(str_id:string, popup_flags:ImGuiPopupFlags):bool
-    BeginPopupContextItem = imgui.BeginPopupContextItem,
-    ---@type fun(str_id:string, popup_flags:ImGuiPopupFlags):bool
-    BeginPopupContextWindow = imgui.BeginPopupContextWindow,
-    ---@type fun(str_id:string, popup_flags:ImGuiPopupFlags):bool
-    BeginPopupContextVoid = imgui.BeginPopupContextVoid,
-    ---@type fun(str_id:string, flags:ImGuiPopupFlags):bool
-    IsPopupOpen = imgui.IsPopupOpen,
-    ---@type fun(str_id:string, column:integer, flags:ImGuiTableFlags, outer_size:any, inner_width:float):bool
-    BeginTable = imgui.BeginTable,
+    ---@param str_id string
+    ---@param popup_flags ImGuiPopupFlags
+    BeginPopupContextItem = function(str_id, popup_flags)
+        popup_flags = popup_flags or 1
+        return imgui.BeginPopupContextItem(str_id, popup_flags)
+    end,
+    ---@param str_id string
+    ---@param popup_flags ImGuiPopupFlags
+    BeginPopupContextWindow = function(str_id, popup_flags)
+        popup_flags = popup_flags or 1
+        return imgui.BeginPopupContextWindow(str_id, popup_flags)
+    end,
+    ---@param str_id string
+    ---@param popup_flags ImGuiPopupFlags
+    BeginPopupContextVoid = function(str_id, popup_flags)
+        popup_flags = popup_flags or 1
+        return imgui.BeginPopupContextVoid(str_id, popup_flags)
+    end,
+    ---@param str_id string
+    ---@param flags ImGuiPopupFlags
+    IsPopupOpen = function(str_id, flags)
+        flags = flags or 0
+        return imgui.IsPopupOpen(str_id, flags)
+    end,
+    ---@param str_id string
+    ---@param column integer
+    ---@param flags ImGuiTableFlags
+    ---@param outer_size any
+    ---@param inner_width number
+    BeginTable = function(str_id, column, flags, outer_size, inner_width)
+        flags = flags or 0
+        outer_size = outer_size or ffi.new('struct ImVec2')
+        inner_width = inner_width or 0.0
+        return imgui.BeginTable(str_id, column, flags, outer_size, inner_width)
+    end,
     ---@type fun():nil
     EndTable = imgui.EndTable,
-    ---@type fun(row_flags:ImGuiTableRowFlags, min_row_height:float):nil
-    TableNextRow = imgui.TableNextRow,
-    ---@type fun():bool
+    ---@param row_flags ImGuiTableRowFlags
+    ---@param min_row_height number
+    TableNextRow = function(row_flags, min_row_height)
+        row_flags = row_flags or 0
+        min_row_height = min_row_height or 0.0
+        return imgui.TableNextRow(row_flags, min_row_height)
+    end,
+    ---@type fun():boolean
     TableNextColumn = imgui.TableNextColumn,
-    ---@type fun(column_n:integer):bool
+    ---@type fun(column_n:integer):boolean
     TableSetColumnIndex = imgui.TableSetColumnIndex,
-    ---@type fun(label:string, flags:ImGuiTableColumnFlags, init_width_or_weight:float, user_id:ImGuiID):nil
-    TableSetupColumn = imgui.TableSetupColumn,
+    ---@param label string
+    ---@param flags ImGuiTableColumnFlags
+    ---@param init_width_or_weight number
+    ---@param user_id ImGuiID
+    TableSetupColumn = function(label, flags, init_width_or_weight, user_id)
+        flags = flags or 0
+        init_width_or_weight = init_width_or_weight or 0.0
+        user_id = user_id or 0
+        return imgui.TableSetupColumn(label, flags, init_width_or_weight, user_id)
+    end,
     ---@type fun(cols:integer, rows:integer):nil
     TableSetupScrollFreeze = imgui.TableSetupScrollFreeze,
     ---@type fun():nil
@@ -1219,48 +2069,122 @@ M.libs.imgui = {
     TableGetColumnIndex = imgui.TableGetColumnIndex,
     ---@type fun():integer
     TableGetRowIndex = imgui.TableGetRowIndex,
-    ---@type fun(column_n:integer):string
-    TableGetColumnName = imgui.TableGetColumnName,
-    ---@type fun(column_n:integer):ImGuiTableColumnFlags
-    TableGetColumnFlags = imgui.TableGetColumnFlags,
-    ---@type fun(column_n:integer, v:bool):nil
+    ---@param column_n integer
+    TableGetColumnName = function(column_n)
+        column_n = column_n or 1
+        return imgui.TableGetColumnName(column_n)
+    end,
+    ---@param column_n integer
+    TableGetColumnFlags = function(column_n)
+        column_n = column_n or 1
+        return imgui.TableGetColumnFlags(column_n)
+    end,
+    ---@type fun(column_n:integer, v:boolean):nil
     TableSetColumnEnabled = imgui.TableSetColumnEnabled,
-    ---@type fun(target:ImGuiTableBgTarget, color:ImU32, column_n:integer):nil
-    TableSetBgColor = imgui.TableSetBgColor,
-    ---@type fun(count:integer, id:string, border:bool):nil
-    Columns = imgui.Columns,
+    ---@param target ImGuiTableBgTarget
+    ---@param color ImU32
+    ---@param column_n integer
+    TableSetBgColor = function(target, color, column_n)
+        column_n = column_n or 1
+        return imgui.TableSetBgColor(target, color, column_n)
+    end,
+    ---@param count integer
+    ---@param id string
+    ---@param border boolean
+    Columns = function(count, id, border)
+        count = count or 1
+        border = border or true
+        return imgui.Columns(count, id, border)
+    end,
     ---@type fun():nil
     NextColumn = imgui.NextColumn,
     ---@type fun():integer
     GetColumnIndex = imgui.GetColumnIndex,
-    ---@type fun(column_index:integer):float
-    GetColumnWidth = imgui.GetColumnWidth,
-    ---@type fun(column_index:integer, width:float):nil
+    ---@param column_index integer
+    GetColumnWidth = function(column_index)
+        column_index = column_index or 1
+        return imgui.GetColumnWidth(column_index)
+    end,
+    ---@type fun(column_index:integer, width:number):nil
     SetColumnWidth = imgui.SetColumnWidth,
-    ---@type fun(column_index:integer):float
-    GetColumnOffset = imgui.GetColumnOffset,
-    ---@type fun(column_index:integer, offset_x:float):nil
+    ---@param column_index integer
+    GetColumnOffset = function(column_index)
+        column_index = column_index or 1
+        return imgui.GetColumnOffset(column_index)
+    end,
+    ---@type fun(column_index:integer, offset_x:number):nil
     SetColumnOffset = imgui.SetColumnOffset,
     ---@type fun():integer
     GetColumnsCount = imgui.GetColumnsCount,
-    ---@type fun(str_id:string, flags:ImGuiTabBarFlags):bool
-    BeginTabBar = imgui.BeginTabBar,
+    ---@param str_id string
+    ---@param flags ImGuiTabBarFlags
+    BeginTabBar = function(str_id, flags)
+        flags = flags or 0
+        return imgui.BeginTabBar(str_id, flags)
+    end,
     ---@type fun():nil
     EndTabBar = imgui.EndTabBar,
-    ---@type fun(label:string, p_open:any, flags:ImGuiTabItemFlags):bool
-    BeginTabItem = imgui.BeginTabItem,
+    ---@param label string
+    ---@param p_open any
+    ---@param flags ImGuiTabItemFlags
+    BeginTabItem = function(label, p_open, flags)
+        flags = flags or 0
+        return imgui.BeginTabItem(label, p_open, flags)
+    end,
     ---@type fun():nil
     EndTabItem = imgui.EndTabItem,
-    ---@type fun(label:string, flags:ImGuiTabItemFlags):bool
-    TabItemButton = imgui.TabItemButton,
+    ---@param label string
+    ---@param flags ImGuiTabItemFlags
+    TabItemButton = function(label, flags)
+        flags = flags or 0
+        return imgui.TabItemButton(label, flags)
+    end,
     ---@type fun(tab_or_docked_window_label:string):nil
     SetTabItemClosed = imgui.SetTabItemClosed,
-    ---@type fun(auto_open_depth:integer):nil
-    LogToTTY = imgui.LogToTTY,
-    ---@type fun(auto_open_depth:integer, filename:string):nil
-    LogToFile = imgui.LogToFile,
-    ---@type fun(auto_open_depth:integer):nil
-    LogToClipboard = imgui.LogToClipboard,
+    ---@param id ImGuiID
+    ---@param size any
+    ---@param flags ImGuiDockNodeFlags
+    ---@param window_class any
+    DockSpace = function(id, size, flags, window_class)
+        size = size or ffi.new('struct ImVec2')
+        flags = flags or 0
+        return imgui.DockSpace(id, size, flags, window_class)
+    end,
+    ---@param viewport any
+    ---@param flags ImGuiDockNodeFlags
+    ---@param window_class any
+    DockSpaceOverViewport = function(viewport, flags, window_class)
+        flags = flags or 0
+        return imgui.DockSpaceOverViewport(viewport, flags, window_class)
+    end,
+    ---@param dock_id ImGuiID
+    ---@param cond ImGuiCond
+    SetNextWindowDockID = function(dock_id, cond)
+        cond = cond or 0
+        return imgui.SetNextWindowDockID(dock_id, cond)
+    end,
+    ---@type fun(window_class:any):nil
+    SetNextWindowClass = imgui.SetNextWindowClass,
+    ---@type fun():ImGuiID
+    GetWindowDockID = imgui.GetWindowDockID,
+    ---@type fun():boolean
+    IsWindowDocked = imgui.IsWindowDocked,
+    ---@param auto_open_depth integer
+    LogToTTY = function(auto_open_depth)
+        auto_open_depth = auto_open_depth or 1
+        return imgui.LogToTTY(auto_open_depth)
+    end,
+    ---@param auto_open_depth integer
+    ---@param filename string
+    LogToFile = function(auto_open_depth, filename)
+        auto_open_depth = auto_open_depth or 1
+        return imgui.LogToFile(auto_open_depth, filename)
+    end,
+    ---@param auto_open_depth integer
+    LogToClipboard = function(auto_open_depth)
+        auto_open_depth = auto_open_depth or 1
+        return imgui.LogToClipboard(auto_open_depth)
+    end,
     ---@type fun():nil
     LogFinish = imgui.LogFinish,
     ---@type fun():nil
@@ -1269,53 +2193,75 @@ M.libs.imgui = {
     LogText = imgui.LogText,
     ---@type fun(fmt:string, args:va_list):nil
     LogTextV = imgui.LogTextV,
-    ---@type fun(flags:ImGuiDragDropFlags):bool
-    BeginDragDropSource = imgui.BeginDragDropSource,
-    ---@type fun(type:string, data:any, sz:size_t, cond:ImGuiCond):bool
-    SetDragDropPayload = imgui.SetDragDropPayload,
+    ---@param flags ImGuiDragDropFlags
+    BeginDragDropSource = function(flags)
+        flags = flags or 0
+        return imgui.BeginDragDropSource(flags)
+    end,
+    ---@param type string
+    ---@param data any
+    ---@param sz size_t
+    ---@param cond ImGuiCond
+    SetDragDropPayload = function(type, data, sz, cond)
+        cond = cond or 0
+        return imgui.SetDragDropPayload(type, data, sz, cond)
+    end,
     ---@type fun():nil
     EndDragDropSource = imgui.EndDragDropSource,
-    ---@type fun():bool
+    ---@type fun():boolean
     BeginDragDropTarget = imgui.BeginDragDropTarget,
-    ---@type fun(type:string, flags:ImGuiDragDropFlags):any
-    AcceptDragDropPayload = imgui.AcceptDragDropPayload,
+    ---@param type string
+    ---@param flags ImGuiDragDropFlags
+    AcceptDragDropPayload = function(type, flags)
+        flags = flags or 0
+        return imgui.AcceptDragDropPayload(type, flags)
+    end,
     ---@type fun():nil
     EndDragDropTarget = imgui.EndDragDropTarget,
     ---@type fun():any
     GetDragDropPayload = imgui.GetDragDropPayload,
-    ---@type fun(clip_rect_min:any, clip_rect_max:any, intersect_with_current_clip_rect:bool):nil
+    ---@type fun(clip_rect_min:any, clip_rect_max:any, intersect_with_current_clip_rect:boolean):nil
     PushClipRect = imgui.PushClipRect,
     ---@type fun():nil
     PopClipRect = imgui.PopClipRect,
     ---@type fun():nil
     SetItemDefaultFocus = imgui.SetItemDefaultFocus,
-    ---@type fun(offset:integer):nil
-    SetKeyboardFocusHere = imgui.SetKeyboardFocusHere,
-    ---@type fun(flags:ImGuiHoveredFlags):bool
-    IsItemHovered = imgui.IsItemHovered,
-    ---@type fun():bool
+    ---@param offset integer
+    SetKeyboardFocusHere = function(offset)
+        offset = offset or 0
+        return imgui.SetKeyboardFocusHere(offset)
+    end,
+    ---@param flags ImGuiHoveredFlags
+    IsItemHovered = function(flags)
+        flags = flags or 0
+        return imgui.IsItemHovered(flags)
+    end,
+    ---@type fun():boolean
     IsItemActive = imgui.IsItemActive,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemFocused = imgui.IsItemFocused,
-    ---@type fun(mouse_button:ImGuiMouseButton):bool
-    IsItemClicked = imgui.IsItemClicked,
-    ---@type fun():bool
+    ---@param mouse_button ImGuiMouseButton
+    IsItemClicked = function(mouse_button)
+        mouse_button = mouse_button or 0
+        return imgui.IsItemClicked(mouse_button)
+    end,
+    ---@type fun():boolean
     IsItemVisible = imgui.IsItemVisible,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemEdited = imgui.IsItemEdited,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemActivated = imgui.IsItemActivated,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemDeactivated = imgui.IsItemDeactivated,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemDeactivatedAfterEdit = imgui.IsItemDeactivatedAfterEdit,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsItemToggledOpen = imgui.IsItemToggledOpen,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsAnyItemHovered = imgui.IsAnyItemHovered,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsAnyItemActive = imgui.IsAnyItemActive,
-    ---@type fun():bool
+    ---@type fun():boolean
     IsAnyItemFocused = imgui.IsAnyItemFocused,
     ---@type fun():ImVec2
     GetItemRectMin = imgui.GetItemRectMin,
@@ -1327,18 +2273,22 @@ M.libs.imgui = {
     SetItemAllowOverlap = imgui.SetItemAllowOverlap,
     ---@type fun():any
     GetMainViewport = imgui.GetMainViewport,
-    ---@type fun(size:any):bool
+    ---@type fun(size:any):boolean
     IsRectVisible = imgui.IsRectVisible,
-    ---@type fun(rect_min:any, rect_max:any):bool
-    IsRectVisible = imgui.IsRectVisible,
+    ---@type fun(rect_min:any, rect_max:any):boolean
+    IsRectVisible__1 = imgui.IsRectVisible__1,
     ---@type fun():number
     GetTime = imgui.GetTime,
     ---@type fun():integer
     GetFrameCount = imgui.GetFrameCount,
     ---@type fun():any
     GetBackgroundDrawList = imgui.GetBackgroundDrawList,
+    ---@type fun(viewport:any):any
+    GetBackgroundDrawList__1 = imgui.GetBackgroundDrawList__1,
     ---@type fun():any
     GetForegroundDrawList = imgui.GetForegroundDrawList,
+    ---@type fun(viewport:any):any
+    GetForegroundDrawList__1 = imgui.GetForegroundDrawList__1,
     ---@type fun():any
     GetDrawListSharedData = imgui.GetDrawListSharedData,
     ---@type fun(idx:ImGuiCol):string
@@ -1347,96 +2297,181 @@ M.libs.imgui = {
     SetStateStorage = imgui.SetStateStorage,
     ---@type fun():any
     GetStateStorage = imgui.GetStateStorage,
-    ---@type fun(items_count:integer, items_height:float, out_items_display_start:any, out_items_display_end:any):nil
+    ---@type fun(items_count:integer, items_height:number, out_items_display_start:any, out_items_display_end:any):nil
     CalcListClipping = imgui.CalcListClipping,
-    ---@type fun(id:ImGuiID, size:any, flags:ImGuiWindowFlags):bool
-    BeginChildFrame = imgui.BeginChildFrame,
+    ---@param id ImGuiID
+    ---@param size any
+    ---@param flags ImGuiWindowFlags
+    BeginChildFrame = function(id, size, flags)
+        flags = flags or 0
+        return imgui.BeginChildFrame(id, size, flags)
+    end,
     ---@type fun():nil
     EndChildFrame = imgui.EndChildFrame,
-    ---@type fun(text:string, text_end:string, hide_text_after_double_hash:bool, wrap_width:float):ImVec2
-    CalcTextSize = imgui.CalcTextSize,
+    ---@param text string
+    ---@param text_end string
+    ---@param hide_text_after_double_hash boolean
+    ---@param wrap_width number
+    CalcTextSize = function(text, text_end, hide_text_after_double_hash, wrap_width)
+        hide_text_after_double_hash = hide_text_after_double_hash or false
+        wrap_width = wrap_width or 1.0
+        return imgui.CalcTextSize(text, text_end, hide_text_after_double_hash, wrap_width)
+    end,
     ---@type fun(in:ImU32):ImVec4
     ColorConvertU32ToFloat4 = imgui.ColorConvertU32ToFloat4,
     ---@type fun(in:any):ImU32
     ColorConvertFloat4ToU32 = imgui.ColorConvertFloat4ToU32,
-    ---@type fun(r:float, g:float, b:float, out_h:any, out_s:any, out_v:any):nil
+    ---@type fun(r:number, g:number, b:number, out_h:any, out_s:any, out_v:any):nil
     ColorConvertRGBtoHSV = imgui.ColorConvertRGBtoHSV,
-    ---@type fun(h:float, s:float, v:float, out_r:any, out_g:any, out_b:any):nil
+    ---@type fun(h:number, s:number, v:number, out_r:any, out_g:any, out_b:any):nil
     ColorConvertHSVtoRGB = imgui.ColorConvertHSVtoRGB,
     ---@type fun(imgui_key:ImGuiKey):integer
     GetKeyIndex = imgui.GetKeyIndex,
-    ---@type fun(user_key_index:integer):bool
+    ---@type fun(user_key_index:integer):boolean
     IsKeyDown = imgui.IsKeyDown,
-    ---@type fun(user_key_index:integer, repeat:bool):bool
-    IsKeyPressed = imgui.IsKeyPressed,
-    ---@type fun(user_key_index:integer):bool
+    ---@param user_key_index integer
+    ---@param repeat_ boolean
+    IsKeyPressed = function(user_key_index, repeat_)
+        repeat_ = repeat_ or true
+        return imgui.IsKeyPressed(user_key_index, repeat_)
+    end,
+    ---@type fun(user_key_index:integer):boolean
     IsKeyReleased = imgui.IsKeyReleased,
-    ---@type fun(key_index:integer, repeat_delay:float, rate:float):integer
+    ---@type fun(key_index:integer, repeat_delay:number, rate:number):integer
     GetKeyPressedAmount = imgui.GetKeyPressedAmount,
-    ---@type fun(want_capture_keyboard_value:bool):nil
-    CaptureKeyboardFromApp = imgui.CaptureKeyboardFromApp,
-    ---@type fun(button:ImGuiMouseButton):bool
+    ---@param want_capture_keyboard_value boolean
+    CaptureKeyboardFromApp = function(want_capture_keyboard_value)
+        want_capture_keyboard_value = want_capture_keyboard_value or true
+        return imgui.CaptureKeyboardFromApp(want_capture_keyboard_value)
+    end,
+    ---@type fun(button:ImGuiMouseButton):boolean
     IsMouseDown = imgui.IsMouseDown,
-    ---@type fun(button:ImGuiMouseButton, repeat:bool):bool
-    IsMouseClicked = imgui.IsMouseClicked,
-    ---@type fun(button:ImGuiMouseButton):bool
+    ---@param button ImGuiMouseButton
+    ---@param repeat_ boolean
+    IsMouseClicked = function(button, repeat_)
+        repeat_ = repeat_ or false
+        return imgui.IsMouseClicked(button, repeat_)
+    end,
+    ---@type fun(button:ImGuiMouseButton):boolean
     IsMouseReleased = imgui.IsMouseReleased,
-    ---@type fun(button:ImGuiMouseButton):bool
+    ---@type fun(button:ImGuiMouseButton):boolean
     IsMouseDoubleClicked = imgui.IsMouseDoubleClicked,
-    ---@type fun(r_min:any, r_max:any, clip:bool):bool
-    IsMouseHoveringRect = imgui.IsMouseHoveringRect,
-    ---@type fun(mouse_pos:any):bool
-    IsMousePosValid = imgui.IsMousePosValid,
-    ---@type fun():bool
+    ---@param r_min any
+    ---@param r_max any
+    ---@param clip boolean
+    IsMouseHoveringRect = function(r_min, r_max, clip)
+        clip = clip or true
+        return imgui.IsMouseHoveringRect(r_min, r_max, clip)
+    end,
+    ---@param mouse_pos any
+    IsMousePosValid = function(mouse_pos)
+        return imgui.IsMousePosValid(mouse_pos)
+    end,
+    ---@type fun():boolean
     IsAnyMouseDown = imgui.IsAnyMouseDown,
     ---@type fun():ImVec2
     GetMousePos = imgui.GetMousePos,
     ---@type fun():ImVec2
     GetMousePosOnOpeningCurrentPopup = imgui.GetMousePosOnOpeningCurrentPopup,
-    ---@type fun(button:ImGuiMouseButton, lock_threshold:float):bool
-    IsMouseDragging = imgui.IsMouseDragging,
-    ---@type fun(button:ImGuiMouseButton, lock_threshold:float):ImVec2
-    GetMouseDragDelta = imgui.GetMouseDragDelta,
-    ---@type fun(button:ImGuiMouseButton):nil
-    ResetMouseDragDelta = imgui.ResetMouseDragDelta,
+    ---@param button ImGuiMouseButton
+    ---@param lock_threshold number
+    IsMouseDragging = function(button, lock_threshold)
+        lock_threshold = lock_threshold or 1.0
+        return imgui.IsMouseDragging(button, lock_threshold)
+    end,
+    ---@param button ImGuiMouseButton
+    ---@param lock_threshold number
+    GetMouseDragDelta = function(button, lock_threshold)
+        button = button or 0
+        lock_threshold = lock_threshold or 1.0
+        return imgui.GetMouseDragDelta(button, lock_threshold)
+    end,
+    ---@param button ImGuiMouseButton
+    ResetMouseDragDelta = function(button)
+        button = button or 0
+        return imgui.ResetMouseDragDelta(button)
+    end,
     ---@type fun():ImGuiMouseCursor
     GetMouseCursor = imgui.GetMouseCursor,
     ---@type fun(cursor_type:ImGuiMouseCursor):nil
     SetMouseCursor = imgui.SetMouseCursor,
-    ---@type fun(want_capture_mouse_value:bool):nil
-    CaptureMouseFromApp = imgui.CaptureMouseFromApp,
+    ---@param want_capture_mouse_value boolean
+    CaptureMouseFromApp = function(want_capture_mouse_value)
+        want_capture_mouse_value = want_capture_mouse_value or true
+        return imgui.CaptureMouseFromApp(want_capture_mouse_value)
+    end,
     ---@type fun():string
     GetClipboardText = imgui.GetClipboardText,
     ---@type fun(text:string):nil
     SetClipboardText = imgui.SetClipboardText,
     ---@type fun(ini_filename:string):nil
     LoadIniSettingsFromDisk = imgui.LoadIniSettingsFromDisk,
-    ---@type fun(ini_data:string, ini_size:size_t):nil
-    LoadIniSettingsFromMemory = imgui.LoadIniSettingsFromMemory,
+    ---@param ini_data string
+    ---@param ini_size size_t
+    LoadIniSettingsFromMemory = function(ini_data, ini_size)
+        ini_size = ini_size or 0
+        return imgui.LoadIniSettingsFromMemory(ini_data, ini_size)
+    end,
     ---@type fun(ini_filename:string):nil
     SaveIniSettingsToDisk = imgui.SaveIniSettingsToDisk,
-    ---@type fun(out_ini_size:any):string
-    SaveIniSettingsToMemory = imgui.SaveIniSettingsToMemory,
-    ---@type fun(version_str:string, sz_io:size_t, sz_style:size_t, sz_vec2:size_t, sz_vec4:size_t, sz_drawvert:size_t, sz_drawidx:size_t):bool
+    ---@param out_ini_size any
+    SaveIniSettingsToMemory = function(out_ini_size)
+        return imgui.SaveIniSettingsToMemory(out_ini_size)
+    end,
+    ---@type fun(version_str:string, sz_io:size_t, sz_style:size_t, sz_vec2:size_t, sz_vec4:size_t, sz_drawvert:size_t, sz_drawidx:size_t):boolean
     DebugCheckVersionAndDataLayout = imgui.DebugCheckVersionAndDataLayout,
-    ---@type fun(alloc_func:ImGuiMemAllocFunc, free_func:ImGuiMemFreeFunc, user_data:any):nil
-    SetAllocatorFunctions = imgui.SetAllocatorFunctions,
+    ---@param alloc_func ImGuiMemAllocFunc
+    ---@param free_func ImGuiMemFreeFunc
+    ---@param user_data any
+    SetAllocatorFunctions = function(alloc_func, free_func, user_data)
+        return imgui.SetAllocatorFunctions(alloc_func, free_func, user_data)
+    end,
     ---@type fun(p_alloc_func:any, p_free_func:any, p_user_data:any):nil
     GetAllocatorFunctions = imgui.GetAllocatorFunctions,
     ---@type fun(size:size_t):any
     MemAlloc = imgui.MemAlloc,
     ---@type fun(ptr:any):nil
     MemFree = imgui.MemFree,
-    ---@type fun(label:string, items_count:integer, height_in_items:integer):bool
-    ListBoxHeader = imgui.ListBoxHeader,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, v_speed:float, p_min:any, p_max:any, format:string, power:float):bool
-    DragScalar = imgui.DragScalar,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, v_speed:float, p_min:any, p_max:any, format:string, power:float):bool
-    DragScalarN = imgui.DragScalarN,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, p_min:any, p_max:any, format:string, power:float):bool
-    SliderScalar = imgui.SliderScalar,
-    ---@type fun(label:string, data_type:ImGuiDataType, p_data:any, components:integer, p_min:any, p_max:any, format:string, power:float):bool
-    SliderScalarN = imgui.SliderScalarN,
+    ---@type fun():any
+    GetPlatformIO = imgui.GetPlatformIO,
+    ---@type fun():nil
+    UpdatePlatformWindows = imgui.UpdatePlatformWindows,
+    ---@param platform_render_arg any
+    ---@param renderer_render_arg any
+    RenderPlatformWindowsDefault = function(platform_render_arg, renderer_render_arg)
+        return imgui.RenderPlatformWindowsDefault(platform_render_arg, renderer_render_arg)
+    end,
+    ---@type fun():nil
+    DestroyPlatformWindows = imgui.DestroyPlatformWindows,
+    ---@type fun(id:ImGuiID):any
+    FindViewportByID = imgui.FindViewportByID,
+    ---@type fun(platform_handle:any):any
+    FindViewportByPlatformHandle = imgui.FindViewportByPlatformHandle,
+    ---@param label string
+    ---@param items_count integer
+    ---@param height_in_items integer
+    ListBoxHeader = function(label, items_count, height_in_items)
+        height_in_items = height_in_items or 1
+        return imgui.ListBoxHeader(label, items_count, height_in_items)
+    end,
+    ---@param glsl_version string
+    ImGui_ImplOpenGL3_Init = function(glsl_version)
+        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
+    end,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
+    ---@type fun(draw_data:any):nil
+    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
 }
 -----------------------------------------------------------------------------
 -- glad.dll

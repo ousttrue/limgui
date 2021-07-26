@@ -21,6 +21,7 @@ typedef int ImGuiButtonFlags;
 typedef int ImGuiColorEditFlags;
 typedef int ImGuiConfigFlags;
 typedef int ImGuiComboFlags;
+typedef int ImGuiDockNodeFlags;
 typedef int ImGuiDragDropFlags;
 typedef int ImGuiFocusedFlags;
 typedef int ImGuiHoveredFlags;
@@ -48,6 +49,7 @@ typedef ImWchar16 ImWchar;
 typedef unsigned char ImU8;
 typedef short ImS16;
 typedef unsigned int ImU32;
+typedef unsigned long long ImU64;
 struct ImVec2{
     float x;
     float y;
@@ -80,6 +82,7 @@ enum ImGuiWindowFlags_{
     ImGuiWindowFlags_NoNavInputs = 1 << 18,
     ImGuiWindowFlags_NoNavFocus = 1 << 19,
     ImGuiWindowFlags_UnsavedDocument = 1 << 20,
+    ImGuiWindowFlags_NoDocking = 1 << 21,
     ImGuiWindowFlags_NoNav = ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,
     ImGuiWindowFlags_NoDecoration = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse,
     ImGuiWindowFlags_NoInputs = ImGuiWindowFlags_NoMouseInputs | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoNavFocus,
@@ -89,6 +92,7 @@ enum ImGuiWindowFlags_{
     ImGuiWindowFlags_Popup = 1 << 26,
     ImGuiWindowFlags_Modal = 1 << 27,
     ImGuiWindowFlags_ChildMenu = 1 << 28,
+    ImGuiWindowFlags_DockNodeHost = 1 << 29,
 };
 enum ImGuiInputTextFlags_{
     ImGuiInputTextFlags_None = 0,
@@ -284,6 +288,15 @@ enum ImGuiHoveredFlags_{
     ImGuiHoveredFlags_RectOnly = ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem | ImGuiHoveredFlags_AllowWhenOverlapped,
     ImGuiHoveredFlags_RootAndChildWindows = ImGuiHoveredFlags_RootWindow | ImGuiHoveredFlags_ChildWindows,
 };
+enum ImGuiDockNodeFlags_{
+    ImGuiDockNodeFlags_None = 0,
+    ImGuiDockNodeFlags_KeepAliveOnly = 1 << 0,
+    ImGuiDockNodeFlags_NoDockingInCentralNode = 1 << 2,
+    ImGuiDockNodeFlags_PassthruCentralNode = 1 << 3,
+    ImGuiDockNodeFlags_NoSplit = 1 << 4,
+    ImGuiDockNodeFlags_NoResize = 1 << 5,
+    ImGuiDockNodeFlags_AutoHideTabBar = 1 << 6,
+};
 enum ImGuiDragDropFlags_{
     ImGuiDragDropFlags_None = 0,
     ImGuiDragDropFlags_SourceNoPreviewTooltip = 1 << 0,
@@ -388,6 +401,10 @@ enum ImGuiConfigFlags_{
     ImGuiConfigFlags_NavNoCaptureKeyboard = 1 << 3,
     ImGuiConfigFlags_NoMouse = 1 << 4,
     ImGuiConfigFlags_NoMouseCursorChange = 1 << 5,
+    ImGuiConfigFlags_DockingEnable = 1 << 6,
+    ImGuiConfigFlags_ViewportsEnable = 1 << 10,
+    ImGuiConfigFlags_DpiEnableScaleViewports = 1 << 14,
+    ImGuiConfigFlags_DpiEnableScaleFonts = 1 << 15,
     ImGuiConfigFlags_IsSRGB = 1 << 20,
     ImGuiConfigFlags_IsTouchScreen = 1 << 21,
 };
@@ -397,6 +414,9 @@ enum ImGuiBackendFlags_{
     ImGuiBackendFlags_HasMouseCursors = 1 << 1,
     ImGuiBackendFlags_HasSetMousePos = 1 << 2,
     ImGuiBackendFlags_RendererHasVtxOffset = 1 << 3,
+    ImGuiBackendFlags_PlatformHasViewports = 1 << 10,
+    ImGuiBackendFlags_HasMouseHoveredViewport = 1 << 11,
+    ImGuiBackendFlags_RendererHasViewports = 1 << 12,
 };
 enum ImGuiCol_{
     ImGuiCol_Text = 0,
@@ -437,22 +457,24 @@ enum ImGuiCol_{
     ImGuiCol_TabActive = 35,
     ImGuiCol_TabUnfocused = 36,
     ImGuiCol_TabUnfocusedActive = 37,
-    ImGuiCol_PlotLines = 38,
-    ImGuiCol_PlotLinesHovered = 39,
-    ImGuiCol_PlotHistogram = 40,
-    ImGuiCol_PlotHistogramHovered = 41,
-    ImGuiCol_TableHeaderBg = 42,
-    ImGuiCol_TableBorderStrong = 43,
-    ImGuiCol_TableBorderLight = 44,
-    ImGuiCol_TableRowBg = 45,
-    ImGuiCol_TableRowBgAlt = 46,
-    ImGuiCol_TextSelectedBg = 47,
-    ImGuiCol_DragDropTarget = 48,
-    ImGuiCol_NavHighlight = 49,
-    ImGuiCol_NavWindowingHighlight = 50,
-    ImGuiCol_NavWindowingDimBg = 51,
-    ImGuiCol_ModalWindowDimBg = 52,
-    ImGuiCol_COUNT = 53,
+    ImGuiCol_DockingPreview = 38,
+    ImGuiCol_DockingEmptyBg = 39,
+    ImGuiCol_PlotLines = 40,
+    ImGuiCol_PlotLinesHovered = 41,
+    ImGuiCol_PlotHistogram = 42,
+    ImGuiCol_PlotHistogramHovered = 43,
+    ImGuiCol_TableHeaderBg = 44,
+    ImGuiCol_TableBorderStrong = 45,
+    ImGuiCol_TableBorderLight = 46,
+    ImGuiCol_TableRowBg = 47,
+    ImGuiCol_TableRowBgAlt = 48,
+    ImGuiCol_TextSelectedBg = 49,
+    ImGuiCol_DragDropTarget = 50,
+    ImGuiCol_NavHighlight = 51,
+    ImGuiCol_NavWindowingHighlight = 52,
+    ImGuiCol_NavWindowingDimBg = 53,
+    ImGuiCol_ModalWindowDimBg = 54,
+    ImGuiCol_COUNT = 55,
 };
 enum ImGuiStyleVar_{
     ImGuiStyleVar_Alpha = 0,
@@ -620,6 +642,13 @@ struct ImGuiIO{
     bool FontAllowUserScaling;
     struct ImFont* FontDefault;
     struct ImVec2 DisplayFramebufferScale;
+    bool ConfigDockingNoSplit;
+    bool ConfigDockingAlwaysTabBar;
+    bool ConfigDockingTransparentPayload;
+    bool ConfigViewportsNoAutoMerge;
+    bool ConfigViewportsNoTaskBarIcon;
+    bool ConfigViewportsNoDecoration;
+    bool ConfigViewportsNoDefaultParent;
     bool MouseDrawCursor;
     bool ConfigMacOSXBehaviors;
     bool ConfigInputTextCursorBlink;
@@ -635,12 +664,11 @@ struct ImGuiIO{
     const char*(*GetClipboardTextFn)(void* user_data);
     void(*SetClipboardTextFn)(void* user_data, const char* text);
     void* ClipboardUserData;
-    void(*ImeSetInputScreenPosFn)(int x, int y);
-    void* ImeWindowHandle;
     struct ImVec2 MousePos;
     bool MouseDown[5];
     float MouseWheel;
     float MouseWheelH;
+    ImGuiID MouseHoveredViewport;
     bool KeyCtrl;
     bool KeyShift;
     bool KeyAlt;
@@ -701,6 +729,16 @@ struct ImGuiSizeCallbackData{
     struct ImVec2 Pos;
     struct ImVec2 CurrentSize;
     struct ImVec2 DesiredSize;
+};
+struct ImGuiWindowClass{
+    ImGuiID ClassId;
+    ImGuiID ParentViewportId;
+    ImGuiViewportFlags ViewportFlagsOverrideSet;
+    ImGuiViewportFlags ViewportFlagsOverrideClear;
+    ImGuiTabItemFlags TabItemFlagsOverrideSet;
+    ImGuiDockNodeFlags DockNodeFlagsOverrideSet;
+    bool DockingAlwaysTabBar;
+    bool DockingAllowUnclassed;
 };
 struct ImGuiPayload{
     void* Data;
@@ -808,6 +846,7 @@ struct ImDrawData{
     struct ImVec2 DisplayPos;
     struct ImVec2 DisplaySize;
     struct ImVec2 FramebufferScale;
+    struct ImGuiViewport* OwnerViewport;
 };
 struct ImFontConfig{
     void* FontData;
@@ -865,13 +904,69 @@ enum ImGuiViewportFlags_{
     ImGuiViewportFlags_IsPlatformWindow = 1 << 0,
     ImGuiViewportFlags_IsPlatformMonitor = 1 << 1,
     ImGuiViewportFlags_OwnedByApp = 1 << 2,
+    ImGuiViewportFlags_NoDecoration = 1 << 3,
+    ImGuiViewportFlags_NoTaskBarIcon = 1 << 4,
+    ImGuiViewportFlags_NoFocusOnAppearing = 1 << 5,
+    ImGuiViewportFlags_NoFocusOnClick = 1 << 6,
+    ImGuiViewportFlags_NoInputs = 1 << 7,
+    ImGuiViewportFlags_NoRendererClear = 1 << 8,
+    ImGuiViewportFlags_TopMost = 1 << 9,
+    ImGuiViewportFlags_Minimized = 1 << 10,
+    ImGuiViewportFlags_NoAutoMerge = 1 << 11,
+    ImGuiViewportFlags_CanHostOtherWindows = 1 << 12,
 };
 struct ImGuiViewport{
+    ImGuiID ID;
     ImGuiViewportFlags Flags;
     struct ImVec2 Pos;
     struct ImVec2 Size;
     struct ImVec2 WorkPos;
     struct ImVec2 WorkSize;
+    float DpiScale;
+    ImGuiID ParentViewportId;
+    struct ImDrawData* DrawData;
+    void* RendererUserData;
+    void* PlatformUserData;
+    void* PlatformHandle;
+    void* PlatformHandleRaw;
+    bool PlatformRequestMove;
+    bool PlatformRequestResize;
+    bool PlatformRequestClose;
+};
+struct ImGuiPlatformMonitor{
+    struct ImVec2 MainPos;
+    struct ImVec2 MainSize;
+    struct ImVec2 WorkPos;
+    struct ImVec2 WorkSize;
+    float DpiScale;
+};
+struct ImGuiPlatformIO{
+    void(*Platform_CreateWindow)(struct ImGuiViewport* vp);
+    void(*Platform_DestroyWindow)(struct ImGuiViewport* vp);
+    void(*Platform_ShowWindow)(struct ImGuiViewport* vp);
+    void(*Platform_SetWindowPos)(struct ImGuiViewport* vp, struct ImVec2 pos);
+    struct ImVec2* Platform_GetWindowPos;
+    void(*Platform_SetWindowSize)(struct ImGuiViewport* vp, struct ImVec2 size);
+    struct ImVec2* Platform_GetWindowSize;
+    void(*Platform_SetWindowFocus)(struct ImGuiViewport* vp);
+    bool(*Platform_GetWindowFocus)(struct ImGuiViewport* vp);
+    bool(*Platform_GetWindowMinimized)(struct ImGuiViewport* vp);
+    void(*Platform_SetWindowTitle)(struct ImGuiViewport* vp, const char* str);
+    void(*Platform_SetWindowAlpha)(struct ImGuiViewport* vp, float alpha);
+    void(*Platform_UpdateWindow)(struct ImGuiViewport* vp);
+    void(*Platform_RenderWindow)(struct ImGuiViewport* vp, void* render_arg);
+    void(*Platform_SwapBuffers)(struct ImGuiViewport* vp, void* render_arg);
+    float(*Platform_GetWindowDpiScale)(struct ImGuiViewport* vp);
+    void(*Platform_OnChangedViewport)(struct ImGuiViewport* vp);
+    void(*Platform_SetImeInputPos)(struct ImGuiViewport* vp, struct ImVec2 pos);
+    int(*Platform_CreateVkSurface)(struct ImGuiViewport* vp, ImU64 vk_inst, const void* vk_allocators, ImU64* out_vk_surface);
+    void(*Renderer_CreateWindow)(struct ImGuiViewport* vp);
+    void(*Renderer_DestroyWindow)(struct ImGuiViewport* vp);
+    void(*Renderer_SetWindowSize)(struct ImGuiViewport* vp, struct ImVec2 size);
+    void(*Renderer_RenderWindow)(struct ImGuiViewport* vp, void* render_arg);
+    void(*Renderer_SwapBuffers)(struct ImGuiViewport* vp, void* render_arg);
+    struct ImGuiPlatformMonitor Monitors;
+    struct ImGuiViewport Viewports;
 };
 enum ImDrawCornerFlags_{
     ImDrawCornerFlags_None = 256,
@@ -952,7 +1047,7 @@ bool BeginChild(
     bool border,
     ImGuiWindowFlags flags
 ) asm("?BeginChild@ImGui@@YA_NPEBDAEBUImVec2@@_NH@Z");
-bool BeginChild(
+bool BeginChild__1(
     ImGuiID id,
     const struct ImVec2* size,
     bool border,
@@ -972,6 +1067,8 @@ bool IsWindowHovered(
 ) asm("?IsWindowHovered@ImGui@@YA_NH@Z");
 struct ImDrawList* GetWindowDrawList(
 ) asm("?GetWindowDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+float GetWindowDpiScale(
+) asm("?GetWindowDpiScale@ImGui@@YAMXZ");
 struct ImVec2 GetWindowPos(
 ) asm("?GetWindowPos@ImGui@@YA?AUImVec2@@XZ");
 struct ImVec2 GetWindowSize(
@@ -980,6 +1077,8 @@ float GetWindowWidth(
 ) asm("?GetWindowWidth@ImGui@@YAMXZ");
 float GetWindowHeight(
 ) asm("?GetWindowHeight@ImGui@@YAMXZ");
+struct ImGuiViewport* GetWindowViewport(
+) asm("?GetWindowViewport@ImGui@@YAPEAUImGuiViewport@@XZ");
 void SetNextWindowPos(
     const struct ImVec2* pos,
     ImGuiCond cond,
@@ -1007,41 +1106,44 @@ void SetNextWindowFocus(
 void SetNextWindowBgAlpha(
     float alpha
 ) asm("?SetNextWindowBgAlpha@ImGui@@YAXM@Z");
+void SetNextWindowViewport(
+    ImGuiID viewport_id
+) asm("?SetNextWindowViewport@ImGui@@YAXI@Z");
 void SetWindowPos(
     const struct ImVec2* pos,
     ImGuiCond cond
 ) asm("?SetWindowPos@ImGui@@YAXAEBUImVec2@@H@Z");
-void SetWindowSize(
-    const struct ImVec2* size,
-    ImGuiCond cond
-) asm("?SetWindowSize@ImGui@@YAXAEBUImVec2@@H@Z");
-void SetWindowCollapsed(
-    bool collapsed,
-    ImGuiCond cond
-) asm("?SetWindowCollapsed@ImGui@@YAX_NH@Z");
-void SetWindowFocus(
-) asm("?SetWindowFocus@ImGui@@YAXXZ");
-void SetWindowFontScale(
-    float scale
-) asm("?SetWindowFontScale@ImGui@@YAXM@Z");
-void SetWindowPos(
+void SetWindowPos__1(
     const char* name,
     const struct ImVec2* pos,
     ImGuiCond cond
 ) asm("?SetWindowPos@ImGui@@YAXPEBDAEBUImVec2@@H@Z");
 void SetWindowSize(
+    const struct ImVec2* size,
+    ImGuiCond cond
+) asm("?SetWindowSize@ImGui@@YAXAEBUImVec2@@H@Z");
+void SetWindowSize__1(
     const char* name,
     const struct ImVec2* size,
     ImGuiCond cond
 ) asm("?SetWindowSize@ImGui@@YAXPEBDAEBUImVec2@@H@Z");
 void SetWindowCollapsed(
+    bool collapsed,
+    ImGuiCond cond
+) asm("?SetWindowCollapsed@ImGui@@YAX_NH@Z");
+void SetWindowCollapsed__1(
     const char* name,
     bool collapsed,
     ImGuiCond cond
 ) asm("?SetWindowCollapsed@ImGui@@YAXPEBD_NH@Z");
 void SetWindowFocus(
+) asm("?SetWindowFocus@ImGui@@YAXXZ");
+void SetWindowFocus__1(
     const char* name
 ) asm("?SetWindowFocus@ImGui@@YAXPEBD@Z");
+void SetWindowFontScale(
+    float scale
+) asm("?SetWindowFontScale@ImGui@@YAXM@Z");
 struct ImVec2 GetContentRegionAvail(
 ) asm("?GetContentRegionAvail@ImGui@@YA?AUImVec2@@XZ");
 struct ImVec2 GetContentRegionMax(
@@ -1089,7 +1191,7 @@ void PushStyleColor(
     ImGuiCol idx,
     ImU32 col
 ) asm("?PushStyleColor@ImGui@@YAXHI@Z");
-void PushStyleColor(
+void PushStyleColor__1(
     ImGuiCol idx,
     const struct ImVec4* col
 ) asm("?PushStyleColor@ImGui@@YAXHAEBUImVec4@@@Z");
@@ -1100,7 +1202,7 @@ void PushStyleVar(
     ImGuiStyleVar idx,
     float val
 ) asm("?PushStyleVar@ImGui@@YAXHM@Z");
-void PushStyleVar(
+void PushStyleVar__1(
     ImGuiStyleVar idx,
     const struct ImVec2* val
 ) asm("?PushStyleVar@ImGui@@YAXHAEBUImVec2@@@Z");
@@ -1142,10 +1244,10 @@ ImU32 GetColorU32(
     ImGuiCol idx,
     float alpha_mul
 ) asm("?GetColorU32@ImGui@@YAIHM@Z");
-ImU32 GetColorU32(
+ImU32 GetColorU32__1(
     const struct ImVec4* col
 ) asm("?GetColorU32@ImGui@@YAIAEBUImVec4@@@Z");
-ImU32 GetColorU32(
+ImU32 GetColorU32__2(
     ImU32 col
 ) asm("?GetColorU32@ImGui@@YAII@Z");
 const struct ImVec4* GetStyleColorVec4(
@@ -1209,14 +1311,14 @@ float GetFrameHeightWithSpacing(
 void PushID(
     const char* str_id
 ) asm("?PushID@ImGui@@YAXPEBD@Z");
-void PushID(
+void PushID__1(
     const char* str_id_begin,
     const char* str_id_end
 ) asm("?PushID@ImGui@@YAXPEBD0@Z");
-void PushID(
+void PushID__2(
     const void* ptr_id
 ) asm("?PushID@ImGui@@YAXPEBX@Z");
-void PushID(
+void PushID__3(
     int int_id
 ) asm("?PushID@ImGui@@YAXH@Z");
 void PopID(
@@ -1224,11 +1326,11 @@ void PopID(
 ImGuiID GetID(
     const char* str_id
 ) asm("?GetID@ImGui@@YAIPEBD@Z");
-ImGuiID GetID(
+ImGuiID GetID__1(
     const char* str_id_begin,
     const char* str_id_end
 ) asm("?GetID@ImGui@@YAIPEBD0@Z");
-ImGuiID GetID(
+ImGuiID GetID__2(
     const void* ptr_id
 ) asm("?GetID@ImGui@@YAIPEBX@Z");
 void TextUnformatted(
@@ -1323,7 +1425,7 @@ bool CheckboxFlags(
     int* flags,
     int flags_value
 ) asm("?CheckboxFlags@ImGui@@YA_NPEBDPEAHH@Z");
-bool CheckboxFlags(
+bool CheckboxFlags__1(
     const char* label,
     unsigned int* flags,
     unsigned int flags_value
@@ -1332,7 +1434,7 @@ bool RadioButton(
     const char* label,
     bool active
 ) asm("?RadioButton@ImGui@@YA_NPEBD_N@Z");
-bool RadioButton(
+bool RadioButton__1(
     const char* label,
     int* v,
     int v_button
@@ -1358,13 +1460,13 @@ bool Combo(
     int items_count,
     int popup_max_height_in_items
 ) asm("?Combo@ImGui@@YA_NPEBDPEAHQEBQEBDHH@Z");
-bool Combo(
+bool Combo__1(
     const char* label,
     int* current_item,
     const char* items_separated_by_zeros,
     int popup_max_height_in_items
 ) asm("?Combo@ImGui@@YA_NPEBDPEAH0H@Z");
-bool Combo(
+bool Combo__2(
     const char* label,
     int* current_item,
     bool(*items_getter)(void* data, int idx, const char** out_text),
@@ -1476,6 +1578,16 @@ bool DragScalar(
     const char* format,
     ImGuiSliderFlags flags
 ) asm("?DragScalar@ImGui@@YA_NPEBDHPEAXMPEBX20H@Z");
+bool DragScalar__1(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?DragScalar@ImGui@@YA_NPEBDHPEAXMPEBX20M@Z");
 bool DragScalarN(
     const char* label,
     ImGuiDataType data_type,
@@ -1487,6 +1599,17 @@ bool DragScalarN(
     const char* format,
     ImGuiSliderFlags flags
 ) asm("?DragScalarN@ImGui@@YA_NPEBDHPEAXHMPEBX20H@Z");
+bool DragScalarN__1(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    float v_speed,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?DragScalarN@ImGui@@YA_NPEBDHPEAXHMPEBX20M@Z");
 bool SliderFloat(
     const char* label,
     float* v,
@@ -1568,6 +1691,15 @@ bool SliderScalar(
     const char* format,
     ImGuiSliderFlags flags
 ) asm("?SliderScalar@ImGui@@YA_NPEBDHPEAXPEBX20H@Z");
+bool SliderScalar__1(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?SliderScalar@ImGui@@YA_NPEBDHPEAXPEBX20M@Z");
 bool SliderScalarN(
     const char* label,
     ImGuiDataType data_type,
@@ -1578,6 +1710,16 @@ bool SliderScalarN(
     const char* format,
     ImGuiSliderFlags flags
 ) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20H@Z");
+bool SliderScalarN__1(
+    const char* label,
+    ImGuiDataType data_type,
+    void* p_data,
+    int components,
+    const void* p_min,
+    const void* p_max,
+    const char* format,
+    float power
+) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20M@Z");
 bool VSliderFloat(
     const char* label,
     const struct ImVec2* size,
@@ -1740,11 +1882,11 @@ void SetColorEditOptions(
 bool TreeNode(
     const char* label
 ) asm("?TreeNode@ImGui@@YA_NPEBD@Z");
-bool TreeNode(
+bool TreeNode__1(
     const char* str_id,
     const char* fmt
 ) asm("?TreeNode@ImGui@@YA_NPEBD0ZZ");
-bool TreeNode(
+bool TreeNode__2(
     const void* ptr_id,
     const char* fmt
 ) asm("?TreeNode@ImGui@@YA_NPEBXPEBDZZ");
@@ -1753,7 +1895,7 @@ bool TreeNodeV(
     const char* fmt,
     va_list args
 ) asm("?TreeNodeV@ImGui@@YA_NPEBD0PEAD@Z");
-bool TreeNodeV(
+bool TreeNodeV__1(
     const void* ptr_id,
     const char* fmt,
     va_list args
@@ -1762,12 +1904,12 @@ bool TreeNodeEx(
     const char* label,
     ImGuiTreeNodeFlags flags
 ) asm("?TreeNodeEx@ImGui@@YA_NPEBDH@Z");
-bool TreeNodeEx(
+bool TreeNodeEx__1(
     const char* str_id,
     ImGuiTreeNodeFlags flags,
     const char* fmt
 ) asm("?TreeNodeEx@ImGui@@YA_NPEBDH0ZZ");
-bool TreeNodeEx(
+bool TreeNodeEx__2(
     const void* ptr_id,
     ImGuiTreeNodeFlags flags,
     const char* fmt
@@ -1778,7 +1920,7 @@ bool TreeNodeExV(
     const char* fmt,
     va_list args
 ) asm("?TreeNodeExV@ImGui@@YA_NPEBDH0PEAD@Z");
-bool TreeNodeExV(
+bool TreeNodeExV__1(
     const void* ptr_id,
     ImGuiTreeNodeFlags flags,
     const char* fmt,
@@ -1787,7 +1929,7 @@ bool TreeNodeExV(
 void TreePush(
     const char* str_id
 ) asm("?TreePush@ImGui@@YAXPEBD@Z");
-void TreePush(
+void TreePush__1(
     const void* ptr_id
 ) asm("?TreePush@ImGui@@YAXPEBX@Z");
 void TreePop(
@@ -1798,7 +1940,7 @@ bool CollapsingHeader(
     const char* label,
     ImGuiTreeNodeFlags flags
 ) asm("?CollapsingHeader@ImGui@@YA_NPEBDH@Z");
-bool CollapsingHeader(
+bool CollapsingHeader__1(
     const char* label,
     bool* p_visible,
     ImGuiTreeNodeFlags flags
@@ -1813,7 +1955,7 @@ bool Selectable(
     ImGuiSelectableFlags flags,
     const struct ImVec2* size
 ) asm("?Selectable@ImGui@@YA_NPEBD_NHAEBUImVec2@@@Z");
-bool Selectable(
+bool Selectable__1(
     const char* label,
     bool* p_selected,
     ImGuiSelectableFlags flags,
@@ -1832,7 +1974,7 @@ bool ListBox(
     int items_count,
     int height_in_items
 ) asm("?ListBox@ImGui@@YA_NPEBDPEAHQEBQEBDHH@Z");
-bool ListBox(
+bool ListBox__1(
     const char* label,
     int* current_item,
     bool(*items_getter)(void* data, int idx, const char** out_text),
@@ -1851,7 +1993,7 @@ void PlotLines(
     struct ImVec2 graph_size,
     int stride
 ) asm("?PlotLines@ImGui@@YAXPEBDPEBMHH0MMUImVec2@@H@Z");
-void PlotLines(
+void PlotLines__1(
     const char* label,
     float(*values_getter)(void* data, int idx),
     void* data,
@@ -1873,7 +2015,7 @@ void PlotHistogram(
     struct ImVec2 graph_size,
     int stride
 ) asm("?PlotHistogram@ImGui@@YAXPEBDPEBMHH0MMUImVec2@@H@Z");
-void PlotHistogram(
+void PlotHistogram__1(
     const char* label,
     float(*values_getter)(void* data, int idx),
     void* data,
@@ -1888,15 +2030,15 @@ void Value(
     const char* prefix,
     bool b
 ) asm("?Value@ImGui@@YAXPEBD_N@Z");
-void Value(
+void Value__1(
     const char* prefix,
     int v
 ) asm("?Value@ImGui@@YAXPEBDH@Z");
-void Value(
+void Value__2(
     const char* prefix,
     unsigned int v
 ) asm("?Value@ImGui@@YAXPEBDI@Z");
-void Value(
+void Value__3(
     const char* prefix,
     float v,
     const char* float_format
@@ -1921,7 +2063,7 @@ bool MenuItem(
     bool selected,
     bool enabled
 ) asm("?MenuItem@ImGui@@YA_NPEBD0_N1@Z");
-bool MenuItem(
+bool MenuItem__1(
     const char* label,
     const char* shortcut,
     bool* p_selected,
@@ -1953,7 +2095,7 @@ void OpenPopup(
     const char* str_id,
     ImGuiPopupFlags popup_flags
 ) asm("?OpenPopup@ImGui@@YAXPEBDH@Z");
-void OpenPopup(
+void OpenPopup__1(
     ImGuiID id,
     ImGuiPopupFlags popup_flags
 ) asm("?OpenPopup@ImGui@@YAXIH@Z");
@@ -2080,6 +2222,28 @@ bool TabItemButton(
 void SetTabItemClosed(
     const char* tab_or_docked_window_label
 ) asm("?SetTabItemClosed@ImGui@@YAXPEBD@Z");
+ImGuiID DockSpace(
+    ImGuiID id,
+    const struct ImVec2* size,
+    ImGuiDockNodeFlags flags,
+    const struct ImGuiWindowClass* window_class
+) asm("?DockSpace@ImGui@@YAIIAEBUImVec2@@HPEBUImGuiWindowClass@@@Z");
+ImGuiID DockSpaceOverViewport(
+    const struct ImGuiViewport* viewport,
+    ImGuiDockNodeFlags flags,
+    const struct ImGuiWindowClass* window_class
+) asm("?DockSpaceOverViewport@ImGui@@YAIPEBUImGuiViewport@@HPEBUImGuiWindowClass@@@Z");
+void SetNextWindowDockID(
+    ImGuiID dock_id,
+    ImGuiCond cond
+) asm("?SetNextWindowDockID@ImGui@@YAXIH@Z");
+void SetNextWindowClass(
+    const struct ImGuiWindowClass* window_class
+) asm("?SetNextWindowClass@ImGui@@YAXPEBUImGuiWindowClass@@@Z");
+ImGuiID GetWindowDockID(
+) asm("?GetWindowDockID@ImGui@@YAIXZ");
+bool IsWindowDocked(
+) asm("?IsWindowDocked@ImGui@@YA_NXZ");
 void LogToTTY(
     int auto_open_depth
 ) asm("?LogToTTY@ImGui@@YAXH@Z");
@@ -2175,7 +2339,7 @@ struct ImGuiViewport* GetMainViewport(
 bool IsRectVisible(
     const struct ImVec2* size
 ) asm("?IsRectVisible@ImGui@@YA_NAEBUImVec2@@@Z");
-bool IsRectVisible(
+bool IsRectVisible__1(
     const struct ImVec2* rect_min,
     const struct ImVec2* rect_max
 ) asm("?IsRectVisible@ImGui@@YA_NAEBUImVec2@@0@Z");
@@ -2185,8 +2349,14 @@ int GetFrameCount(
 ) asm("?GetFrameCount@ImGui@@YAHXZ");
 struct ImDrawList* GetBackgroundDrawList(
 ) asm("?GetBackgroundDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+struct ImDrawList* GetBackgroundDrawList__1(
+    struct ImGuiViewport* viewport
+) asm("?GetBackgroundDrawList@ImGui@@YAPEAUImDrawList@@PEAUImGuiViewport@@@Z");
 struct ImDrawList* GetForegroundDrawList(
 ) asm("?GetForegroundDrawList@ImGui@@YAPEAUImDrawList@@XZ");
+struct ImDrawList* GetForegroundDrawList__1(
+    struct ImGuiViewport* viewport
+) asm("?GetForegroundDrawList@ImGui@@YAPEAUImDrawList@@PEAUImGuiViewport@@@Z");
 struct ImDrawListSharedData* GetDrawListSharedData(
 ) asm("?GetDrawListSharedData@ImGui@@YAPEAUImDrawListSharedData@@XZ");
 const char* GetStyleColorName(
@@ -2348,49 +2518,25 @@ void* MemAlloc(
 void MemFree(
     void* ptr
 ) asm("?MemFree@ImGui@@YAXPEAX@Z");
+struct ImGuiPlatformIO* GetPlatformIO(
+) asm("?GetPlatformIO@ImGui@@YAAEAUImGuiPlatformIO@@XZ");
+void UpdatePlatformWindows(
+) asm("?UpdatePlatformWindows@ImGui@@YAXXZ");
+void RenderPlatformWindowsDefault(
+    void* platform_render_arg,
+    void* renderer_render_arg
+) asm("?RenderPlatformWindowsDefault@ImGui@@YAXPEAX0@Z");
+void DestroyPlatformWindows(
+) asm("?DestroyPlatformWindows@ImGui@@YAXXZ");
+struct ImGuiViewport* FindViewportByID(
+    ImGuiID id
+) asm("?FindViewportByID@ImGui@@YAPEAUImGuiViewport@@I@Z");
+struct ImGuiViewport* FindViewportByPlatformHandle(
+    void* platform_handle
+) asm("?FindViewportByPlatformHandle@ImGui@@YAPEAUImGuiViewport@@PEAX@Z");
 bool ListBoxHeader(
     const char* label,
     int items_count,
     int height_in_items
 ) asm("?ListBoxHeader@ImGui@@YA_NPEBDHH@Z");
-bool DragScalar(
-    const char* label,
-    ImGuiDataType data_type,
-    void* p_data,
-    float v_speed,
-    const void* p_min,
-    const void* p_max,
-    const char* format,
-    float power
-) asm("?DragScalar@ImGui@@YA_NPEBDHPEAXMPEBX20M@Z");
-bool DragScalarN(
-    const char* label,
-    ImGuiDataType data_type,
-    void* p_data,
-    int components,
-    float v_speed,
-    const void* p_min,
-    const void* p_max,
-    const char* format,
-    float power
-) asm("?DragScalarN@ImGui@@YA_NPEBDHPEAXHMPEBX20M@Z");
-bool SliderScalar(
-    const char* label,
-    ImGuiDataType data_type,
-    void* p_data,
-    const void* p_min,
-    const void* p_max,
-    const char* format,
-    float power
-) asm("?SliderScalar@ImGui@@YA_NPEBDHPEAXPEBX20M@Z");
-bool SliderScalarN(
-    const char* label,
-    ImGuiDataType data_type,
-    void* p_data,
-    int components,
-    const void* p_min,
-    const void* p_max,
-    const char* format,
-    float power
-) asm("?SliderScalarN@ImGui@@YA_NPEBDHPEAXHPEBX20M@Z");
 ]]

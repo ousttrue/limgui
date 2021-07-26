@@ -102,19 +102,19 @@ while not window:shouldClose(window) do
 
     -- 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
     do
-        imgui.Begin("Hello, world!", nil, 0) -- Create a window called "Hello, world!" and append into it.
+        imgui.Begin("Hello, world!") -- Create a window called "Hello, world!" and append into it.
 
         imgui.Text("This is some useful text.") -- Display some text (you can use a format strings too)
         imgui.Checkbox("Demo Window", show_demo_window) -- Edit bools storing our window open/close state
         imgui.Checkbox("Another Window", show_another_window)
 
-        imgui.SliderFloat("float", f, 0.0, 1.0, nil, 0) -- Edit 1 float using a slider from 0.0f to 1.0f
-        imgui.ColorEdit3("clear color", clear_color, 0) -- Edit 3 floats representing a color
+        imgui.SliderFloat("float", f, 0.0, 1.0) -- Edit 1 float using a slider from 0.0f to 1.0f
+        imgui.ColorEdit3("clear color", clear_color) -- Edit 3 floats representing a color
 
-        -- if imgui.Button("Button") then -- Buttons return true when clicked (most widgets return true when edited/activated)
-        --     counter[0] = counter[0] + 1
-        -- end
-        imgui.SameLine(0, 0)
+        if imgui.Button("Button") then -- Buttons return true when clicked (most widgets return true when edited/activated)
+            counter[0] = counter[0] + 1
+        end
+        imgui.SameLine()
         -- imgui.Text("counter = %d", counter)
 
         -- imgui.Text(
@@ -127,10 +127,11 @@ while not window:shouldClose(window) do
 
     -- 3. Show another simple window.
     if show_another_window[0] then
-        imgui.Begin("Another Window", show_another_window, 0) -- Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+        imgui.Begin("Another Window", show_another_window) -- Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
         imgui.Text("Hello from another window!")
-        -- if (imgui.Button("Close Me"))
-        --     show_another_window = false;
+        if imgui.Button("Close Me") then
+            show_another_window[0] = false
+        end
         imgui.End()
     end
 
