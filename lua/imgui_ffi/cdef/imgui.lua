@@ -1338,7 +1338,8 @@ void TextUnformatted(
     const char* text_end
 ) asm("?TextUnformatted@ImGui@@YAXPEBD0@Z");
 void Text(
-    const char* fmt, ...
+    const char* fmt
+, ...
 ) asm("?Text@ImGui@@YAXPEBDZZ");
 void TextV(
     const char* fmt,
@@ -1347,6 +1348,7 @@ void TextV(
 void TextColored(
     const struct ImVec4* col,
     const char* fmt
+, ...
 ) asm("?TextColored@ImGui@@YAXAEBUImVec4@@PEBDZZ");
 void TextColoredV(
     const struct ImVec4* col,
@@ -1355,6 +1357,7 @@ void TextColoredV(
 ) asm("?TextColoredV@ImGui@@YAXAEBUImVec4@@PEBDPEAD@Z");
 void TextDisabled(
     const char* fmt
+, ...
 ) asm("?TextDisabled@ImGui@@YAXPEBDZZ");
 void TextDisabledV(
     const char* fmt,
@@ -1362,6 +1365,7 @@ void TextDisabledV(
 ) asm("?TextDisabledV@ImGui@@YAXPEBDPEAD@Z");
 void TextWrapped(
     const char* fmt
+, ...
 ) asm("?TextWrapped@ImGui@@YAXPEBDZZ");
 void TextWrappedV(
     const char* fmt,
@@ -1370,6 +1374,7 @@ void TextWrappedV(
 void LabelText(
     const char* label,
     const char* fmt
+, ...
 ) asm("?LabelText@ImGui@@YAXPEBD0ZZ");
 void LabelTextV(
     const char* label,
@@ -1378,6 +1383,7 @@ void LabelTextV(
 ) asm("?LabelTextV@ImGui@@YAXPEBD0PEAD@Z");
 void BulletText(
     const char* fmt
+, ...
 ) asm("?BulletText@ImGui@@YAXPEBDZZ");
 void BulletTextV(
     const char* fmt,
@@ -1885,10 +1891,12 @@ bool TreeNode(
 bool TreeNode__1(
     const char* str_id,
     const char* fmt
+, ...
 ) asm("?TreeNode@ImGui@@YA_NPEBD0ZZ");
 bool TreeNode__2(
     const void* ptr_id,
     const char* fmt
+, ...
 ) asm("?TreeNode@ImGui@@YA_NPEBXPEBDZZ");
 bool TreeNodeV(
     const char* str_id,
@@ -1908,11 +1916,13 @@ bool TreeNodeEx__1(
     const char* str_id,
     ImGuiTreeNodeFlags flags,
     const char* fmt
+, ...
 ) asm("?TreeNodeEx@ImGui@@YA_NPEBDH0ZZ");
 bool TreeNodeEx__2(
     const void* ptr_id,
     ImGuiTreeNodeFlags flags,
     const char* fmt
+, ...
 ) asm("?TreeNodeEx@ImGui@@YA_NPEBXHPEBDZZ");
 bool TreeNodeExV(
     const char* str_id,
@@ -2075,6 +2085,7 @@ void EndTooltip(
 ) asm("?EndTooltip@ImGui@@YAXXZ");
 void SetTooltip(
     const char* fmt
+, ...
 ) asm("?SetTooltip@ImGui@@YAXPEBDZZ");
 void SetTooltipV(
     const char* fmt,
@@ -2260,6 +2271,7 @@ void LogButtons(
 ) asm("?LogButtons@ImGui@@YAXXZ");
 void LogText(
     const char* fmt
+, ...
 ) asm("?LogText@ImGui@@YAXPEBDZZ");
 void LogTextV(
     const char* fmt,

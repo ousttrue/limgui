@@ -9,12 +9,12 @@ local M = {
 }
 
 -- cdef
-require('imgui_ffi.cdef.imgui_impl_glfw')
-require('imgui_ffi.cdef.vadefs')
 require('imgui_ffi.cdef.imgui')
-require('imgui_ffi.cdef.vcruntime')
+require('imgui_ffi.cdef.vadefs')
 require('imgui_ffi.cdef.imgui_impl_opengl3')
 require('imgui_ffi.cdef.gl')
+require('imgui_ffi.cdef.vcruntime')
+require('imgui_ffi.cdef.imgui_impl_glfw')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -594,9 +594,6 @@ M.enums = {
         ImDrawCornerFlags_Right = C.ImDrawCornerFlags_Right,
     },
 }
----@class GLFWwindow
----@class GLFWmonitor
----@class va_list
 ---@class ImDrawListSharedData
 ---@class ImFontBuilderIO
 ---@class ImGuiContext
@@ -675,10 +672,25 @@ M.enums = {
 ---@class ImGuiViewport
 ---@class ImGuiPlatformIO
 ---@class ImGuiPlatformMonitor
----@class size_t
+---@class va_list
 ---@class GLADapiproc
 ---@class GLADloadfunc
 ---@class GLADuserptrloadfunc
+---@class size_t
+---@class GLFWwindow
+---@class GLFWmonitor
+-----------------------------------------------------------------------------
+-- glad.dll
+-----------------------------------------------------------------------------
+---@type Table<string, any>
+local glad = ffi.load('glad')
+M.cache.glad = glad
+M.libs.glad = {
+    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
+    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
+    ---@type fun(load:GLADloadfunc):integer
+    gladLoadGL = glad.gladLoadGL,
+}
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -686,26 +698,6 @@ M.enums = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
-    ---@type fun():nil
-    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
-    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
-    ---@type fun(window:any, xoffset:number, yoffset:number):nil
-    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
-    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
-    ---@type fun(window:any, c:integer):nil
-    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
-    ---@type fun(monitor:any, event:integer):nil
-    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
     ---@param shared_font_atlas any
     CreateContext = function(shared_font_atlas)
         return imgui.CreateContext(shared_font_atlas)
@@ -1090,27 +1082,27 @@ M.libs.imgui = {
     TextUnformatted = function(text, text_end)
         return imgui.TextUnformatted(text, text_end)
     end,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     Text = imgui.Text,
     ---@type fun(fmt:string, args:va_list):nil
     TextV = imgui.TextV,
-    ---@type fun(col:any, fmt:string):nil
+    ---@type fun(col:any, fmt:string, ...):nil
     TextColored = imgui.TextColored,
     ---@type fun(col:any, fmt:string, args:va_list):nil
     TextColoredV = imgui.TextColoredV,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     TextDisabled = imgui.TextDisabled,
     ---@type fun(fmt:string, args:va_list):nil
     TextDisabledV = imgui.TextDisabledV,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     TextWrapped = imgui.TextWrapped,
     ---@type fun(fmt:string, args:va_list):nil
     TextWrappedV = imgui.TextWrappedV,
-    ---@type fun(label:string, fmt:string):nil
+    ---@type fun(label:string, fmt:string, ...):nil
     LabelText = imgui.LabelText,
     ---@type fun(label:string, fmt:string, args:va_list):nil
     LabelTextV = imgui.LabelTextV,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     BulletText = imgui.BulletText,
     ---@type fun(fmt:string, args:va_list):nil
     BulletTextV = imgui.BulletTextV,
@@ -1746,9 +1738,9 @@ M.libs.imgui = {
     SetColorEditOptions = imgui.SetColorEditOptions,
     ---@type fun(label:string):boolean
     TreeNode = imgui.TreeNode,
-    ---@type fun(str_id:string, fmt:string):boolean
+    ---@type fun(str_id:string, fmt:string, ...):boolean
     TreeNode__1 = imgui.TreeNode__1,
-    ---@type fun(ptr_id:any, fmt:string):boolean
+    ---@type fun(ptr_id:any, fmt:string, ...):boolean
     TreeNode__2 = imgui.TreeNode__2,
     ---@type fun(str_id:string, fmt:string, args:va_list):boolean
     TreeNodeV = imgui.TreeNodeV,
@@ -1760,9 +1752,9 @@ M.libs.imgui = {
         flags = flags or 0
         return imgui.TreeNodeEx(label, flags)
     end,
-    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string):boolean
+    ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string, ...):boolean
     TreeNodeEx__1 = imgui.TreeNodeEx__1,
-    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string):boolean
+    ---@type fun(ptr_id:any, flags:ImGuiTreeNodeFlags, fmt:string, ...):boolean
     TreeNodeEx__2 = imgui.TreeNodeEx__2,
     ---@type fun(str_id:string, flags:ImGuiTreeNodeFlags, fmt:string, args:va_list):boolean
     TreeNodeExV = imgui.TreeNodeExV,
@@ -1958,7 +1950,7 @@ M.libs.imgui = {
     BeginTooltip = imgui.BeginTooltip,
     ---@type fun():nil
     EndTooltip = imgui.EndTooltip,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     SetTooltip = imgui.SetTooltip,
     ---@type fun(fmt:string, args:va_list):nil
     SetTooltipV = imgui.SetTooltipV,
@@ -2189,7 +2181,7 @@ M.libs.imgui = {
     LogFinish = imgui.LogFinish,
     ---@type fun():nil
     LogButtons = imgui.LogButtons,
-    ---@type fun(fmt:string):nil
+    ---@type fun(fmt:string, ...):nil
     LogText = imgui.LogText,
     ---@type fun(fmt:string, args:va_list):nil
     LogTextV = imgui.LogTextV,
@@ -2472,17 +2464,25 @@ M.libs.imgui = {
     ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
     ---@type fun():nil
     ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
-}
------------------------------------------------------------------------------
--- glad.dll
------------------------------------------------------------------------------
----@type Table<string, any>
-local glad = ffi.load('glad')
-M.cache.glad = glad
-M.libs.glad = {
-    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
-    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
-    ---@type fun(load:GLADloadfunc):integer
-    gladLoadGL = glad.gladLoadGL,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
+    ---@type fun():nil
+    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
+    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
+    ---@type fun(window:any, xoffset:number, yoffset:number):nil
+    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
+    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
+    ---@type fun(window:any, c:integer):nil
+    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
+    ---@type fun(monitor:any, event:integer):nil
+    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
 }
 return M
