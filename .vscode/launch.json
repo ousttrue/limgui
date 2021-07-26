@@ -5,28 +5,30 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "imgui-lua",
+            "name": "glfw-lua",
             "type": "lua-local",
             "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
             "program": {
                 "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
-                "file": "${workspaceFolder}/imgui_test.lua"
+                "file": "glfw_test.lua"
             },
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\glad_cmake\\Release;${workspaceFolder}\\libs\\build\\imgui_cmake\\Release",
             }
         },
         {
-            "name": "glfw-lua",
+            "name": "imgui-lua",
             "type": "lua-local",
             "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
             "program": {
                 "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
-                "file": "${workspaceFolder}/glfw_test.lua"
+                "file": "imgui_test.lua"
             },
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\glad_cmake\\Release;${workspaceFolder}\\libs\\build\\imgui_cmake\\Release",
-            }
+            },
         },
         {
             "name": "invoke task",
@@ -43,9 +45,10 @@
             "name": "generate imgui ffi",
             "type": "lua-local",
             "request": "launch",
+            "cwd": "${workspaceFolder}/luajitffi",
             "program": {
                 "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
-                "file": "${workspaceFolder}/luajitffi/main.lua"
+                "file": "main.lua"
             },
             "args": [
                 // CFLAGS
@@ -58,9 +61,8 @@
                 "-E../libs/imgui/backends/imgui_impl_opengl3.h,imgui.dll",
                 "-E../libs/imgui/backends/imgui_impl_glfw.h,imgui.dll",
                 // OUt
-                "-O../imgui_ffi",
+                "-O../lua/imgui_ffi",
             ],
-            "cwd": "${workspaceFolder}/luajitffi",
             "env": {
                 // path to libclang.dll
                 "PATH": "${env:PATH};C:\\Program Files\\LLVM\\bin",

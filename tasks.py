@@ -5,15 +5,17 @@ import io
 from invoke import task, Context
 import pathlib
 HERE = pathlib.Path(__file__).absolute().parent
-
+# libs
 GLFW_DIR = HERE / 'libs/glfw'
 GLFW_BUILD_DIR = GLFW_DIR / 'build'
 LIBS_DIR = HERE / 'libs'
 LIBS_BUILD_DIR = HERE / 'libs/build'
+# luajitffi
 LUAJITFFI_DIR = HERE / 'luajitffi'
 LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
 LUA_BIN = LUAJIT_DIR / 'luajit.exe'
-IMGUI_FFI_DIR = HERE / 'imgui_ffi'
+# lua
+IMGUI_FFI_DIR = HERE / 'lua/imgui_ffi'
 
 
 def get_cmake() -> pathlib.Path:
