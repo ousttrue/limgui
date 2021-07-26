@@ -3,5 +3,6 @@
         "cmake",
         "glfw",
         "imgui"
-    ]
+    ],
+    "Lua.runtime.version": "LuaJIT"
 }

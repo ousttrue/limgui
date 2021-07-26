@@ -79,7 +79,7 @@ clear_color[2] = 0.6
 clear_color[3] = 1
 local f = ffi.new("float[1]")
 f[0] = 0
-local counter = ffi.new("int[1]")
+local counter = 0LL
 
 -- Main loop
 while not window:shouldClose(window) do
@@ -112,16 +112,16 @@ while not window:shouldClose(window) do
         imgui.ColorEdit3("clear color", clear_color) -- Edit 3 floats representing a color
 
         if imgui.Button("Button") then -- Buttons return true when clicked (most widgets return true when edited/activated)
-            counter[0] = counter[0] + 1
+            counter = counter + 1
         end
         imgui.SameLine()
-        -- imgui.Text("counter = %d", counter)
+        imgui.Text("counter = %d", counter)
 
-        -- imgui.Text(
-        --     "Application average %.3f ms/frame (%.1f FPS)",
-        --     1000.0 / imgui.GetIO().Framerate,
-        --     imgui.GetIO().Framerate
-        -- )
+        imgui.Text(
+            "Application average %.3f ms/frame (%.1f FPS)",
+            1000.0 / imgui.GetIO().Framerate,
+            imgui.GetIO().Framerate
+        )
         imgui.End()
     end
 

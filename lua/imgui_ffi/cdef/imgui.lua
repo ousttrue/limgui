@@ -1338,7 +1338,7 @@ void TextUnformatted(
     const char* text_end
 ) asm("?TextUnformatted@ImGui@@YAXPEBD0@Z");
 void Text(
-    const char* fmt
+    const char* fmt, ...
 ) asm("?Text@ImGui@@YAXPEBDZZ");
 void TextV(
     const char* fmt,
