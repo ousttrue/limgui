@@ -14,7 +14,7 @@
                 "file": "glfw_test.lua"
             },
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\glad_cmake\\Release;${workspaceFolder}\\libs\\build\\imgui_cmake\\Release",
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
             }
         },
         {
@@ -27,7 +27,7 @@
                 "file": "imgui_test.lua"
             },
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\glad_cmake\\Release;${workspaceFolder}\\libs\\build\\imgui_cmake\\Release",
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
             },
         },
         {
@@ -36,7 +36,7 @@
             "request": "launch",
             "module": "invoke",
             "args": [
-                "build-all"
+                "build-lua"
                 // "generate-ffi"
             ],
             "console": "integratedTerminal"

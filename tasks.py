@@ -4,6 +4,7 @@ import os
 import io
 from invoke import task, Context
 import pathlib
+
 HERE = pathlib.Path(__file__).absolute().parent
 # libs
 GLFW_DIR = HERE / 'libs/glfw'
@@ -16,6 +17,10 @@ LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
 LUA_BIN = LUAJIT_DIR / 'luajit.exe'
 # lua
 IMGUI_FFI_DIR = HERE / 'lua/imgui_ffi'
+
+VCVARS_BAT = pathlib.Path(
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
+)
 
 
 def get_cmake() -> pathlib.Path:
@@ -54,8 +59,10 @@ def build_glfw(c):
     cmake = get_cmake()
     GLFW_BUILD_DIR.mkdir(exist_ok=True)
     with c.cd(GLFW_BUILD_DIR):
-        c.run(commandline(cmake, '-DBUILD_SHARED_LIBS=1',
-              '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0', '..'))
+        c.run(
+            commandline(cmake, '-DBUILD_SHARED_LIBS=1',
+                        '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0',
+                        '..'))
         c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
         # fix
         shutil.copy((GLFW_BUILD_DIR / 'src/Release/glfw3dll.exp'),
@@ -93,12 +100,15 @@ def build_lua(c):
     '''
     build lua
     '''
+    if not VCVARS_BAT.exists():
+        raise Exception('no vcvars64.bat')
+
     with c.cd(LUAJIT_DIR):
-        c.run(f'{os.environ["COMSPEC"]} /K "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"',
+        c.run(f'{os.environ["COMSPEC"]} /K "{VCVARS_BAT}"',
               in_stream=io.StringIO("msvcbuild.bat\r\nexit\r\n')"))
 
 
-@ task(build_glfw, build_imgui, build_lua)
+@task(build_glfw, build_imgui, build_lua)
 def build_all(c):
     # type: (Context) -> None
     '''
@@ -107,18 +117,16 @@ def build_all(c):
     print('build all')
 
 
-@ task
+@task
 def generate_ffi(c):
     # type: (Context) -> None
     '''
     build
     '''
     with c.cd(LUAJITFFI_DIR):
-        c.run(commandline(
-            LUA_BIN,
-            "main.lua",
-            f"-E{LIBS_DIR}/imgui/imgui.h,ImGui.dll",
-            f"-O{IMGUI_FFI_DIR}"
-        ), env={
-            'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",
-        })
+        c.run(commandline(LUA_BIN, "main.lua",
+                          f"-E{LIBS_DIR}/imgui/imgui.h,ImGui.dll",
+                          f"-O{IMGUI_FFI_DIR}"),
+              env={
+                  'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",
+              })
