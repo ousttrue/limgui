@@ -584,7 +584,7 @@ enum ImGuiCond_{
 struct ImVector{
     int Size;
     int Capacity;
-    struct ImVector* Data;
+    void* Data;
 };
 struct ImGuiStyle{
     float Alpha;
