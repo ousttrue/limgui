@@ -1,4 +1,4 @@
--- C:/Users/oustt/ghq/github.com/ousttrue/limgui/libs/glfw/deps/glad/gl.h
+-- generated from gl.h
 local ffi = require 'ffi'
 ffi.cdef[[
 typedef void(*GLADapiproc)();

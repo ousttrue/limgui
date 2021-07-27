@@ -5,6 +5,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "clang-viewer",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "file": "clang_viewer.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+            }
+        },
+        {
             "name": "glfw-lua",
             "type": "lua-local",
             "request": "launch",
@@ -54,7 +67,7 @@
                 // CFLAGS
                 "-DIMGUI_API=__declspec(dllexport)",
                 "-DGLAD_API_CALL_EXPORT=1",
-                "-DGLAD_API_CALL_EXPORT_BUILD=1",
+                "-DGLAD_API_CALL_EXPORT_BUILD=1",                
                 // Export
                 "-E../libs/glfw/deps/glad/gl.h,glad.dll",
                 "-E../libs/imgui/imgui.h,imgui.dll",

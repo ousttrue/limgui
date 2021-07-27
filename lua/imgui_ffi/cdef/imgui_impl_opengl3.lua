@@ -1,4 +1,4 @@
--- C:/Users/oustt/ghq/github.com/ousttrue/limgui/libs/imgui/backends/imgui_impl_opengl3.h
+-- generated from imgui_impl_opengl3.h
 local ffi = require 'ffi'
 ffi.cdef[[
 bool ImGui_ImplOpenGL3_Init(

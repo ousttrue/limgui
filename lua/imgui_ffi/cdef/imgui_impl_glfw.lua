@@ -1,4 +1,4 @@
--- C:/Users/oustt/ghq/github.com/ousttrue/limgui/libs/imgui/backends/imgui_impl_glfw.h
+-- generated from imgui_impl_glfw.h
 local ffi = require 'ffi'
 ffi.cdef[[
 struct GLFWwindow;

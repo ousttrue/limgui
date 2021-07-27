@@ -1,4 +1,4 @@
--- C:/Users/oustt/ghq/github.com/ousttrue/limgui/libs/imgui/imgui.h
+-- generated from imgui.h
 local ffi = require 'ffi'
 ffi.cdef[[
 struct ImDrawListSharedData;
@@ -580,6 +580,11 @@ enum ImGuiCond_{
     ImGuiCond_FirstUseEver = 1 << 2,
     ImGuiCond_Appearing = 1 << 3,
 };
+struct ImVector{
+    int Size;
+    int Capacity;
+    void* Data;
+};
 struct ImGuiStyle{
     float Alpha;
     struct ImVec2 WindowPadding;
@@ -708,7 +713,7 @@ struct ImGuiIO{
     float NavInputsDownDurationPrev[21];
     float PenPressure;
     ImWchar16 InputQueueSurrogate;
-    ImWchar InputQueueCharacters;
+    struct ImVector InputQueueCharacters;
 };
 struct ImGuiInputTextCallbackData{
     ImGuiInputTextFlags EventFlag;
@@ -765,7 +770,7 @@ struct ImGuiStoragePair{
     ImGuiID key;
 };
 struct ImGuiStorage{
-    struct ImGuiStoragePair Data;
+    struct ImVector Data;
 };
 typedef void(*ImDrawCallback)(const struct ImDrawList* parent_list, const struct ImDrawCmd* cmd);
 struct ImDrawCmd{
@@ -789,13 +794,13 @@ struct ImDrawCmdHeader{
     unsigned int VtxOffset;
 };
 struct ImDrawChannel{
-    struct ImDrawCmd _CmdBuffer;
-    ImDrawIdx _IdxBuffer;
+    struct ImVector _CmdBuffer;
+    struct ImVector _IdxBuffer;
 };
 struct ImDrawListSplitter{
     int _Current;
     int _Count;
-    struct ImDrawChannel _Channels;
+    struct ImVector _Channels;
 };
 enum ImDrawFlags_{
     ImDrawFlags_None = 0,
@@ -821,18 +826,18 @@ enum ImDrawListFlags_{
     ImDrawListFlags_AllowVtxOffset = 1 << 3,
 };
 struct ImDrawList{
-    struct ImDrawCmd CmdBuffer;
-    ImDrawIdx IdxBuffer;
-    struct ImDrawVert VtxBuffer;
+    struct ImVector CmdBuffer;
+    struct ImVector IdxBuffer;
+    struct ImVector VtxBuffer;
     ImDrawListFlags Flags;
     unsigned int _VtxCurrentIdx;
     const struct ImDrawListSharedData* _Data;
     const char* _OwnerName;
     struct ImDrawVert* _VtxWritePtr;
     ImDrawIdx* _IdxWritePtr;
-    struct ImVec4 _ClipRectStack;
-    ImTextureID _TextureIdStack;
-    struct ImVec2 _Path;
+    struct ImVector _ClipRectStack;
+    struct ImVector _TextureIdStack;
+    struct ImVector _Path;
     struct ImDrawCmdHeader _CmdHeader;
     struct ImDrawListSplitter _Splitter;
     float _FringeScale;
@@ -933,13 +938,6 @@ struct ImGuiViewport{
     bool PlatformRequestResize;
     bool PlatformRequestClose;
 };
-struct ImGuiPlatformMonitor{
-    struct ImVec2 MainPos;
-    struct ImVec2 MainSize;
-    struct ImVec2 WorkPos;
-    struct ImVec2 WorkSize;
-    float DpiScale;
-};
 struct ImGuiPlatformIO{
     void(*Platform_CreateWindow)(struct ImGuiViewport* vp);
     void(*Platform_DestroyWindow)(struct ImGuiViewport* vp);
@@ -965,8 +963,15 @@ struct ImGuiPlatformIO{
     void(*Renderer_SetWindowSize)(struct ImGuiViewport* vp, struct ImVec2 size);
     void(*Renderer_RenderWindow)(struct ImGuiViewport* vp, void* render_arg);
     void(*Renderer_SwapBuffers)(struct ImGuiViewport* vp, void* render_arg);
-    struct ImGuiPlatformMonitor Monitors;
-    struct ImGuiViewport Viewports;
+    struct ImVector Monitors;
+    struct ImVector Viewports;
+};
+struct ImGuiPlatformMonitor{
+    struct ImVec2 MainPos;
+    struct ImVec2 MainSize;
+    struct ImVec2 WorkPos;
+    struct ImVec2 WorkSize;
+    float DpiScale;
 };
 enum ImDrawCornerFlags_{
     ImDrawCornerFlags_None = 256,
