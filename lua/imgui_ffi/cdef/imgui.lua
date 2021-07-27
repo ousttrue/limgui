@@ -1,9 +1,6 @@
 -- generated from imgui.h
 local ffi = require 'ffi'
 ffi.cdef[[
-struct ImDrawListSharedData;
-struct ImFontBuilderIO;
-struct ImGuiContext;
 typedef int ImGuiCol;
 typedef int ImGuiCond;
 typedef int ImGuiDataType;
@@ -47,8 +44,11 @@ typedef void*(*ImGuiMemAllocFunc)(size_t sz, void* user_data);
 typedef void(*ImGuiMemFreeFunc)(void* ptr, void* user_data);
 typedef unsigned short ImWchar16;
 typedef ImWchar16 ImWchar;
+typedef char ImS8;
 typedef unsigned char ImU8;
 typedef short ImS16;
+typedef unsigned short ImU16;
+typedef int ImS32;
 typedef unsigned int ImU32;
 typedef unsigned long long ImU64;
 struct ImVec2{
@@ -797,6 +797,24 @@ struct ImGuiTableSortSpecs{
     int SpecsCount;
     bool SpecsDirty;
 };
+struct ImGuiTextBuffer{
+    struct ImVector Buf;
+};
+void ImGuiTextBuffer_append(
+    struct ImGuiTextBuffer* this,
+    const char* str,
+    const char* str_end
+) asm("?append@ImGuiTextBuffer@@QEAAXPEBD0@Z");
+void ImGuiTextBuffer_appendf(
+    struct ImGuiTextBuffer* this,
+    const char* fmt
+, ...
+) asm("?appendf@ImGuiTextBuffer@@QEAAXPEBDZZ");
+void ImGuiTextBuffer_appendfv(
+    struct ImGuiTextBuffer* this,
+    const char* fmt,
+    va_list args
+) asm("?appendfv@ImGuiTextBuffer@@QEAAXPEBDPEAD@Z");
 struct ImGuiStoragePair{
     ImGuiID key;
 };

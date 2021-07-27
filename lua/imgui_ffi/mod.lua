@@ -9,12 +9,15 @@ local M = {
 }
 
 -- cdef
-require('imgui_ffi.cdef.imgui')
-require('imgui_ffi.cdef.imgui_impl_opengl3')
-require('imgui_ffi.cdef.gl')
 require('imgui_ffi.cdef.vcruntime')
-require('imgui_ffi.cdef.imgui_impl_glfw')
+require('imgui_ffi.cdef.corecrt_wstdio')
 require('imgui_ffi.cdef.vadefs')
+require('imgui_ffi.cdef.gl')
+require('imgui_ffi.cdef.imgui')
+require('imgui_ffi.cdef.imgui_impl_glfw')
+require('imgui_ffi.cdef.imgui_impl_opengl3')
+require('imgui_ffi.cdef.imstb_textedit')
+require('imgui_ffi.cdef.imgui_internal')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -593,10 +596,280 @@ M.enums = {
         ImDrawCornerFlags_Left = C.ImDrawCornerFlags_Left,
         ImDrawCornerFlags_Right = C.ImDrawCornerFlags_Right,
     },
+    ImGuiItemFlags_ = {
+        ImGuiItemFlags_None = C.ImGuiItemFlags_None,
+        ImGuiItemFlags_NoTabStop = C.ImGuiItemFlags_NoTabStop,
+        ImGuiItemFlags_ButtonRepeat = C.ImGuiItemFlags_ButtonRepeat,
+        ImGuiItemFlags_Disabled = C.ImGuiItemFlags_Disabled,
+        ImGuiItemFlags_NoNav = C.ImGuiItemFlags_NoNav,
+        ImGuiItemFlags_NoNavDefaultFocus = C.ImGuiItemFlags_NoNavDefaultFocus,
+        ImGuiItemFlags_SelectableDontClosePopup = C.ImGuiItemFlags_SelectableDontClosePopup,
+        ImGuiItemFlags_MixedValue = C.ImGuiItemFlags_MixedValue,
+        ImGuiItemFlags_ReadOnly = C.ImGuiItemFlags_ReadOnly,
+    },
+    ImGuiItemAddFlags_ = {
+        ImGuiItemAddFlags_None = C.ImGuiItemAddFlags_None,
+        ImGuiItemAddFlags_Focusable = C.ImGuiItemAddFlags_Focusable,
+    },
+    ImGuiItemStatusFlags_ = {
+        ImGuiItemStatusFlags_None = C.ImGuiItemStatusFlags_None,
+        ImGuiItemStatusFlags_HoveredRect = C.ImGuiItemStatusFlags_HoveredRect,
+        ImGuiItemStatusFlags_HasDisplayRect = C.ImGuiItemStatusFlags_HasDisplayRect,
+        ImGuiItemStatusFlags_Edited = C.ImGuiItemStatusFlags_Edited,
+        ImGuiItemStatusFlags_ToggledSelection = C.ImGuiItemStatusFlags_ToggledSelection,
+        ImGuiItemStatusFlags_ToggledOpen = C.ImGuiItemStatusFlags_ToggledOpen,
+        ImGuiItemStatusFlags_HasDeactivated = C.ImGuiItemStatusFlags_HasDeactivated,
+        ImGuiItemStatusFlags_Deactivated = C.ImGuiItemStatusFlags_Deactivated,
+        ImGuiItemStatusFlags_HoveredWindow = C.ImGuiItemStatusFlags_HoveredWindow,
+        ImGuiItemStatusFlags_FocusedByCode = C.ImGuiItemStatusFlags_FocusedByCode,
+        ImGuiItemStatusFlags_FocusedByTabbing = C.ImGuiItemStatusFlags_FocusedByTabbing,
+        ImGuiItemStatusFlags_Focused = C.ImGuiItemStatusFlags_Focused,
+    },
+    ImGuiInputTextFlagsPrivate_ = {
+        ImGuiInputTextFlags_Multiline = C.ImGuiInputTextFlags_Multiline,
+        ImGuiInputTextFlags_NoMarkEdited = C.ImGuiInputTextFlags_NoMarkEdited,
+        ImGuiInputTextFlags_MergedItem = C.ImGuiInputTextFlags_MergedItem,
+    },
+    ImGuiButtonFlagsPrivate_ = {
+        ImGuiButtonFlags_PressedOnClick = C.ImGuiButtonFlags_PressedOnClick,
+        ImGuiButtonFlags_PressedOnClickRelease = C.ImGuiButtonFlags_PressedOnClickRelease,
+        ImGuiButtonFlags_PressedOnClickReleaseAnywhere = C.ImGuiButtonFlags_PressedOnClickReleaseAnywhere,
+        ImGuiButtonFlags_PressedOnRelease = C.ImGuiButtonFlags_PressedOnRelease,
+        ImGuiButtonFlags_PressedOnDoubleClick = C.ImGuiButtonFlags_PressedOnDoubleClick,
+        ImGuiButtonFlags_PressedOnDragDropHold = C.ImGuiButtonFlags_PressedOnDragDropHold,
+        ImGuiButtonFlags_Repeat = C.ImGuiButtonFlags_Repeat,
+        ImGuiButtonFlags_FlattenChildren = C.ImGuiButtonFlags_FlattenChildren,
+        ImGuiButtonFlags_AllowItemOverlap = C.ImGuiButtonFlags_AllowItemOverlap,
+        ImGuiButtonFlags_DontClosePopups = C.ImGuiButtonFlags_DontClosePopups,
+        ImGuiButtonFlags_AlignTextBaseLine = C.ImGuiButtonFlags_AlignTextBaseLine,
+        ImGuiButtonFlags_NoKeyModifiers = C.ImGuiButtonFlags_NoKeyModifiers,
+        ImGuiButtonFlags_NoHoldingActiveId = C.ImGuiButtonFlags_NoHoldingActiveId,
+        ImGuiButtonFlags_NoNavFocus = C.ImGuiButtonFlags_NoNavFocus,
+        ImGuiButtonFlags_NoHoveredOnFocus = C.ImGuiButtonFlags_NoHoveredOnFocus,
+        ImGuiButtonFlags_PressedOnMask_ = C.ImGuiButtonFlags_PressedOnMask_,
+        ImGuiButtonFlags_PressedOnDefault_ = C.ImGuiButtonFlags_PressedOnDefault_,
+    },
+    ImGuiComboFlagsPrivate_ = {
+        ImGuiComboFlags_CustomPreview = C.ImGuiComboFlags_CustomPreview,
+    },
+    ImGuiSliderFlagsPrivate_ = {
+        ImGuiSliderFlags_Vertical = C.ImGuiSliderFlags_Vertical,
+        ImGuiSliderFlags_ReadOnly = C.ImGuiSliderFlags_ReadOnly,
+    },
+    ImGuiSelectableFlagsPrivate_ = {
+        ImGuiSelectableFlags_NoHoldingActiveID = C.ImGuiSelectableFlags_NoHoldingActiveID,
+        ImGuiSelectableFlags_SelectOnNav = C.ImGuiSelectableFlags_SelectOnNav,
+        ImGuiSelectableFlags_SelectOnClick = C.ImGuiSelectableFlags_SelectOnClick,
+        ImGuiSelectableFlags_SelectOnRelease = C.ImGuiSelectableFlags_SelectOnRelease,
+        ImGuiSelectableFlags_SpanAvailWidth = C.ImGuiSelectableFlags_SpanAvailWidth,
+        ImGuiSelectableFlags_DrawHoveredWhenHeld = C.ImGuiSelectableFlags_DrawHoveredWhenHeld,
+        ImGuiSelectableFlags_SetNavIdOnHover = C.ImGuiSelectableFlags_SetNavIdOnHover,
+        ImGuiSelectableFlags_NoPadWithHalfSpacing = C.ImGuiSelectableFlags_NoPadWithHalfSpacing,
+    },
+    ImGuiTreeNodeFlagsPrivate_ = {
+        ImGuiTreeNodeFlags_ClipLabelForTrailingButton = C.ImGuiTreeNodeFlags_ClipLabelForTrailingButton,
+    },
+    ImGuiSeparatorFlags_ = {
+        ImGuiSeparatorFlags_None = C.ImGuiSeparatorFlags_None,
+        ImGuiSeparatorFlags_Horizontal = C.ImGuiSeparatorFlags_Horizontal,
+        ImGuiSeparatorFlags_Vertical = C.ImGuiSeparatorFlags_Vertical,
+        ImGuiSeparatorFlags_SpanAllColumns = C.ImGuiSeparatorFlags_SpanAllColumns,
+    },
+    ImGuiTextFlags_ = {
+        ImGuiTextFlags_None = C.ImGuiTextFlags_None,
+        ImGuiTextFlags_NoWidthForLargeClippedText = C.ImGuiTextFlags_NoWidthForLargeClippedText,
+    },
+    ImGuiTooltipFlags_ = {
+        ImGuiTooltipFlags_None = C.ImGuiTooltipFlags_None,
+        ImGuiTooltipFlags_OverridePreviousTooltip = C.ImGuiTooltipFlags_OverridePreviousTooltip,
+    },
+    ImGuiLayoutType_ = {
+        ImGuiLayoutType_Horizontal = C.ImGuiLayoutType_Horizontal,
+        ImGuiLayoutType_Vertical = C.ImGuiLayoutType_Vertical,
+    },
+    ImGuiLogType = {
+        ImGuiLogType_None = C.ImGuiLogType_None,
+        ImGuiLogType_TTY = C.ImGuiLogType_TTY,
+        ImGuiLogType_File = C.ImGuiLogType_File,
+        ImGuiLogType_Buffer = C.ImGuiLogType_Buffer,
+        ImGuiLogType_Clipboard = C.ImGuiLogType_Clipboard,
+    },
+    ImGuiAxis = {
+        ImGuiAxis_None = C.ImGuiAxis_None,
+        ImGuiAxis_X = C.ImGuiAxis_X,
+        ImGuiAxis_Y = C.ImGuiAxis_Y,
+    },
+    ImGuiPlotType = {
+        ImGuiPlotType_Lines = C.ImGuiPlotType_Lines,
+        ImGuiPlotType_Histogram = C.ImGuiPlotType_Histogram,
+    },
+    ImGuiInputSource = {
+        ImGuiInputSource_None = C.ImGuiInputSource_None,
+        ImGuiInputSource_Mouse = C.ImGuiInputSource_Mouse,
+        ImGuiInputSource_Keyboard = C.ImGuiInputSource_Keyboard,
+        ImGuiInputSource_Gamepad = C.ImGuiInputSource_Gamepad,
+        ImGuiInputSource_Nav = C.ImGuiInputSource_Nav,
+        ImGuiInputSource_Clipboard = C.ImGuiInputSource_Clipboard,
+        ImGuiInputSource_COUNT = C.ImGuiInputSource_COUNT,
+    },
+    ImGuiInputReadMode = {
+        ImGuiInputReadMode_Down = C.ImGuiInputReadMode_Down,
+        ImGuiInputReadMode_Pressed = C.ImGuiInputReadMode_Pressed,
+        ImGuiInputReadMode_Released = C.ImGuiInputReadMode_Released,
+        ImGuiInputReadMode_Repeat = C.ImGuiInputReadMode_Repeat,
+        ImGuiInputReadMode_RepeatSlow = C.ImGuiInputReadMode_RepeatSlow,
+        ImGuiInputReadMode_RepeatFast = C.ImGuiInputReadMode_RepeatFast,
+    },
+    ImGuiNavHighlightFlags_ = {
+        ImGuiNavHighlightFlags_None = C.ImGuiNavHighlightFlags_None,
+        ImGuiNavHighlightFlags_TypeDefault = C.ImGuiNavHighlightFlags_TypeDefault,
+        ImGuiNavHighlightFlags_TypeThin = C.ImGuiNavHighlightFlags_TypeThin,
+        ImGuiNavHighlightFlags_AlwaysDraw = C.ImGuiNavHighlightFlags_AlwaysDraw,
+        ImGuiNavHighlightFlags_NoRounding = C.ImGuiNavHighlightFlags_NoRounding,
+    },
+    ImGuiNavDirSourceFlags_ = {
+        ImGuiNavDirSourceFlags_None = C.ImGuiNavDirSourceFlags_None,
+        ImGuiNavDirSourceFlags_Keyboard = C.ImGuiNavDirSourceFlags_Keyboard,
+        ImGuiNavDirSourceFlags_PadDPad = C.ImGuiNavDirSourceFlags_PadDPad,
+        ImGuiNavDirSourceFlags_PadLStick = C.ImGuiNavDirSourceFlags_PadLStick,
+    },
+    ImGuiNavMoveFlags_ = {
+        ImGuiNavMoveFlags_None = C.ImGuiNavMoveFlags_None,
+        ImGuiNavMoveFlags_LoopX = C.ImGuiNavMoveFlags_LoopX,
+        ImGuiNavMoveFlags_LoopY = C.ImGuiNavMoveFlags_LoopY,
+        ImGuiNavMoveFlags_WrapX = C.ImGuiNavMoveFlags_WrapX,
+        ImGuiNavMoveFlags_WrapY = C.ImGuiNavMoveFlags_WrapY,
+        ImGuiNavMoveFlags_AllowCurrentNavId = C.ImGuiNavMoveFlags_AllowCurrentNavId,
+        ImGuiNavMoveFlags_AlsoScoreVisibleSet = C.ImGuiNavMoveFlags_AlsoScoreVisibleSet,
+        ImGuiNavMoveFlags_ScrollToEdge = C.ImGuiNavMoveFlags_ScrollToEdge,
+    },
+    ImGuiNavForward = {
+        ImGuiNavForward_None = C.ImGuiNavForward_None,
+        ImGuiNavForward_ForwardQueued = C.ImGuiNavForward_ForwardQueued,
+        ImGuiNavForward_ForwardActive = C.ImGuiNavForward_ForwardActive,
+    },
+    ImGuiNavLayer = {
+        ImGuiNavLayer_Main = C.ImGuiNavLayer_Main,
+        ImGuiNavLayer_Menu = C.ImGuiNavLayer_Menu,
+        ImGuiNavLayer_COUNT = C.ImGuiNavLayer_COUNT,
+    },
+    ImGuiPopupPositionPolicy = {
+        ImGuiPopupPositionPolicy_Default = C.ImGuiPopupPositionPolicy_Default,
+        ImGuiPopupPositionPolicy_ComboBox = C.ImGuiPopupPositionPolicy_ComboBox,
+        ImGuiPopupPositionPolicy_Tooltip = C.ImGuiPopupPositionPolicy_Tooltip,
+    },
+    ImGuiDataTypePrivate_ = {
+        ImGuiDataType_String = C.ImGuiDataType_String,
+        ImGuiDataType_Pointer = C.ImGuiDataType_Pointer,
+        ImGuiDataType_ID = C.ImGuiDataType_ID,
+    },
+    ImGuiNextWindowDataFlags_ = {
+        ImGuiNextWindowDataFlags_None = C.ImGuiNextWindowDataFlags_None,
+        ImGuiNextWindowDataFlags_HasPos = C.ImGuiNextWindowDataFlags_HasPos,
+        ImGuiNextWindowDataFlags_HasSize = C.ImGuiNextWindowDataFlags_HasSize,
+        ImGuiNextWindowDataFlags_HasContentSize = C.ImGuiNextWindowDataFlags_HasContentSize,
+        ImGuiNextWindowDataFlags_HasCollapsed = C.ImGuiNextWindowDataFlags_HasCollapsed,
+        ImGuiNextWindowDataFlags_HasSizeConstraint = C.ImGuiNextWindowDataFlags_HasSizeConstraint,
+        ImGuiNextWindowDataFlags_HasFocus = C.ImGuiNextWindowDataFlags_HasFocus,
+        ImGuiNextWindowDataFlags_HasBgAlpha = C.ImGuiNextWindowDataFlags_HasBgAlpha,
+        ImGuiNextWindowDataFlags_HasScroll = C.ImGuiNextWindowDataFlags_HasScroll,
+        ImGuiNextWindowDataFlags_HasViewport = C.ImGuiNextWindowDataFlags_HasViewport,
+        ImGuiNextWindowDataFlags_HasDock = C.ImGuiNextWindowDataFlags_HasDock,
+        ImGuiNextWindowDataFlags_HasWindowClass = C.ImGuiNextWindowDataFlags_HasWindowClass,
+    },
+    ImGuiNextItemDataFlags_ = {
+        ImGuiNextItemDataFlags_None = C.ImGuiNextItemDataFlags_None,
+        ImGuiNextItemDataFlags_HasWidth = C.ImGuiNextItemDataFlags_HasWidth,
+        ImGuiNextItemDataFlags_HasOpen = C.ImGuiNextItemDataFlags_HasOpen,
+    },
+    ImGuiOldColumnFlags_ = {
+        ImGuiOldColumnFlags_None = C.ImGuiOldColumnFlags_None,
+        ImGuiOldColumnFlags_NoBorder = C.ImGuiOldColumnFlags_NoBorder,
+        ImGuiOldColumnFlags_NoResize = C.ImGuiOldColumnFlags_NoResize,
+        ImGuiOldColumnFlags_NoPreserveWidths = C.ImGuiOldColumnFlags_NoPreserveWidths,
+        ImGuiOldColumnFlags_NoForceWithinWindow = C.ImGuiOldColumnFlags_NoForceWithinWindow,
+        ImGuiOldColumnFlags_GrowParentContentsSize = C.ImGuiOldColumnFlags_GrowParentContentsSize,
+        ImGuiColumnsFlags_None = C.ImGuiColumnsFlags_None,
+        ImGuiColumnsFlags_NoBorder = C.ImGuiColumnsFlags_NoBorder,
+        ImGuiColumnsFlags_NoResize = C.ImGuiColumnsFlags_NoResize,
+        ImGuiColumnsFlags_NoPreserveWidths = C.ImGuiColumnsFlags_NoPreserveWidths,
+        ImGuiColumnsFlags_NoForceWithinWindow = C.ImGuiColumnsFlags_NoForceWithinWindow,
+        ImGuiColumnsFlags_GrowParentContentsSize = C.ImGuiColumnsFlags_GrowParentContentsSize,
+    },
+    ImGuiDockNodeFlagsPrivate_ = {
+        ImGuiDockNodeFlags_DockSpace = C.ImGuiDockNodeFlags_DockSpace,
+        ImGuiDockNodeFlags_CentralNode = C.ImGuiDockNodeFlags_CentralNode,
+        ImGuiDockNodeFlags_NoTabBar = C.ImGuiDockNodeFlags_NoTabBar,
+        ImGuiDockNodeFlags_HiddenTabBar = C.ImGuiDockNodeFlags_HiddenTabBar,
+        ImGuiDockNodeFlags_NoWindowMenuButton = C.ImGuiDockNodeFlags_NoWindowMenuButton,
+        ImGuiDockNodeFlags_NoCloseButton = C.ImGuiDockNodeFlags_NoCloseButton,
+        ImGuiDockNodeFlags_NoDocking = C.ImGuiDockNodeFlags_NoDocking,
+        ImGuiDockNodeFlags_NoDockingSplitMe = C.ImGuiDockNodeFlags_NoDockingSplitMe,
+        ImGuiDockNodeFlags_NoDockingSplitOther = C.ImGuiDockNodeFlags_NoDockingSplitOther,
+        ImGuiDockNodeFlags_NoDockingOverMe = C.ImGuiDockNodeFlags_NoDockingOverMe,
+        ImGuiDockNodeFlags_NoDockingOverOther = C.ImGuiDockNodeFlags_NoDockingOverOther,
+        ImGuiDockNodeFlags_NoDockingOverEmpty = C.ImGuiDockNodeFlags_NoDockingOverEmpty,
+        ImGuiDockNodeFlags_NoResizeX = C.ImGuiDockNodeFlags_NoResizeX,
+        ImGuiDockNodeFlags_NoResizeY = C.ImGuiDockNodeFlags_NoResizeY,
+        ImGuiDockNodeFlags_SharedFlagsInheritMask_ = C.ImGuiDockNodeFlags_SharedFlagsInheritMask_,
+        ImGuiDockNodeFlags_NoResizeFlagsMask_ = C.ImGuiDockNodeFlags_NoResizeFlagsMask_,
+        ImGuiDockNodeFlags_LocalFlagsMask_ = C.ImGuiDockNodeFlags_LocalFlagsMask_,
+        ImGuiDockNodeFlags_LocalFlagsTransferMask_ = C.ImGuiDockNodeFlags_LocalFlagsTransferMask_,
+        ImGuiDockNodeFlags_SavedFlagsMask_ = C.ImGuiDockNodeFlags_SavedFlagsMask_,
+    },
+    ImGuiDataAuthority_ = {
+        ImGuiDataAuthority_Auto = C.ImGuiDataAuthority_Auto,
+        ImGuiDataAuthority_DockNode = C.ImGuiDataAuthority_DockNode,
+        ImGuiDataAuthority_Window = C.ImGuiDataAuthority_Window,
+    },
+    ImGuiDockNodeState = {
+        ImGuiDockNodeState_Unknown = C.ImGuiDockNodeState_Unknown,
+        ImGuiDockNodeState_HostWindowHiddenBecauseSingleWindow = C.ImGuiDockNodeState_HostWindowHiddenBecauseSingleWindow,
+        ImGuiDockNodeState_HostWindowHiddenBecauseWindowsAreResizing = C.ImGuiDockNodeState_HostWindowHiddenBecauseWindowsAreResizing,
+        ImGuiDockNodeState_HostWindowVisible = C.ImGuiDockNodeState_HostWindowVisible,
+    },
+    ImGuiWindowDockStyleCol = {
+        ImGuiWindowDockStyleCol_Text = C.ImGuiWindowDockStyleCol_Text,
+        ImGuiWindowDockStyleCol_Tab = C.ImGuiWindowDockStyleCol_Tab,
+        ImGuiWindowDockStyleCol_TabHovered = C.ImGuiWindowDockStyleCol_TabHovered,
+        ImGuiWindowDockStyleCol_TabActive = C.ImGuiWindowDockStyleCol_TabActive,
+        ImGuiWindowDockStyleCol_TabUnfocused = C.ImGuiWindowDockStyleCol_TabUnfocused,
+        ImGuiWindowDockStyleCol_TabUnfocusedActive = C.ImGuiWindowDockStyleCol_TabUnfocusedActive,
+        ImGuiWindowDockStyleCol_COUNT = C.ImGuiWindowDockStyleCol_COUNT,
+    },
+    ImGuiContextHookType = {
+        ImGuiContextHookType_NewFramePre = C.ImGuiContextHookType_NewFramePre,
+        ImGuiContextHookType_NewFramePost = C.ImGuiContextHookType_NewFramePost,
+        ImGuiContextHookType_EndFramePre = C.ImGuiContextHookType_EndFramePre,
+        ImGuiContextHookType_EndFramePost = C.ImGuiContextHookType_EndFramePost,
+        ImGuiContextHookType_RenderPre = C.ImGuiContextHookType_RenderPre,
+        ImGuiContextHookType_RenderPost = C.ImGuiContextHookType_RenderPost,
+        ImGuiContextHookType_Shutdown = C.ImGuiContextHookType_Shutdown,
+        ImGuiContextHookType_PendingRemoval_ = C.ImGuiContextHookType_PendingRemoval_,
+    },
+    ImGuiTabBarFlagsPrivate_ = {
+        ImGuiTabBarFlags_DockNode = C.ImGuiTabBarFlags_DockNode,
+        ImGuiTabBarFlags_IsFocused = C.ImGuiTabBarFlags_IsFocused,
+        ImGuiTabBarFlags_SaveSettings = C.ImGuiTabBarFlags_SaveSettings,
+    },
+    ImGuiTabItemFlagsPrivate_ = {
+        ImGuiTabItemFlags_SectionMask_ = C.ImGuiTabItemFlags_SectionMask_,
+        ImGuiTabItemFlags_NoCloseButton = C.ImGuiTabItemFlags_NoCloseButton,
+        ImGuiTabItemFlags_Button = C.ImGuiTabItemFlags_Button,
+        ImGuiTabItemFlags_Unsorted = C.ImGuiTabItemFlags_Unsorted,
+        ImGuiTabItemFlags_Preview = C.ImGuiTabItemFlags_Preview,
+    },
 }
----@class ImDrawListSharedData
----@class ImFontBuilderIO
----@class ImGuiContext
+---@class va_list
+---@class GLFWwindow
+---@class GLFWmonitor
+---@class size_t
+---@class StbUndoRecord
+---@class StbUndoState
+---@class STB_TexteditState
+---@class GLADapiproc
+---@class GLADloadfunc
+---@class GLADuserptrloadfunc
 ---@class ImGuiCol
 ---@class ImGuiCond
 ---@class ImGuiDataType
@@ -640,8 +913,11 @@ M.enums = {
 ---@class ImGuiMemFreeFunc
 ---@class ImWchar16
 ---@class ImWchar
+---@class ImS8
 ---@class ImU8
 ---@class ImS16
+---@class ImU16
+---@class ImS32
 ---@class ImU32
 ---@class ImU64
 ---@class ImVec2
@@ -655,6 +931,7 @@ M.enums = {
 ---@class ImGuiPayload
 ---@class ImGuiTableColumnSortSpecs
 ---@class ImGuiTableSortSpecs
+---@class ImGuiTextBuffer
 ---@class ImGuiStorage
 ---@class ImDrawCallback
 ---@class ImDrawCmd
@@ -673,13 +950,68 @@ M.enums = {
 ---@class ImGuiViewport
 ---@class ImGuiPlatformIO
 ---@class ImGuiPlatformMonitor
----@class GLADapiproc
----@class GLADloadfunc
----@class GLADuserptrloadfunc
----@class size_t
----@class GLFWwindow
----@class GLFWmonitor
----@class va_list
+---@class ImGuiDockRequest
+---@class ImGuiDockNodeSettings
+---@class ImGuiDataAuthority
+---@class ImGuiLayoutType
+---@class ImGuiItemFlags
+---@class ImGuiItemStatusFlags
+---@class ImGuiOldColumnFlags
+---@class ImGuiNavMoveFlags
+---@class ImGuiNextItemDataFlags
+---@class ImGuiNextWindowDataFlags
+---@class ImFileHandle
+---@class ImVec1
+---@class ImVec2ih
+---@class ImRect
+---@class ImSpan
+---@class ImPoolIdx
+---@class ImPool
+---@class ImChunkStream
+---@class ImDrawListSharedData
+---@class ImDrawDataBuilder
+---@class ImGuiColorMod
+---@class ImGuiStyleMod
+---@class ImGuiComboPreviewData
+---@class ImGuiGroupData
+---@class ImGuiMenuColumns
+---@class ImGuiInputTextState
+---@class ImGuiPopupData
+---@class ImGuiNavItemData
+---@class ImGuiNextWindowData
+---@class ImGuiNextItemData
+---@class ImGuiLastItemData
+---@class ImGuiWindowStackData
+---@class ImGuiShrinkWidthItem
+---@class ImGuiPtrOrIndex
+---@class ImGuiOldColumnData
+---@class ImGuiOldColumns
+---@class ImGuiDockNode
+---@class ImGuiWindowDockStyle
+---@class ImGuiDockContext
+---@class ImGuiViewportP
+---@class ImGuiWindowSettings
+---@class ImGuiSettingsHandler
+---@class ImGuiMetricsConfig
+---@class ImGuiStackSizes
+---@class ImGuiContextHookCallback
+---@class ImGuiContextHook
+---@class ImGuiContext
+---@class ImGuiWindowTempData
+---@class ImGuiWindow
+---@class ImGuiTabItem
+---@class ImGuiTabBar
+---@class ImGuiTableColumnIdx
+---@class ImGuiTableDrawChannelIdx
+---@class ImGuiTableColumn
+---@class ImGuiTableCellData
+---@class ImGuiTable
+---@class ImGuiTableTempData
+---@class ImGuiTableColumnSettings
+---@class ImGuiTableSettings
+---@class ImFontBuilderIO
+---@class _iobuf
+---@class FILE
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -687,6 +1019,26 @@ M.enums = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
+    ---@type fun():nil
+    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
+    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
+    ---@type fun(window:any, xoffset:number, yoffset:number):nil
+    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
+    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
+    ---@type fun(window:any, c:integer):nil
+    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
+    ---@type fun(monitor:any, event:integer):nil
+    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
     ---@param shared_font_atlas any
     CreateContext = function(shared_font_atlas)
         return imgui.CreateContext(shared_font_atlas)
@@ -2455,6 +2807,16 @@ M.libs.imgui = {
         return imgui.ImGuiInputTextCallbackData_InsertChars(this, pos, text, text_end)
     end,
     ---@param this any
+    ---@param str string
+    ---@param str_end string
+    ImGuiTextBuffer_append = function(this, str, str_end)
+        return imgui.ImGuiTextBuffer_append(this, str, str_end)
+    end,
+    ---@type fun(this:any, fmt:string, ...):nil
+    ImGuiTextBuffer_appendf = imgui.ImGuiTextBuffer_appendf,
+    ---@type fun(this:any, fmt:string, args:va_list):nil
+    ImGuiTextBuffer_appendfv = imgui.ImGuiTextBuffer_appendfv,
+    ---@param this any
     ---@param key ImGuiID
     ---@param default_val integer
     ImGuiStorage_GetInt = function(this, key, default_val)
@@ -2957,6 +3319,229 @@ M.libs.imgui = {
     ImFont_SetGlyphVisible = imgui.ImFont_SetGlyphVisible,
     ---@type fun(this:any, c_begin:integer, c_last:integer):boolean
     ImFont_IsGlyphRangeUnused = imgui.ImFont_IsGlyphRangeUnused,
+    ---@type fun(ctx:any):nil
+    DockContextInitialize = imgui.DockContextInitialize,
+    ---@type fun(ctx:any):nil
+    DockContextShutdown = imgui.DockContextShutdown,
+    ---@type fun(ctx:any, root_id:ImGuiID, clear_settings_refs:boolean):nil
+    DockContextClearNodes = imgui.DockContextClearNodes,
+    ---@type fun(ctx:any):nil
+    DockContextRebuildNodes = imgui.DockContextRebuildNodes,
+    ---@type fun(ctx:any):nil
+    DockContextNewFrameUpdateUndocking = imgui.DockContextNewFrameUpdateUndocking,
+    ---@type fun(ctx:any):nil
+    DockContextNewFrameUpdateDocking = imgui.DockContextNewFrameUpdateDocking,
+    ---@type fun(ctx:any):ImGuiID
+    DockContextGenNodeID = imgui.DockContextGenNodeID,
+    ---@type fun(ctx:any, target:any, target_node:any, payload:any, split_dir:ImGuiDir, split_ratio:number, split_outer:boolean):nil
+    DockContextQueueDock = imgui.DockContextQueueDock,
+    ---@type fun(ctx:any, window:any):nil
+    DockContextQueueUndockWindow = imgui.DockContextQueueUndockWindow,
+    ---@type fun(ctx:any, node:any):nil
+    DockContextQueueUndockNode = imgui.DockContextQueueUndockNode,
+    ---@type fun(target:any, target_node:any, payload:any, split_dir:ImGuiDir, split_outer:boolean, out_pos:any):boolean
+    DockContextCalcDropPosForDocking = imgui.DockContextCalcDropPosForDocking,
+    ---@type fun(node:any):boolean
+    DockNodeBeginAmendTabBar = imgui.DockNodeBeginAmendTabBar,
+    ---@type fun():nil
+    DockNodeEndAmendTabBar = imgui.DockNodeEndAmendTabBar,
+    ---@type fun(window:any, p_open:any):nil
+    BeginDocked = imgui.BeginDocked,
+    ---@type fun(window:any):nil
+    BeginDockableDragDropSource = imgui.BeginDockableDragDropSource,
+    ---@type fun(window:any):nil
+    BeginDockableDragDropTarget = imgui.BeginDockableDragDropTarget,
+    ---@type fun(window:any, dock_id:ImGuiID, cond:ImGuiCond):nil
+    SetWindowDock = imgui.SetWindowDock,
+    ---@type fun(window_name:string, node_id:ImGuiID):nil
+    DockBuilderDockWindow = imgui.DockBuilderDockWindow,
+    ---@type fun(node_id:ImGuiID):any
+    DockBuilderGetNode = imgui.DockBuilderGetNode,
+    ---@param node_id ImGuiID
+    ---@param flags ImGuiDockNodeFlags
+    DockBuilderAddNode = function(node_id, flags)
+        node_id = node_id or 0
+        flags = flags or 0
+        return imgui.DockBuilderAddNode(node_id, flags)
+    end,
+    ---@type fun(node_id:ImGuiID):nil
+    DockBuilderRemoveNode = imgui.DockBuilderRemoveNode,
+    ---@param node_id ImGuiID
+    ---@param clear_settings_refs boolean
+    DockBuilderRemoveNodeDockedWindows = function(node_id, clear_settings_refs)
+        clear_settings_refs = clear_settings_refs or true
+        return imgui.DockBuilderRemoveNodeDockedWindows(node_id, clear_settings_refs)
+    end,
+    ---@type fun(node_id:ImGuiID):nil
+    DockBuilderRemoveNodeChildNodes = imgui.DockBuilderRemoveNodeChildNodes,
+    ---@type fun(node_id:ImGuiID, pos:ImVec2):nil
+    DockBuilderSetNodePos = imgui.DockBuilderSetNodePos,
+    ---@type fun(node_id:ImGuiID, size:ImVec2):nil
+    DockBuilderSetNodeSize = imgui.DockBuilderSetNodeSize,
+    ---@type fun(node_id:ImGuiID, split_dir:ImGuiDir, size_ratio_for_node_at_dir:number, out_id_at_dir:any, out_id_at_opposite_dir:any):ImGuiID
+    DockBuilderSplitNode = imgui.DockBuilderSplitNode,
+    ---@type fun(src_dockspace_id:ImGuiID, dst_dockspace_id:ImGuiID, in_window_remap_pairs:any):nil
+    DockBuilderCopyDockSpace = imgui.DockBuilderCopyDockSpace,
+    ---@type fun(src_node_id:ImGuiID, dst_node_id:ImGuiID, out_node_remap_pairs:any):nil
+    DockBuilderCopyNode = imgui.DockBuilderCopyNode,
+    ---@type fun(src_name:string, dst_name:string):nil
+    DockBuilderCopyWindowSettings = imgui.DockBuilderCopyWindowSettings,
+    ---@type fun(node_id:ImGuiID):nil
+    DockBuilderFinish = imgui.DockBuilderFinish,
+    ---@type fun(draw_list:any, p_min:ImVec2, sz:number, col:ImU32):nil
+    RenderArrowDockMenu = imgui.RenderArrowDockMenu,
+    ---@type fun(node:any, label:string):nil
+    DebugNodeDockNode = imgui.DebugNodeDockNode,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetCenter = imgui.ImRect_GetCenter,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetSize = imgui.ImRect_GetSize,
+    ---@type fun(this:any):number
+    ImRect_GetWidth = imgui.ImRect_GetWidth,
+    ---@type fun(this:any):number
+    ImRect_GetHeight = imgui.ImRect_GetHeight,
+    ---@type fun(this:any):number
+    ImRect_GetArea = imgui.ImRect_GetArea,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetTL = imgui.ImRect_GetTL,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetTR = imgui.ImRect_GetTR,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetBL = imgui.ImRect_GetBL,
+    ---@type fun(this:any):ImVec2
+    ImRect_GetBR = imgui.ImRect_GetBR,
+    ---@type fun(this:any, p:any):boolean
+    ImRect_Contains = imgui.ImRect_Contains,
+    ---@type fun(this:any, r:any):boolean
+    ImRect_Contains = imgui.ImRect_Contains,
+    ---@type fun(this:any, r:any):boolean
+    ImRect_Overlaps = imgui.ImRect_Overlaps,
+    ---@type fun(this:any, p:any):nil
+    ImRect_Add = imgui.ImRect_Add,
+    ---@type fun(this:any, r:any):nil
+    ImRect_Add = imgui.ImRect_Add,
+    ---@type fun(this:any, amount:number):nil
+    ImRect_Expand = imgui.ImRect_Expand,
+    ---@type fun(this:any, amount:any):nil
+    ImRect_Expand = imgui.ImRect_Expand,
+    ---@type fun(this:any, d:any):nil
+    ImRect_Translate = imgui.ImRect_Translate,
+    ---@type fun(this:any, dx:number):nil
+    ImRect_TranslateX = imgui.ImRect_TranslateX,
+    ---@type fun(this:any, dy:number):nil
+    ImRect_TranslateY = imgui.ImRect_TranslateY,
+    ---@type fun(this:any, r:any):nil
+    ImRect_ClipWith = imgui.ImRect_ClipWith,
+    ---@type fun(this:any, r:any):nil
+    ImRect_ClipWithFull = imgui.ImRect_ClipWithFull,
+    ---@type fun(this:any):nil
+    ImRect_Floor = imgui.ImRect_Floor,
+    ---@type fun(this:any):boolean
+    ImRect_IsInverted = imgui.ImRect_IsInverted,
+    ---@type fun(this:any):ImVec4
+    ImRect_ToVec4 = imgui.ImRect_ToVec4,
+    ---@type fun(this:any, max_error:number):nil
+    ImDrawListSharedData_SetCircleTessellationMaxError = imgui.ImDrawListSharedData_SetCircleTessellationMaxError,
+    ---@type fun(this:any):nil
+    ImDrawDataBuilder_FlattenIntoSingleLayer = imgui.ImDrawDataBuilder_FlattenIntoSingleLayer,
+    ---@type fun(this:any, spacing:number, window_reappearing:boolean):nil
+    ImGuiMenuColumns_Update = imgui.ImGuiMenuColumns_Update,
+    ---@type fun(this:any, w_icon:number, w_label:number, w_shortcut:number, w_mark:number):number
+    ImGuiMenuColumns_DeclColumns = imgui.ImGuiMenuColumns_DeclColumns,
+    ---@type fun(this:any, update_offsets:boolean):nil
+    ImGuiMenuColumns_CalcNextTotalWidth = imgui.ImGuiMenuColumns_CalcNextTotalWidth,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_ClearText = imgui.ImGuiInputTextState_ClearText,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_ClearFreeMemory = imgui.ImGuiInputTextState_ClearFreeMemory,
+    ---@type fun(this:any):integer
+    ImGuiInputTextState_GetUndoAvailCount = imgui.ImGuiInputTextState_GetUndoAvailCount,
+    ---@type fun(this:any):integer
+    ImGuiInputTextState_GetRedoAvailCount = imgui.ImGuiInputTextState_GetRedoAvailCount,
+    ---@type fun(this:any, key:integer):nil
+    ImGuiInputTextState_OnKeyPressed = imgui.ImGuiInputTextState_OnKeyPressed,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_CursorAnimReset = imgui.ImGuiInputTextState_CursorAnimReset,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_CursorClamp = imgui.ImGuiInputTextState_CursorClamp,
+    ---@type fun(this:any):boolean
+    ImGuiInputTextState_HasSelection = imgui.ImGuiInputTextState_HasSelection,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_ClearSelection = imgui.ImGuiInputTextState_ClearSelection,
+    ---@type fun(this:any):integer
+    ImGuiInputTextState_GetCursorPos = imgui.ImGuiInputTextState_GetCursorPos,
+    ---@type fun(this:any):integer
+    ImGuiInputTextState_GetSelectionStart = imgui.ImGuiInputTextState_GetSelectionStart,
+    ---@type fun(this:any):integer
+    ImGuiInputTextState_GetSelectionEnd = imgui.ImGuiInputTextState_GetSelectionEnd,
+    ---@type fun(this:any):nil
+    ImGuiInputTextState_SelectAll = imgui.ImGuiInputTextState_SelectAll,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsRootNode = imgui.ImGuiDockNode_IsRootNode,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsDockSpace = imgui.ImGuiDockNode_IsDockSpace,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsFloatingNode = imgui.ImGuiDockNode_IsFloatingNode,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsCentralNode = imgui.ImGuiDockNode_IsCentralNode,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsHiddenTabBar = imgui.ImGuiDockNode_IsHiddenTabBar,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsNoTabBar = imgui.ImGuiDockNode_IsNoTabBar,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsSplitNode = imgui.ImGuiDockNode_IsSplitNode,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsLeafNode = imgui.ImGuiDockNode_IsLeafNode,
+    ---@type fun(this:any):boolean
+    ImGuiDockNode_IsEmpty = imgui.ImGuiDockNode_IsEmpty,
+    ---@type fun(this:any):ImRect
+    ImGuiDockNode_Rect = imgui.ImGuiDockNode_Rect,
+    ---@type fun(this:any, flags:ImGuiDockNodeFlags):nil
+    ImGuiDockNode_SetLocalFlags = imgui.ImGuiDockNode_SetLocalFlags,
+    ---@type fun(this:any):nil
+    ImGuiDockNode_UpdateMergedFlags = imgui.ImGuiDockNode_UpdateMergedFlags,
+    ---@type fun(this:any):nil
+    ImGuiStackSizes_SetToCurrentState = imgui.ImGuiStackSizes_SetToCurrentState,
+    ---@type fun(this:any):nil
+    ImGuiStackSizes_CompareWithCurrentState = imgui.ImGuiStackSizes_CompareWithCurrentState,
+    ---@param this any
+    ---@param str string
+    ---@param str_end string
+    ImGuiWindow_GetID = function(this, str, str_end)
+        return imgui.ImGuiWindow_GetID(this, str, str_end)
+    end,
+    ---@type fun(this:any, ptr:any):ImGuiID
+    ImGuiWindow_GetID = imgui.ImGuiWindow_GetID,
+    ---@type fun(this:any, n:integer):ImGuiID
+    ImGuiWindow_GetID = imgui.ImGuiWindow_GetID,
+    ---@param this any
+    ---@param str string
+    ---@param str_end string
+    ImGuiWindow_GetIDNoKeepAlive = function(this, str, str_end)
+        return imgui.ImGuiWindow_GetIDNoKeepAlive(this, str, str_end)
+    end,
+    ---@type fun(this:any, ptr:any):ImGuiID
+    ImGuiWindow_GetIDNoKeepAlive = imgui.ImGuiWindow_GetIDNoKeepAlive,
+    ---@type fun(this:any, n:integer):ImGuiID
+    ImGuiWindow_GetIDNoKeepAlive = imgui.ImGuiWindow_GetIDNoKeepAlive,
+    ---@type fun(this:any, r_abs:any):ImGuiID
+    ImGuiWindow_GetIDFromRectangle = imgui.ImGuiWindow_GetIDFromRectangle,
+    ---@type fun(this:any):ImRect
+    ImGuiWindow_Rect = imgui.ImGuiWindow_Rect,
+    ---@type fun(this:any):number
+    ImGuiWindow_CalcFontSize = imgui.ImGuiWindow_CalcFontSize,
+    ---@type fun(this:any):number
+    ImGuiWindow_TitleBarHeight = imgui.ImGuiWindow_TitleBarHeight,
+    ---@type fun(this:any):ImRect
+    ImGuiWindow_TitleBarRect = imgui.ImGuiWindow_TitleBarRect,
+    ---@type fun(this:any):number
+    ImGuiWindow_MenuBarHeight = imgui.ImGuiWindow_MenuBarHeight,
+    ---@type fun(this:any):ImRect
+    ImGuiWindow_MenuBarRect = imgui.ImGuiWindow_MenuBarRect,
+    ---@type fun(this:any, tab:any):integer
+    ImGuiTabBar_GetTabOrder = imgui.ImGuiTabBar_GetTabOrder,
+    ---@type fun(this:any, tab:any):string
+    ImGuiTabBar_GetTabName = imgui.ImGuiTabBar_GetTabName,
     ---@param glsl_version string
     ImGui_ImplOpenGL3_Init = function(glsl_version)
         return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
@@ -2975,26 +3560,6 @@ M.libs.imgui = {
     ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
     ---@type fun():nil
     ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
-    ---@type fun():nil
-    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
-    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
-    ---@type fun(window:any, xoffset:number, yoffset:number):nil
-    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
-    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
-    ---@type fun(window:any, c:integer):nil
-    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
-    ---@type fun(monitor:any, event:integer):nil
-    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
 }
 -----------------------------------------------------------------------------
 -- glad.dll
