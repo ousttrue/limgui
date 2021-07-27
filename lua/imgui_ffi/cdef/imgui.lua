@@ -14,6 +14,7 @@ typedef int ImGuiMouseCursor;
 typedef int ImGuiSortDirection;
 typedef int ImGuiStyleVar;
 typedef int ImGuiTableBgTarget;
+typedef int ImDrawFlags;
 typedef int ImDrawListFlags;
 typedef int ImFontAtlasFlags;
 typedef int ImGuiBackendFlags;
@@ -583,7 +584,7 @@ enum ImGuiCond_{
 struct ImVector{
     int Size;
     int Capacity;
-    void* Data;
+    struct ImVector* Data;
 };
 struct ImGuiStyle{
     float Alpha;
@@ -627,6 +628,10 @@ struct ImGuiStyle{
     float CircleTessellationMaxError;
     struct ImVec4 Colors;
 };
+void ImGuiStyle_ScaleAllSizes(
+    struct ImGuiStyle* this,
+    float scale_factor
+) asm("?ScaleAllSizes@ImGuiStyle@@QEAAXM@Z");
 struct ImGuiIO{
     ImGuiConfigFlags ConfigFlags;
     ImGuiBackendFlags BackendFlags;
@@ -715,6 +720,21 @@ struct ImGuiIO{
     ImWchar16 InputQueueSurrogate;
     struct ImVector InputQueueCharacters;
 };
+void ImGuiIO_AddInputCharacter(
+    struct ImGuiIO* this,
+    unsigned int c
+) asm("?AddInputCharacter@ImGuiIO@@QEAAXI@Z");
+void ImGuiIO_AddInputCharacterUTF16(
+    struct ImGuiIO* this,
+    ImWchar16 c
+) asm("?AddInputCharacterUTF16@ImGuiIO@@QEAAXG@Z");
+void ImGuiIO_AddInputCharactersUTF8(
+    struct ImGuiIO* this,
+    const char* str
+) asm("?AddInputCharactersUTF8@ImGuiIO@@QEAAXPEBD@Z");
+void ImGuiIO_ClearInputCharacters(
+    struct ImGuiIO* this
+) asm("?ClearInputCharacters@ImGuiIO@@QEAAXXZ");
 struct ImGuiInputTextCallbackData{
     ImGuiInputTextFlags EventFlag;
     ImGuiInputTextFlags Flags;
@@ -729,6 +749,17 @@ struct ImGuiInputTextCallbackData{
     int SelectionStart;
     int SelectionEnd;
 };
+void ImGuiInputTextCallbackData_DeleteChars(
+    struct ImGuiInputTextCallbackData* this,
+    int pos,
+    int bytes_count
+) asm("?DeleteChars@ImGuiInputTextCallbackData@@QEAAXHH@Z");
+void ImGuiInputTextCallbackData_InsertChars(
+    struct ImGuiInputTextCallbackData* this,
+    int pos,
+    const char* text,
+    const char* text_end
+) asm("?InsertChars@ImGuiInputTextCallbackData@@QEAAXHPEBD0@Z");
 struct ImGuiSizeCallbackData{
     void* UserData;
     struct ImVec2 Pos;
@@ -772,6 +803,72 @@ struct ImGuiStoragePair{
 struct ImGuiStorage{
     struct ImVector Data;
 };
+int ImGuiStorage_GetInt(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    int default_val
+) asm("?GetInt@ImGuiStorage@@QEBAHIH@Z");
+void ImGuiStorage_SetInt(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    int val
+) asm("?SetInt@ImGuiStorage@@QEAAXIH@Z");
+bool ImGuiStorage_GetBool(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    bool default_val
+) asm("?GetBool@ImGuiStorage@@QEBA_NI_N@Z");
+void ImGuiStorage_SetBool(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    bool val
+) asm("?SetBool@ImGuiStorage@@QEAAXI_N@Z");
+float ImGuiStorage_GetFloat(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    float default_val
+) asm("?GetFloat@ImGuiStorage@@QEBAMIM@Z");
+void ImGuiStorage_SetFloat(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    float val
+) asm("?SetFloat@ImGuiStorage@@QEAAXIM@Z");
+void* ImGuiStorage_GetVoidPtr(
+    struct ImGuiStorage* this,
+    ImGuiID key
+) asm("?GetVoidPtr@ImGuiStorage@@QEBAPEAXI@Z");
+void ImGuiStorage_SetVoidPtr(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    void* val
+) asm("?SetVoidPtr@ImGuiStorage@@QEAAXIPEAX@Z");
+int* ImGuiStorage_GetIntRef(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    int default_val
+) asm("?GetIntRef@ImGuiStorage@@QEAAPEAHIH@Z");
+bool* ImGuiStorage_GetBoolRef(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    bool default_val
+) asm("?GetBoolRef@ImGuiStorage@@QEAAPEA_NI_N@Z");
+float* ImGuiStorage_GetFloatRef(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    float default_val
+) asm("?GetFloatRef@ImGuiStorage@@QEAAPEAMIM@Z");
+void** ImGuiStorage_GetVoidPtrRef(
+    struct ImGuiStorage* this,
+    ImGuiID key,
+    void* default_val
+) asm("?GetVoidPtrRef@ImGuiStorage@@QEAAPEAPEAXIPEAX@Z");
+void ImGuiStorage_SetAllInt(
+    struct ImGuiStorage* this,
+    int val
+) asm("?SetAllInt@ImGuiStorage@@QEAAXH@Z");
+void ImGuiStorage_BuildSortByKey(
+    struct ImGuiStorage* this
+) asm("?BuildSortByKey@ImGuiStorage@@QEAAXXZ");
 typedef void(*ImDrawCallback)(const struct ImDrawList* parent_list, const struct ImDrawCmd* cmd);
 struct ImDrawCmd{
     struct ImVec4 ClipRect;
@@ -802,6 +899,23 @@ struct ImDrawListSplitter{
     int _Count;
     struct ImVector _Channels;
 };
+void ImDrawListSplitter_ClearFreeMemory(
+    struct ImDrawListSplitter* this
+) asm("?ClearFreeMemory@ImDrawListSplitter@@QEAAXXZ");
+void ImDrawListSplitter_Split(
+    struct ImDrawListSplitter* this,
+    struct ImDrawList* draw_list,
+    int count
+) asm("?Split@ImDrawListSplitter@@QEAAXPEAUImDrawList@@H@Z");
+void ImDrawListSplitter_Merge(
+    struct ImDrawListSplitter* this,
+    struct ImDrawList* draw_list
+) asm("?Merge@ImDrawListSplitter@@QEAAXPEAUImDrawList@@@Z");
+void ImDrawListSplitter_SetCurrentChannel(
+    struct ImDrawListSplitter* this,
+    struct ImDrawList* draw_list,
+    int channel_idx
+) asm("?SetCurrentChannel@ImDrawListSplitter@@QEAAXPEAUImDrawList@@H@Z");
 enum ImDrawFlags_{
     ImDrawFlags_None = 0,
     ImDrawFlags_Closed = 1 << 0,
@@ -842,6 +956,327 @@ struct ImDrawList{
     struct ImDrawListSplitter _Splitter;
     float _FringeScale;
 };
+void ImDrawList_PushClipRect(
+    struct ImDrawList* this,
+    struct ImVec2 clip_rect_min,
+    struct ImVec2 clip_rect_max,
+    bool intersect_with_current_clip_rect
+) asm("?PushClipRect@ImDrawList@@QEAAXUImVec2@@0_N@Z");
+void ImDrawList_PushClipRectFullScreen(
+    struct ImDrawList* this
+) asm("?PushClipRectFullScreen@ImDrawList@@QEAAXXZ");
+void ImDrawList_PopClipRect(
+    struct ImDrawList* this
+) asm("?PopClipRect@ImDrawList@@QEAAXXZ");
+void ImDrawList_PushTextureID(
+    struct ImDrawList* this,
+    ImTextureID texture_id
+) asm("?PushTextureID@ImDrawList@@QEAAXPEAX@Z");
+void ImDrawList_PopTextureID(
+    struct ImDrawList* this
+) asm("?PopTextureID@ImDrawList@@QEAAXXZ");
+void ImDrawList_AddLine(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    ImU32 col,
+    float thickness
+) asm("?AddLine@ImDrawList@@QEAAXAEBUImVec2@@0IM@Z");
+void ImDrawList_AddRect(
+    struct ImDrawList* this,
+    const struct ImVec2* p_min,
+    const struct ImVec2* p_max,
+    ImU32 col,
+    float rounding,
+    ImDrawFlags flags,
+    float thickness
+) asm("?AddRect@ImDrawList@@QEAAXAEBUImVec2@@0IMHM@Z");
+void ImDrawList_AddRectFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* p_min,
+    const struct ImVec2* p_max,
+    ImU32 col,
+    float rounding,
+    ImDrawFlags flags
+) asm("?AddRectFilled@ImDrawList@@QEAAXAEBUImVec2@@0IMH@Z");
+void ImDrawList_AddRectFilledMultiColor(
+    struct ImDrawList* this,
+    const struct ImVec2* p_min,
+    const struct ImVec2* p_max,
+    ImU32 col_upr_left,
+    ImU32 col_upr_right,
+    ImU32 col_bot_right,
+    ImU32 col_bot_left
+) asm("?AddRectFilledMultiColor@ImDrawList@@QEAAXAEBUImVec2@@0IIII@Z");
+void ImDrawList_AddQuad(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    const struct ImVec2* p4,
+    ImU32 col,
+    float thickness
+) asm("?AddQuad@ImDrawList@@QEAAXAEBUImVec2@@000IM@Z");
+void ImDrawList_AddQuadFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    const struct ImVec2* p4,
+    ImU32 col
+) asm("?AddQuadFilled@ImDrawList@@QEAAXAEBUImVec2@@000I@Z");
+void ImDrawList_AddTriangle(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    ImU32 col,
+    float thickness
+) asm("?AddTriangle@ImDrawList@@QEAAXAEBUImVec2@@00IM@Z");
+void ImDrawList_AddTriangleFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    ImU32 col
+) asm("?AddTriangleFilled@ImDrawList@@QEAAXAEBUImVec2@@00I@Z");
+void ImDrawList_AddCircle(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    ImU32 col,
+    int num_segments,
+    float thickness
+) asm("?AddCircle@ImDrawList@@QEAAXAEBUImVec2@@MIHM@Z");
+void ImDrawList_AddCircleFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    ImU32 col,
+    int num_segments
+) asm("?AddCircleFilled@ImDrawList@@QEAAXAEBUImVec2@@MIH@Z");
+void ImDrawList_AddNgon(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    ImU32 col,
+    int num_segments,
+    float thickness
+) asm("?AddNgon@ImDrawList@@QEAAXAEBUImVec2@@MIHM@Z");
+void ImDrawList_AddNgonFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    ImU32 col,
+    int num_segments
+) asm("?AddNgonFilled@ImDrawList@@QEAAXAEBUImVec2@@MIH@Z");
+void ImDrawList_AddText(
+    struct ImDrawList* this,
+    const struct ImVec2* pos,
+    ImU32 col,
+    const char* text_begin,
+    const char* text_end
+) asm("?AddText@ImDrawList@@QEAAXAEBUImVec2@@IPEBD1@Z");
+void ImDrawList_AddText(
+    struct ImDrawList* this,
+    const struct ImFont* font,
+    float font_size,
+    const struct ImVec2* pos,
+    ImU32 col,
+    const char* text_begin,
+    const char* text_end,
+    float wrap_width,
+    const struct ImVec4* cpu_fine_clip_rect
+) asm("?AddText@ImDrawList@@QEAAXPEBUImFont@@MAEBUImVec2@@IPEBD2MPEBUImVec4@@@Z");
+void ImDrawList_AddPolyline(
+    struct ImDrawList* this,
+    const struct ImVec2* points,
+    int num_points,
+    ImU32 col,
+    ImDrawFlags flags,
+    float thickness
+) asm("?AddPolyline@ImDrawList@@QEAAXPEBUImVec2@@HIHM@Z");
+void ImDrawList_AddConvexPolyFilled(
+    struct ImDrawList* this,
+    const struct ImVec2* points,
+    int num_points,
+    ImU32 col
+) asm("?AddConvexPolyFilled@ImDrawList@@QEAAXPEBUImVec2@@HI@Z");
+void ImDrawList_AddBezierCubic(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    const struct ImVec2* p4,
+    ImU32 col,
+    float thickness,
+    int num_segments
+) asm("?AddBezierCubic@ImDrawList@@QEAAXAEBUImVec2@@000IMH@Z");
+void ImDrawList_AddBezierQuadratic(
+    struct ImDrawList* this,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    ImU32 col,
+    float thickness,
+    int num_segments
+) asm("?AddBezierQuadratic@ImDrawList@@QEAAXAEBUImVec2@@00IMH@Z");
+void ImDrawList_AddImage(
+    struct ImDrawList* this,
+    ImTextureID user_texture_id,
+    const struct ImVec2* p_min,
+    const struct ImVec2* p_max,
+    const struct ImVec2* uv_min,
+    const struct ImVec2* uv_max,
+    ImU32 col
+) asm("?AddImage@ImDrawList@@QEAAXPEAXAEBUImVec2@@111I@Z");
+void ImDrawList_AddImageQuad(
+    struct ImDrawList* this,
+    ImTextureID user_texture_id,
+    const struct ImVec2* p1,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    const struct ImVec2* p4,
+    const struct ImVec2* uv1,
+    const struct ImVec2* uv2,
+    const struct ImVec2* uv3,
+    const struct ImVec2* uv4,
+    ImU32 col
+) asm("?AddImageQuad@ImDrawList@@QEAAXPEAXAEBUImVec2@@1111111I@Z");
+void ImDrawList_AddImageRounded(
+    struct ImDrawList* this,
+    ImTextureID user_texture_id,
+    const struct ImVec2* p_min,
+    const struct ImVec2* p_max,
+    const struct ImVec2* uv_min,
+    const struct ImVec2* uv_max,
+    ImU32 col,
+    float rounding,
+    ImDrawFlags flags
+) asm("?AddImageRounded@ImDrawList@@QEAAXPEAXAEBUImVec2@@111IMH@Z");
+void ImDrawList_PathArcTo(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    float a_min,
+    float a_max,
+    int num_segments
+) asm("?PathArcTo@ImDrawList@@QEAAXAEBUImVec2@@MMMH@Z");
+void ImDrawList_PathArcToFast(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    int a_min_of_12,
+    int a_max_of_12
+) asm("?PathArcToFast@ImDrawList@@QEAAXAEBUImVec2@@MHH@Z");
+void ImDrawList_PathBezierCubicCurveTo(
+    struct ImDrawList* this,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    const struct ImVec2* p4,
+    int num_segments
+) asm("?PathBezierCubicCurveTo@ImDrawList@@QEAAXAEBUImVec2@@00H@Z");
+void ImDrawList_PathBezierQuadraticCurveTo(
+    struct ImDrawList* this,
+    const struct ImVec2* p2,
+    const struct ImVec2* p3,
+    int num_segments
+) asm("?PathBezierQuadraticCurveTo@ImDrawList@@QEAAXAEBUImVec2@@0H@Z");
+void ImDrawList_PathRect(
+    struct ImDrawList* this,
+    const struct ImVec2* rect_min,
+    const struct ImVec2* rect_max,
+    float rounding,
+    ImDrawFlags flags
+) asm("?PathRect@ImDrawList@@QEAAXAEBUImVec2@@0MH@Z");
+void ImDrawList_AddCallback(
+    struct ImDrawList* this,
+    ImDrawCallback callback,
+    void* callback_data
+) asm("?AddCallback@ImDrawList@@QEAAXP6AXPEBU1@PEBUImDrawCmd@@@ZPEAX@Z");
+void ImDrawList_AddDrawCmd(
+    struct ImDrawList* this
+) asm("?AddDrawCmd@ImDrawList@@QEAAXXZ");
+struct ImDrawList* ImDrawList_CloneOutput(
+    struct ImDrawList* this
+) asm("?CloneOutput@ImDrawList@@QEBAPEAU1@XZ");
+void ImDrawList_PrimReserve(
+    struct ImDrawList* this,
+    int idx_count,
+    int vtx_count
+) asm("?PrimReserve@ImDrawList@@QEAAXHH@Z");
+void ImDrawList_PrimUnreserve(
+    struct ImDrawList* this,
+    int idx_count,
+    int vtx_count
+) asm("?PrimUnreserve@ImDrawList@@QEAAXHH@Z");
+void ImDrawList_PrimRect(
+    struct ImDrawList* this,
+    const struct ImVec2* a,
+    const struct ImVec2* b,
+    ImU32 col
+) asm("?PrimRect@ImDrawList@@QEAAXAEBUImVec2@@0I@Z");
+void ImDrawList_PrimRectUV(
+    struct ImDrawList* this,
+    const struct ImVec2* a,
+    const struct ImVec2* b,
+    const struct ImVec2* uv_a,
+    const struct ImVec2* uv_b,
+    ImU32 col
+) asm("?PrimRectUV@ImDrawList@@QEAAXAEBUImVec2@@000I@Z");
+void ImDrawList_PrimQuadUV(
+    struct ImDrawList* this,
+    const struct ImVec2* a,
+    const struct ImVec2* b,
+    const struct ImVec2* c,
+    const struct ImVec2* d,
+    const struct ImVec2* uv_a,
+    const struct ImVec2* uv_b,
+    const struct ImVec2* uv_c,
+    const struct ImVec2* uv_d,
+    ImU32 col
+) asm("?PrimQuadUV@ImDrawList@@QEAAXAEBUImVec2@@0000000I@Z");
+void ImDrawList__ResetForNewFrame(
+    struct ImDrawList* this
+) asm("?_ResetForNewFrame@ImDrawList@@QEAAXXZ");
+void ImDrawList__ClearFreeMemory(
+    struct ImDrawList* this
+) asm("?_ClearFreeMemory@ImDrawList@@QEAAXXZ");
+void ImDrawList__PopUnusedDrawCmd(
+    struct ImDrawList* this
+) asm("?_PopUnusedDrawCmd@ImDrawList@@QEAAXXZ");
+void ImDrawList__TryMergeDrawCmds(
+    struct ImDrawList* this
+) asm("?_TryMergeDrawCmds@ImDrawList@@QEAAXXZ");
+void ImDrawList__OnChangedClipRect(
+    struct ImDrawList* this
+) asm("?_OnChangedClipRect@ImDrawList@@QEAAXXZ");
+void ImDrawList__OnChangedTextureID(
+    struct ImDrawList* this
+) asm("?_OnChangedTextureID@ImDrawList@@QEAAXXZ");
+void ImDrawList__OnChangedVtxOffset(
+    struct ImDrawList* this
+) asm("?_OnChangedVtxOffset@ImDrawList@@QEAAXXZ");
+int ImDrawList__CalcCircleAutoSegmentCount(
+    struct ImDrawList* this,
+    float radius
+) asm("?_CalcCircleAutoSegmentCount@ImDrawList@@QEBAHM@Z");
+void ImDrawList__PathArcToFastEx(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    int a_min_sample,
+    int a_max_sample,
+    int a_step
+) asm("?_PathArcToFastEx@ImDrawList@@QEAAXAEBUImVec2@@MHHH@Z");
+void ImDrawList__PathArcToN(
+    struct ImDrawList* this,
+    const struct ImVec2* center,
+    float radius,
+    float a_min,
+    float a_max,
+    int num_segments
+) asm("?_PathArcToN@ImDrawList@@QEAAXAEBUImVec2@@MMMH@Z");
 struct ImDrawData{
     bool Valid;
     int CmdListsCount;
@@ -853,6 +1288,13 @@ struct ImDrawData{
     struct ImVec2 FramebufferScale;
     struct ImGuiViewport* OwnerViewport;
 };
+void ImDrawData_DeIndexAllBuffers(
+    struct ImDrawData* this
+) asm("?DeIndexAllBuffers@ImDrawData@@QEAAXXZ");
+void ImDrawData_ScaleClipRects(
+    struct ImDrawData* this,
+    const struct ImVec2* fb_scale
+) asm("?ScaleClipRects@ImDrawData@@QEAAXAEBUImVec2@@@Z");
 struct ImFontConfig{
     void* FontData;
     int FontDataSize;
@@ -904,6 +1346,252 @@ enum ImFontAtlasFlags_{
     ImFontAtlasFlags_NoMouseCursors = 1 << 1,
     ImFontAtlasFlags_NoBakedLines = 1 << 2,
 };
+struct ImFontAtlas{
+    ImFontAtlasFlags Flags;
+    ImTextureID TexID;
+    int TexDesiredWidth;
+    int TexGlyphPadding;
+    bool Locked;
+    bool TexReady;
+    bool TexPixelsUseColors;
+    unsigned char* TexPixelsAlpha8;
+    unsigned int* TexPixelsRGBA32;
+    int TexWidth;
+    int TexHeight;
+    struct ImVec2 TexUvScale;
+    struct ImVec2 TexUvWhitePixel;
+    struct ImVector Fonts;
+    struct ImVector CustomRects;
+    struct ImVector ConfigData;
+    struct ImVec4 TexUvLines;
+    const struct ImFontBuilderIO* FontBuilderIO;
+    unsigned int FontBuilderFlags;
+    int PackIdMouseCursors;
+    int PackIdLines;
+};
+struct ImFont* ImFontAtlas_AddFont(
+    struct ImFontAtlas* this,
+    const struct ImFontConfig* font_cfg
+) asm("?AddFont@ImFontAtlas@@QEAAPEAUImFont@@PEBUImFontConfig@@@Z");
+struct ImFont* ImFontAtlas_AddFontDefault(
+    struct ImFontAtlas* this,
+    const struct ImFontConfig* font_cfg
+) asm("?AddFontDefault@ImFontAtlas@@QEAAPEAUImFont@@PEBUImFontConfig@@@Z");
+struct ImFont* ImFontAtlas_AddFontFromFileTTF(
+    struct ImFontAtlas* this,
+    const char* filename,
+    float size_pixels,
+    const struct ImFontConfig* font_cfg,
+    ImWchar* glyph_ranges
+) asm("?AddFontFromFileTTF@ImFontAtlas@@QEAAPEAUImFont@@PEBDMPEBUImFontConfig@@PEBG@Z");
+struct ImFont* ImFontAtlas_AddFontFromMemoryTTF(
+    struct ImFontAtlas* this,
+    void* font_data,
+    int font_size,
+    float size_pixels,
+    const struct ImFontConfig* font_cfg,
+    ImWchar* glyph_ranges
+) asm("?AddFontFromMemoryTTF@ImFontAtlas@@QEAAPEAUImFont@@PEAXHMPEBUImFontConfig@@PEBG@Z");
+struct ImFont* ImFontAtlas_AddFontFromMemoryCompressedTTF(
+    struct ImFontAtlas* this,
+    const void* compressed_font_data,
+    int compressed_font_size,
+    float size_pixels,
+    const struct ImFontConfig* font_cfg,
+    ImWchar* glyph_ranges
+) asm("?AddFontFromMemoryCompressedTTF@ImFontAtlas@@QEAAPEAUImFont@@PEBXHMPEBUImFontConfig@@PEBG@Z");
+struct ImFont* ImFontAtlas_AddFontFromMemoryCompressedBase85TTF(
+    struct ImFontAtlas* this,
+    const char* compressed_font_data_base85,
+    float size_pixels,
+    const struct ImFontConfig* font_cfg,
+    ImWchar* glyph_ranges
+) asm("?AddFontFromMemoryCompressedBase85TTF@ImFontAtlas@@QEAAPEAUImFont@@PEBDMPEBUImFontConfig@@PEBG@Z");
+void ImFontAtlas_ClearInputData(
+    struct ImFontAtlas* this
+) asm("?ClearInputData@ImFontAtlas@@QEAAXXZ");
+void ImFontAtlas_ClearTexData(
+    struct ImFontAtlas* this
+) asm("?ClearTexData@ImFontAtlas@@QEAAXXZ");
+void ImFontAtlas_ClearFonts(
+    struct ImFontAtlas* this
+) asm("?ClearFonts@ImFontAtlas@@QEAAXXZ");
+void ImFontAtlas_Clear(
+    struct ImFontAtlas* this
+) asm("?Clear@ImFontAtlas@@QEAAXXZ");
+bool ImFontAtlas_Build(
+    struct ImFontAtlas* this
+) asm("?Build@ImFontAtlas@@QEAA_NXZ");
+void ImFontAtlas_GetTexDataAsAlpha8(
+    struct ImFontAtlas* this,
+    unsigned char** out_pixels,
+    int* out_width,
+    int* out_height,
+    int* out_bytes_per_pixel
+) asm("?GetTexDataAsAlpha8@ImFontAtlas@@QEAAXPEAPEAEPEAH11@Z");
+void ImFontAtlas_GetTexDataAsRGBA32(
+    struct ImFontAtlas* this,
+    unsigned char** out_pixels,
+    int* out_width,
+    int* out_height,
+    int* out_bytes_per_pixel
+) asm("?GetTexDataAsRGBA32@ImFontAtlas@@QEAAXPEAPEAEPEAH11@Z");
+ImWchar* ImFontAtlas_GetGlyphRangesDefault(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesDefault@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesKorean(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesKorean@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesJapanese(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesJapanese@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesChineseFull(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesChineseFull@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesChineseSimplifiedCommon@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesCyrillic(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesCyrillic@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesThai(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesThai@ImFontAtlas@@QEAAPEBGXZ");
+ImWchar* ImFontAtlas_GetGlyphRangesVietnamese(
+    struct ImFontAtlas* this
+) asm("?GetGlyphRangesVietnamese@ImFontAtlas@@QEAAPEBGXZ");
+int ImFontAtlas_AddCustomRectRegular(
+    struct ImFontAtlas* this,
+    int width,
+    int height
+) asm("?AddCustomRectRegular@ImFontAtlas@@QEAAHHH@Z");
+int ImFontAtlas_AddCustomRectFontGlyph(
+    struct ImFontAtlas* this,
+    struct ImFont* font,
+    ImWchar id,
+    int width,
+    int height,
+    float advance_x,
+    const struct ImVec2* offset
+) asm("?AddCustomRectFontGlyph@ImFontAtlas@@QEAAHPEAUImFont@@GHHMAEBUImVec2@@@Z");
+void ImFontAtlas_CalcCustomRectUV(
+    struct ImFontAtlas* this,
+    const struct ImFontAtlasCustomRect* rect,
+    struct ImVec2* out_uv_min,
+    struct ImVec2* out_uv_max
+) asm("?CalcCustomRectUV@ImFontAtlas@@QEBAXPEBUImFontAtlasCustomRect@@PEAUImVec2@@1@Z");
+bool ImFontAtlas_GetMouseCursorTexData(
+    struct ImFontAtlas* this,
+    ImGuiMouseCursor cursor,
+    struct ImVec2* out_offset,
+    struct ImVec2* out_size,
+    struct ImVec2 out_uv_border,
+    struct ImVec2 out_uv_fill
+) asm("?GetMouseCursorTexData@ImFontAtlas@@QEAA_NHPEAUImVec2@@0QEAU2@1@Z");
+struct ImFont{
+    struct ImVector IndexAdvanceX;
+    float FallbackAdvanceX;
+    float FontSize;
+    struct ImVector IndexLookup;
+    struct ImVector Glyphs;
+    const struct ImFontGlyph* FallbackGlyph;
+    struct ImFontAtlas* ContainerAtlas;
+    const struct ImFontConfig* ConfigData;
+    short ConfigDataCount;
+    ImWchar FallbackChar;
+    ImWchar EllipsisChar;
+    ImWchar DotChar;
+    bool DirtyLookupTables;
+    float Scale;
+    float Ascent;
+    float Descent;
+    int MetricsTotalSurface;
+    ImU8 Used4kPagesMap;
+};
+const struct ImFontGlyph* ImFont_FindGlyph(
+    struct ImFont* this,
+    ImWchar c
+) asm("?FindGlyph@ImFont@@QEBAPEBUImFontGlyph@@G@Z");
+const struct ImFontGlyph* ImFont_FindGlyphNoFallback(
+    struct ImFont* this,
+    ImWchar c
+) asm("?FindGlyphNoFallback@ImFont@@QEBAPEBUImFontGlyph@@G@Z");
+struct ImVec2 ImFont_CalcTextSizeA(
+    struct ImFont* this,
+    float size,
+    float max_width,
+    float wrap_width,
+    const char* text_begin,
+    const char* text_end,
+    const char** remaining
+) asm("?CalcTextSizeA@ImFont@@QEBA?AUImVec2@@MMMPEBD0PEAPEBD@Z");
+const char* ImFont_CalcWordWrapPositionA(
+    struct ImFont* this,
+    float scale,
+    const char* text,
+    const char* text_end,
+    float wrap_width
+) asm("?CalcWordWrapPositionA@ImFont@@QEBAPEBDMPEBD0M@Z");
+void ImFont_RenderChar(
+    struct ImFont* this,
+    struct ImDrawList* draw_list,
+    float size,
+    struct ImVec2 pos,
+    ImU32 col,
+    ImWchar c
+) asm("?RenderChar@ImFont@@QEBAXPEAUImDrawList@@MUImVec2@@IG@Z");
+void ImFont_RenderText(
+    struct ImFont* this,
+    struct ImDrawList* draw_list,
+    float size,
+    struct ImVec2 pos,
+    ImU32 col,
+    const struct ImVec4* clip_rect,
+    const char* text_begin,
+    const char* text_end,
+    float wrap_width,
+    bool cpu_fine_clip
+) asm("?RenderText@ImFont@@QEBAXPEAUImDrawList@@MUImVec2@@IAEBUImVec4@@PEBD3M_N@Z");
+void ImFont_BuildLookupTable(
+    struct ImFont* this
+) asm("?BuildLookupTable@ImFont@@QEAAXXZ");
+void ImFont_ClearOutputData(
+    struct ImFont* this
+) asm("?ClearOutputData@ImFont@@QEAAXXZ");
+void ImFont_GrowIndex(
+    struct ImFont* this,
+    int new_size
+) asm("?GrowIndex@ImFont@@QEAAXH@Z");
+void ImFont_AddGlyph(
+    struct ImFont* this,
+    const struct ImFontConfig* src_cfg,
+    ImWchar c,
+    float x0,
+    float y0,
+    float x1,
+    float y1,
+    float u0,
+    float v0,
+    float u1,
+    float v1,
+    float advance_x
+) asm("?AddGlyph@ImFont@@QEAAXPEBUImFontConfig@@GMMMMMMMMM@Z");
+void ImFont_AddRemapChar(
+    struct ImFont* this,
+    ImWchar dst,
+    ImWchar src,
+    bool overwrite_dst
+) asm("?AddRemapChar@ImFont@@QEAAXGG_N@Z");
+void ImFont_SetGlyphVisible(
+    struct ImFont* this,
+    ImWchar c,
+    bool visible
+) asm("?SetGlyphVisible@ImFont@@QEAAXG_N@Z");
+bool ImFont_IsGlyphRangeUnused(
+    struct ImFont* this,
+    unsigned int c_begin,
+    unsigned int c_last
+) asm("?IsGlyphRangeUnused@ImFont@@QEAA_NII@Z");
 enum ImGuiViewportFlags_{
     ImGuiViewportFlags_None = 0,
     ImGuiViewportFlags_IsPlatformWindow = 1 << 0,

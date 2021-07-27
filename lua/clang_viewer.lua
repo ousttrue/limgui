@@ -68,13 +68,19 @@ local app = {
         -- - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
         -- - Read 'docs/FONTS.md' for more instructions and details.
         -- - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-        --io.Fonts->AddFontDefault();
-        --io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+        -- imgui.ImFontAtlas_AddFontDefault(io.Fonts)
+        -- imgui.ImFontAtlas_AddFontFromFileTTF(self.io.Fonts, "C:/Windows/Fonts/meiryo.ttc", 16.0)
         --io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
         --io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
         --io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
-        --ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
-        --IM_ASSERT(font != NULL);
+        local font = imgui.ImFontAtlas_AddFontFromFileTTF(
+            self.io.Fonts,
+            "c:\\Windows\\Fonts\\meiryo.ttc",
+            24.0,
+            nil,
+            imgui.ImFontAtlas_GetGlyphRangesJapanese(self.io.Fonts)
+        )
+        assert(font)
 
         return true
     end,
@@ -141,53 +147,12 @@ end
 ---@field counter any
 gui = {
 
-    show_demo_window = ffi.new("bool[1]", true),
-    show_another_window = ffi.new("bool[1]", false),
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
-    f = ffi.new("float[1]"),
-    counter = ffi.new("long long[1]", 1),
 
     ---@param self GUI
     update = function(self)
         -- 1. Show the big demo window (Most of the sample code is in imgui.ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if self.show_demo_window[0] then
-            imgui.ShowDemoWindow(self.show_demo_window)
-        end
-
-        -- 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-        do
-            imgui.Begin("Hello, world!") -- Create a window called "Hello, world!" and append into it.
-
-            imgui.Text("This is some useful text.") -- Display some text (you can use a format strings too)
-            imgui.Checkbox("Demo Window", self.show_demo_window) -- Edit bools storing our window open/close state
-            imgui.Checkbox("Another Window", self.show_another_window)
-
-            imgui.SliderFloat("float", self.f, 0.0, 1.0) -- Edit 1 float using a slider from 0.0f to 1.0f
-            imgui.ColorEdit3("clear color", self.clear_color) -- Edit 3 floats representing a color
-
-            if imgui.Button("Button") then -- Buttons return true when clicked (most widgets return true when edited/activated)
-                self.counter[0] = self.counter[0] + 1
-            end
-            imgui.SameLine()
-            imgui.Text("counter = %d", self.counter[0])
-
-            imgui.Text(
-                "Application average %.3f ms/frame (%.1f FPS)",
-                1000.0 / imgui.GetIO().Framerate,
-                imgui.GetIO().Framerate
-            )
-            imgui.End()
-        end
-
-        -- 3. Show another simple window.
-        if self.show_another_window[0] then
-            imgui.Begin("Another Window", self.show_another_window) -- Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            imgui.Text("Hello from another window!")
-            if imgui.Button("Close Me") then
-                self.show_another_window[0] = false
-            end
-            imgui.End()
-        end
+        imgui.ShowDemoWindow()
     end,
 }
 

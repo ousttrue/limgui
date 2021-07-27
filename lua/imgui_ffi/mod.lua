@@ -9,12 +9,12 @@ local M = {
 }
 
 -- cdef
+require('imgui_ffi.cdef.imgui')
 require('imgui_ffi.cdef.imgui_impl_opengl3')
 require('imgui_ffi.cdef.gl')
-require('imgui_ffi.cdef.vadefs')
-require('imgui_ffi.cdef.imgui_impl_glfw')
-require('imgui_ffi.cdef.imgui')
 require('imgui_ffi.cdef.vcruntime')
+require('imgui_ffi.cdef.imgui_impl_glfw')
+require('imgui_ffi.cdef.vadefs')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -594,12 +594,6 @@ M.enums = {
         ImDrawCornerFlags_Right = C.ImDrawCornerFlags_Right,
     },
 }
----@class GLADapiproc
----@class GLADloadfunc
----@class GLADuserptrloadfunc
----@class va_list
----@class GLFWwindow
----@class GLFWmonitor
 ---@class ImDrawListSharedData
 ---@class ImFontBuilderIO
 ---@class ImGuiContext
@@ -613,6 +607,7 @@ M.enums = {
 ---@class ImGuiSortDirection
 ---@class ImGuiStyleVar
 ---@class ImGuiTableBgTarget
+---@class ImDrawFlags
 ---@class ImDrawListFlags
 ---@class ImFontAtlasFlags
 ---@class ImGuiBackendFlags
@@ -678,19 +673,13 @@ M.enums = {
 ---@class ImGuiViewport
 ---@class ImGuiPlatformIO
 ---@class ImGuiPlatformMonitor
+---@class GLADapiproc
+---@class GLADloadfunc
+---@class GLADuserptrloadfunc
 ---@class size_t
------------------------------------------------------------------------------
--- glad.dll
------------------------------------------------------------------------------
----@type Table<string, any>
-local glad = ffi.load('glad')
-M.cache.glad = glad
-M.libs.glad = {
-    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
-    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
-    ---@type fun(load:GLADloadfunc):integer
-    gladLoadGL = glad.gladLoadGL,
-}
+---@class GLFWwindow
+---@class GLFWmonitor
+---@class va_list
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -698,44 +687,6 @@ M.libs.glad = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
-    ---@param glsl_version string
-    ImGui_ImplOpenGL3_Init = function(glsl_version)
-        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
-    end,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
-    ---@type fun(draw_data:any):nil
-    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
-    ---@type fun():nil
-    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
-    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
-    ---@type fun(window:any, xoffset:number, yoffset:number):nil
-    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
-    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
-    ---@type fun(window:any, c:integer):nil
-    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
-    ---@type fun(monitor:any, event:integer):nil
-    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
     ---@param shared_font_atlas any
     CreateContext = function(shared_font_atlas)
         return imgui.CreateContext(shared_font_atlas)
@@ -2484,5 +2435,577 @@ M.libs.imgui = {
         height_in_items = height_in_items or 1
         return imgui.ListBoxHeader(label, items_count, height_in_items)
     end,
+    ---@type fun(this:any, scale_factor:number):nil
+    ImGuiStyle_ScaleAllSizes = imgui.ImGuiStyle_ScaleAllSizes,
+    ---@type fun(this:any, c:integer):nil
+    ImGuiIO_AddInputCharacter = imgui.ImGuiIO_AddInputCharacter,
+    ---@type fun(this:any, c:ImWchar16):nil
+    ImGuiIO_AddInputCharacterUTF16 = imgui.ImGuiIO_AddInputCharacterUTF16,
+    ---@type fun(this:any, str:string):nil
+    ImGuiIO_AddInputCharactersUTF8 = imgui.ImGuiIO_AddInputCharactersUTF8,
+    ---@type fun(this:any):nil
+    ImGuiIO_ClearInputCharacters = imgui.ImGuiIO_ClearInputCharacters,
+    ---@type fun(this:any, pos:integer, bytes_count:integer):nil
+    ImGuiInputTextCallbackData_DeleteChars = imgui.ImGuiInputTextCallbackData_DeleteChars,
+    ---@param this any
+    ---@param pos integer
+    ---@param text string
+    ---@param text_end string
+    ImGuiInputTextCallbackData_InsertChars = function(this, pos, text, text_end)
+        return imgui.ImGuiInputTextCallbackData_InsertChars(this, pos, text, text_end)
+    end,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val integer
+    ImGuiStorage_GetInt = function(this, key, default_val)
+        default_val = default_val or 0
+        return imgui.ImGuiStorage_GetInt(this, key, default_val)
+    end,
+    ---@type fun(this:any, key:ImGuiID, val:integer):nil
+    ImGuiStorage_SetInt = imgui.ImGuiStorage_SetInt,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val boolean
+    ImGuiStorage_GetBool = function(this, key, default_val)
+        default_val = default_val or false
+        return imgui.ImGuiStorage_GetBool(this, key, default_val)
+    end,
+    ---@type fun(this:any, key:ImGuiID, val:boolean):nil
+    ImGuiStorage_SetBool = imgui.ImGuiStorage_SetBool,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val number
+    ImGuiStorage_GetFloat = function(this, key, default_val)
+        default_val = default_val or 0.0
+        return imgui.ImGuiStorage_GetFloat(this, key, default_val)
+    end,
+    ---@type fun(this:any, key:ImGuiID, val:number):nil
+    ImGuiStorage_SetFloat = imgui.ImGuiStorage_SetFloat,
+    ---@type fun(this:any, key:ImGuiID):any
+    ImGuiStorage_GetVoidPtr = imgui.ImGuiStorage_GetVoidPtr,
+    ---@type fun(this:any, key:ImGuiID, val:any):nil
+    ImGuiStorage_SetVoidPtr = imgui.ImGuiStorage_SetVoidPtr,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val integer
+    ImGuiStorage_GetIntRef = function(this, key, default_val)
+        default_val = default_val or 0
+        return imgui.ImGuiStorage_GetIntRef(this, key, default_val)
+    end,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val boolean
+    ImGuiStorage_GetBoolRef = function(this, key, default_val)
+        default_val = default_val or false
+        return imgui.ImGuiStorage_GetBoolRef(this, key, default_val)
+    end,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val number
+    ImGuiStorage_GetFloatRef = function(this, key, default_val)
+        default_val = default_val or 0.0
+        return imgui.ImGuiStorage_GetFloatRef(this, key, default_val)
+    end,
+    ---@param this any
+    ---@param key ImGuiID
+    ---@param default_val any
+    ImGuiStorage_GetVoidPtrRef = function(this, key, default_val)
+        return imgui.ImGuiStorage_GetVoidPtrRef(this, key, default_val)
+    end,
+    ---@type fun(this:any, val:integer):nil
+    ImGuiStorage_SetAllInt = imgui.ImGuiStorage_SetAllInt,
+    ---@type fun(this:any):nil
+    ImGuiStorage_BuildSortByKey = imgui.ImGuiStorage_BuildSortByKey,
+    ---@type fun(this:any):nil
+    ImDrawListSplitter_ClearFreeMemory = imgui.ImDrawListSplitter_ClearFreeMemory,
+    ---@type fun(this:any, draw_list:any, count:integer):nil
+    ImDrawListSplitter_Split = imgui.ImDrawListSplitter_Split,
+    ---@type fun(this:any, draw_list:any):nil
+    ImDrawListSplitter_Merge = imgui.ImDrawListSplitter_Merge,
+    ---@type fun(this:any, draw_list:any, channel_idx:integer):nil
+    ImDrawListSplitter_SetCurrentChannel = imgui.ImDrawListSplitter_SetCurrentChannel,
+    ---@param this any
+    ---@param clip_rect_min ImVec2
+    ---@param clip_rect_max ImVec2
+    ---@param intersect_with_current_clip_rect boolean
+    ImDrawList_PushClipRect = function(this, clip_rect_min, clip_rect_max, intersect_with_current_clip_rect)
+        intersect_with_current_clip_rect = intersect_with_current_clip_rect or false
+        return imgui.ImDrawList_PushClipRect(this, clip_rect_min, clip_rect_max, intersect_with_current_clip_rect)
+    end,
+    ---@type fun(this:any):nil
+    ImDrawList_PushClipRectFullScreen = imgui.ImDrawList_PushClipRectFullScreen,
+    ---@type fun(this:any):nil
+    ImDrawList_PopClipRect = imgui.ImDrawList_PopClipRect,
+    ---@type fun(this:any, texture_id:ImTextureID):nil
+    ImDrawList_PushTextureID = imgui.ImDrawList_PushTextureID,
+    ---@type fun(this:any):nil
+    ImDrawList_PopTextureID = imgui.ImDrawList_PopTextureID,
+    ---@param this any
+    ---@param p1 any
+    ---@param p2 any
+    ---@param col ImU32
+    ---@param thickness number
+    ImDrawList_AddLine = function(this, p1, p2, col, thickness)
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddLine(this, p1, p2, col, thickness)
+    end,
+    ---@param this any
+    ---@param p_min any
+    ---@param p_max any
+    ---@param col ImU32
+    ---@param rounding number
+    ---@param flags ImDrawFlags
+    ---@param thickness number
+    ImDrawList_AddRect = function(this, p_min, p_max, col, rounding, flags, thickness)
+        rounding = rounding or 0.0
+        flags = flags or 0
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddRect(this, p_min, p_max, col, rounding, flags, thickness)
+    end,
+    ---@param this any
+    ---@param p_min any
+    ---@param p_max any
+    ---@param col ImU32
+    ---@param rounding number
+    ---@param flags ImDrawFlags
+    ImDrawList_AddRectFilled = function(this, p_min, p_max, col, rounding, flags)
+        rounding = rounding or 0.0
+        flags = flags or 0
+        return imgui.ImDrawList_AddRectFilled(this, p_min, p_max, col, rounding, flags)
+    end,
+    ---@type fun(this:any, p_min:any, p_max:any, col_upr_left:ImU32, col_upr_right:ImU32, col_bot_right:ImU32, col_bot_left:ImU32):nil
+    ImDrawList_AddRectFilledMultiColor = imgui.ImDrawList_AddRectFilledMultiColor,
+    ---@param this any
+    ---@param p1 any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param p4 any
+    ---@param col ImU32
+    ---@param thickness number
+    ImDrawList_AddQuad = function(this, p1, p2, p3, p4, col, thickness)
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddQuad(this, p1, p2, p3, p4, col, thickness)
+    end,
+    ---@type fun(this:any, p1:any, p2:any, p3:any, p4:any, col:ImU32):nil
+    ImDrawList_AddQuadFilled = imgui.ImDrawList_AddQuadFilled,
+    ---@param this any
+    ---@param p1 any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param col ImU32
+    ---@param thickness number
+    ImDrawList_AddTriangle = function(this, p1, p2, p3, col, thickness)
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddTriangle(this, p1, p2, p3, col, thickness)
+    end,
+    ---@type fun(this:any, p1:any, p2:any, p3:any, col:ImU32):nil
+    ImDrawList_AddTriangleFilled = imgui.ImDrawList_AddTriangleFilled,
+    ---@param this any
+    ---@param center any
+    ---@param radius number
+    ---@param col ImU32
+    ---@param num_segments integer
+    ---@param thickness number
+    ImDrawList_AddCircle = function(this, center, radius, col, num_segments, thickness)
+        num_segments = num_segments or 0
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddCircle(this, center, radius, col, num_segments, thickness)
+    end,
+    ---@param this any
+    ---@param center any
+    ---@param radius number
+    ---@param col ImU32
+    ---@param num_segments integer
+    ImDrawList_AddCircleFilled = function(this, center, radius, col, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_AddCircleFilled(this, center, radius, col, num_segments)
+    end,
+    ---@param this any
+    ---@param center any
+    ---@param radius number
+    ---@param col ImU32
+    ---@param num_segments integer
+    ---@param thickness number
+    ImDrawList_AddNgon = function(this, center, radius, col, num_segments, thickness)
+        thickness = thickness or 1.0
+        return imgui.ImDrawList_AddNgon(this, center, radius, col, num_segments, thickness)
+    end,
+    ---@type fun(this:any, center:any, radius:number, col:ImU32, num_segments:integer):nil
+    ImDrawList_AddNgonFilled = imgui.ImDrawList_AddNgonFilled,
+    ---@param this any
+    ---@param pos any
+    ---@param col ImU32
+    ---@param text_begin string
+    ---@param text_end string
+    ImDrawList_AddText = function(this, pos, col, text_begin, text_end)
+        return imgui.ImDrawList_AddText(this, pos, col, text_begin, text_end)
+    end,
+    ---@param this any
+    ---@param font any
+    ---@param font_size number
+    ---@param pos any
+    ---@param col ImU32
+    ---@param text_begin string
+    ---@param text_end string
+    ---@param wrap_width number
+    ---@param cpu_fine_clip_rect any
+    ImDrawList_AddText = function(this, font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect)
+        wrap_width = wrap_width or 0.0
+        return imgui.ImDrawList_AddText(this, font, font_size, pos, col, text_begin, text_end, wrap_width, cpu_fine_clip_rect)
+    end,
+    ---@type fun(this:any, points:any, num_points:integer, col:ImU32, flags:ImDrawFlags, thickness:number):nil
+    ImDrawList_AddPolyline = imgui.ImDrawList_AddPolyline,
+    ---@type fun(this:any, points:any, num_points:integer, col:ImU32):nil
+    ImDrawList_AddConvexPolyFilled = imgui.ImDrawList_AddConvexPolyFilled,
+    ---@param this any
+    ---@param p1 any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param p4 any
+    ---@param col ImU32
+    ---@param thickness number
+    ---@param num_segments integer
+    ImDrawList_AddBezierCubic = function(this, p1, p2, p3, p4, col, thickness, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_AddBezierCubic(this, p1, p2, p3, p4, col, thickness, num_segments)
+    end,
+    ---@param this any
+    ---@param p1 any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param col ImU32
+    ---@param thickness number
+    ---@param num_segments integer
+    ImDrawList_AddBezierQuadratic = function(this, p1, p2, p3, col, thickness, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_AddBezierQuadratic(this, p1, p2, p3, col, thickness, num_segments)
+    end,
+    ---@param this any
+    ---@param user_texture_id ImTextureID
+    ---@param p_min any
+    ---@param p_max any
+    ---@param uv_min any
+    ---@param uv_max any
+    ---@param col ImU32
+    ImDrawList_AddImage = function(this, user_texture_id, p_min, p_max, uv_min, uv_max, col)
+        uv_min = uv_min or ffi.new('struct ImVec2')
+        uv_max = uv_max or ffi.new('struct ImVec2', 1, 1)
+        col = col or IM_COL32_WHITE
+        return imgui.ImDrawList_AddImage(this, user_texture_id, p_min, p_max, uv_min, uv_max, col)
+    end,
+    ---@param this any
+    ---@param user_texture_id ImTextureID
+    ---@param p1 any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param p4 any
+    ---@param uv1 any
+    ---@param uv2 any
+    ---@param uv3 any
+    ---@param uv4 any
+    ---@param col ImU32
+    ImDrawList_AddImageQuad = function(this, user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col)
+        uv1 = uv1 or ffi.new('struct ImVec2')
+        uv2 = uv2 or ImVec2(1,0)
+        uv3 = uv3 or ffi.new('struct ImVec2', 1, 1)
+        uv4 = uv4 or ImVec2(0,1)
+        col = col or IM_COL32_WHITE
+        return imgui.ImDrawList_AddImageQuad(this, user_texture_id, p1, p2, p3, p4, uv1, uv2, uv3, uv4, col)
+    end,
+    ---@param this any
+    ---@param user_texture_id ImTextureID
+    ---@param p_min any
+    ---@param p_max any
+    ---@param uv_min any
+    ---@param uv_max any
+    ---@param col ImU32
+    ---@param rounding number
+    ---@param flags ImDrawFlags
+    ImDrawList_AddImageRounded = function(this, user_texture_id, p_min, p_max, uv_min, uv_max, col, rounding, flags)
+        flags = flags or 0
+        return imgui.ImDrawList_AddImageRounded(this, user_texture_id, p_min, p_max, uv_min, uv_max, col, rounding, flags)
+    end,
+    ---@param this any
+    ---@param center any
+    ---@param radius number
+    ---@param a_min number
+    ---@param a_max number
+    ---@param num_segments integer
+    ImDrawList_PathArcTo = function(this, center, radius, a_min, a_max, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_PathArcTo(this, center, radius, a_min, a_max, num_segments)
+    end,
+    ---@type fun(this:any, center:any, radius:number, a_min_of_12:integer, a_max_of_12:integer):nil
+    ImDrawList_PathArcToFast = imgui.ImDrawList_PathArcToFast,
+    ---@param this any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param p4 any
+    ---@param num_segments integer
+    ImDrawList_PathBezierCubicCurveTo = function(this, p2, p3, p4, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_PathBezierCubicCurveTo(this, p2, p3, p4, num_segments)
+    end,
+    ---@param this any
+    ---@param p2 any
+    ---@param p3 any
+    ---@param num_segments integer
+    ImDrawList_PathBezierQuadraticCurveTo = function(this, p2, p3, num_segments)
+        num_segments = num_segments or 0
+        return imgui.ImDrawList_PathBezierQuadraticCurveTo(this, p2, p3, num_segments)
+    end,
+    ---@param this any
+    ---@param rect_min any
+    ---@param rect_max any
+    ---@param rounding number
+    ---@param flags ImDrawFlags
+    ImDrawList_PathRect = function(this, rect_min, rect_max, rounding, flags)
+        rounding = rounding or 0.0
+        flags = flags or 0
+        return imgui.ImDrawList_PathRect(this, rect_min, rect_max, rounding, flags)
+    end,
+    ---@type fun(this:any, callback:ImDrawCallback, callback_data:any):nil
+    ImDrawList_AddCallback = imgui.ImDrawList_AddCallback,
+    ---@type fun(this:any):nil
+    ImDrawList_AddDrawCmd = imgui.ImDrawList_AddDrawCmd,
+    ---@type fun(this:any):any
+    ImDrawList_CloneOutput = imgui.ImDrawList_CloneOutput,
+    ---@type fun(this:any, idx_count:integer, vtx_count:integer):nil
+    ImDrawList_PrimReserve = imgui.ImDrawList_PrimReserve,
+    ---@type fun(this:any, idx_count:integer, vtx_count:integer):nil
+    ImDrawList_PrimUnreserve = imgui.ImDrawList_PrimUnreserve,
+    ---@type fun(this:any, a:any, b:any, col:ImU32):nil
+    ImDrawList_PrimRect = imgui.ImDrawList_PrimRect,
+    ---@type fun(this:any, a:any, b:any, uv_a:any, uv_b:any, col:ImU32):nil
+    ImDrawList_PrimRectUV = imgui.ImDrawList_PrimRectUV,
+    ---@type fun(this:any, a:any, b:any, c:any, d:any, uv_a:any, uv_b:any, uv_c:any, uv_d:any, col:ImU32):nil
+    ImDrawList_PrimQuadUV = imgui.ImDrawList_PrimQuadUV,
+    ---@type fun(this:any):nil
+    ImDrawList__ResetForNewFrame = imgui.ImDrawList__ResetForNewFrame,
+    ---@type fun(this:any):nil
+    ImDrawList__ClearFreeMemory = imgui.ImDrawList__ClearFreeMemory,
+    ---@type fun(this:any):nil
+    ImDrawList__PopUnusedDrawCmd = imgui.ImDrawList__PopUnusedDrawCmd,
+    ---@type fun(this:any):nil
+    ImDrawList__TryMergeDrawCmds = imgui.ImDrawList__TryMergeDrawCmds,
+    ---@type fun(this:any):nil
+    ImDrawList__OnChangedClipRect = imgui.ImDrawList__OnChangedClipRect,
+    ---@type fun(this:any):nil
+    ImDrawList__OnChangedTextureID = imgui.ImDrawList__OnChangedTextureID,
+    ---@type fun(this:any):nil
+    ImDrawList__OnChangedVtxOffset = imgui.ImDrawList__OnChangedVtxOffset,
+    ---@type fun(this:any, radius:number):integer
+    ImDrawList__CalcCircleAutoSegmentCount = imgui.ImDrawList__CalcCircleAutoSegmentCount,
+    ---@type fun(this:any, center:any, radius:number, a_min_sample:integer, a_max_sample:integer, a_step:integer):nil
+    ImDrawList__PathArcToFastEx = imgui.ImDrawList__PathArcToFastEx,
+    ---@type fun(this:any, center:any, radius:number, a_min:number, a_max:number, num_segments:integer):nil
+    ImDrawList__PathArcToN = imgui.ImDrawList__PathArcToN,
+    ---@type fun(this:any):nil
+    ImDrawData_DeIndexAllBuffers = imgui.ImDrawData_DeIndexAllBuffers,
+    ---@type fun(this:any, fb_scale:any):nil
+    ImDrawData_ScaleClipRects = imgui.ImDrawData_ScaleClipRects,
+    ---@type fun(this:any, font_cfg:any):any
+    ImFontAtlas_AddFont = imgui.ImFontAtlas_AddFont,
+    ---@param this any
+    ---@param font_cfg any
+    ImFontAtlas_AddFontDefault = function(this, font_cfg)
+        return imgui.ImFontAtlas_AddFontDefault(this, font_cfg)
+    end,
+    ---@param this any
+    ---@param filename string
+    ---@param size_pixels number
+    ---@param font_cfg any
+    ---@param glyph_ranges any
+    ImFontAtlas_AddFontFromFileTTF = function(this, filename, size_pixels, font_cfg, glyph_ranges)
+        return imgui.ImFontAtlas_AddFontFromFileTTF(this, filename, size_pixels, font_cfg, glyph_ranges)
+    end,
+    ---@param this any
+    ---@param font_data any
+    ---@param font_size integer
+    ---@param size_pixels number
+    ---@param font_cfg any
+    ---@param glyph_ranges any
+    ImFontAtlas_AddFontFromMemoryTTF = function(this, font_data, font_size, size_pixels, font_cfg, glyph_ranges)
+        return imgui.ImFontAtlas_AddFontFromMemoryTTF(this, font_data, font_size, size_pixels, font_cfg, glyph_ranges)
+    end,
+    ---@param this any
+    ---@param compressed_font_data any
+    ---@param compressed_font_size integer
+    ---@param size_pixels number
+    ---@param font_cfg any
+    ---@param glyph_ranges any
+    ImFontAtlas_AddFontFromMemoryCompressedTTF = function(this, compressed_font_data, compressed_font_size, size_pixels, font_cfg, glyph_ranges)
+        return imgui.ImFontAtlas_AddFontFromMemoryCompressedTTF(this, compressed_font_data, compressed_font_size, size_pixels, font_cfg, glyph_ranges)
+    end,
+    ---@param this any
+    ---@param compressed_font_data_base85 string
+    ---@param size_pixels number
+    ---@param font_cfg any
+    ---@param glyph_ranges any
+    ImFontAtlas_AddFontFromMemoryCompressedBase85TTF = function(this, compressed_font_data_base85, size_pixels, font_cfg, glyph_ranges)
+        return imgui.ImFontAtlas_AddFontFromMemoryCompressedBase85TTF(this, compressed_font_data_base85, size_pixels, font_cfg, glyph_ranges)
+    end,
+    ---@type fun(this:any):nil
+    ImFontAtlas_ClearInputData = imgui.ImFontAtlas_ClearInputData,
+    ---@type fun(this:any):nil
+    ImFontAtlas_ClearTexData = imgui.ImFontAtlas_ClearTexData,
+    ---@type fun(this:any):nil
+    ImFontAtlas_ClearFonts = imgui.ImFontAtlas_ClearFonts,
+    ---@type fun(this:any):nil
+    ImFontAtlas_Clear = imgui.ImFontAtlas_Clear,
+    ---@type fun(this:any):boolean
+    ImFontAtlas_Build = imgui.ImFontAtlas_Build,
+    ---@param this any
+    ---@param out_pixels any
+    ---@param out_width any
+    ---@param out_height any
+    ---@param out_bytes_per_pixel any
+    ImFontAtlas_GetTexDataAsAlpha8 = function(this, out_pixels, out_width, out_height, out_bytes_per_pixel)
+        return imgui.ImFontAtlas_GetTexDataAsAlpha8(this, out_pixels, out_width, out_height, out_bytes_per_pixel)
+    end,
+    ---@param this any
+    ---@param out_pixels any
+    ---@param out_width any
+    ---@param out_height any
+    ---@param out_bytes_per_pixel any
+    ImFontAtlas_GetTexDataAsRGBA32 = function(this, out_pixels, out_width, out_height, out_bytes_per_pixel)
+        return imgui.ImFontAtlas_GetTexDataAsRGBA32(this, out_pixels, out_width, out_height, out_bytes_per_pixel)
+    end,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesDefault = imgui.ImFontAtlas_GetGlyphRangesDefault,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesKorean = imgui.ImFontAtlas_GetGlyphRangesKorean,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesJapanese = imgui.ImFontAtlas_GetGlyphRangesJapanese,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesChineseFull = imgui.ImFontAtlas_GetGlyphRangesChineseFull,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon = imgui.ImFontAtlas_GetGlyphRangesChineseSimplifiedCommon,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesCyrillic = imgui.ImFontAtlas_GetGlyphRangesCyrillic,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesThai = imgui.ImFontAtlas_GetGlyphRangesThai,
+    ---@type fun(this:any):any
+    ImFontAtlas_GetGlyphRangesVietnamese = imgui.ImFontAtlas_GetGlyphRangesVietnamese,
+    ---@type fun(this:any, width:integer, height:integer):integer
+    ImFontAtlas_AddCustomRectRegular = imgui.ImFontAtlas_AddCustomRectRegular,
+    ---@param this any
+    ---@param font any
+    ---@param id ImWchar
+    ---@param width integer
+    ---@param height integer
+    ---@param advance_x number
+    ---@param offset any
+    ImFontAtlas_AddCustomRectFontGlyph = function(this, font, id, width, height, advance_x, offset)
+        offset = offset or ffi.new('struct ImVec2')
+        return imgui.ImFontAtlas_AddCustomRectFontGlyph(this, font, id, width, height, advance_x, offset)
+    end,
+    ---@type fun(this:any, rect:any, out_uv_min:any, out_uv_max:any):nil
+    ImFontAtlas_CalcCustomRectUV = imgui.ImFontAtlas_CalcCustomRectUV,
+    ---@type fun(this:any, cursor:ImGuiMouseCursor, out_offset:any, out_size:any, out_uv_border:ImVec2, out_uv_fill:ImVec2):boolean
+    ImFontAtlas_GetMouseCursorTexData = imgui.ImFontAtlas_GetMouseCursorTexData,
+    ---@type fun(this:any, c:ImWchar):any
+    ImFont_FindGlyph = imgui.ImFont_FindGlyph,
+    ---@type fun(this:any, c:ImWchar):any
+    ImFont_FindGlyphNoFallback = imgui.ImFont_FindGlyphNoFallback,
+    ---@param this any
+    ---@param size number
+    ---@param max_width number
+    ---@param wrap_width number
+    ---@param text_begin string
+    ---@param text_end string
+    ---@param remaining any
+    ImFont_CalcTextSizeA = function(this, size, max_width, wrap_width, text_begin, text_end, remaining)
+        return imgui.ImFont_CalcTextSizeA(this, size, max_width, wrap_width, text_begin, text_end, remaining)
+    end,
+    ---@type fun(this:any, scale:number, text:string, text_end:string, wrap_width:number):string
+    ImFont_CalcWordWrapPositionA = imgui.ImFont_CalcWordWrapPositionA,
+    ---@type fun(this:any, draw_list:any, size:number, pos:ImVec2, col:ImU32, c:ImWchar):nil
+    ImFont_RenderChar = imgui.ImFont_RenderChar,
+    ---@param this any
+    ---@param draw_list any
+    ---@param size number
+    ---@param pos ImVec2
+    ---@param col ImU32
+    ---@param clip_rect any
+    ---@param text_begin string
+    ---@param text_end string
+    ---@param wrap_width number
+    ---@param cpu_fine_clip boolean
+    ImFont_RenderText = function(this, draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip)
+        wrap_width = wrap_width or 0.0
+        cpu_fine_clip = cpu_fine_clip or false
+        return imgui.ImFont_RenderText(this, draw_list, size, pos, col, clip_rect, text_begin, text_end, wrap_width, cpu_fine_clip)
+    end,
+    ---@type fun(this:any):nil
+    ImFont_BuildLookupTable = imgui.ImFont_BuildLookupTable,
+    ---@type fun(this:any):nil
+    ImFont_ClearOutputData = imgui.ImFont_ClearOutputData,
+    ---@type fun(this:any, new_size:integer):nil
+    ImFont_GrowIndex = imgui.ImFont_GrowIndex,
+    ---@type fun(this:any, src_cfg:any, c:ImWchar, x0:number, y0:number, x1:number, y1:number, u0:number, v0:number, u1:number, v1:number, advance_x:number):nil
+    ImFont_AddGlyph = imgui.ImFont_AddGlyph,
+    ---@param this any
+    ---@param dst ImWchar
+    ---@param src ImWchar
+    ---@param overwrite_dst boolean
+    ImFont_AddRemapChar = function(this, dst, src, overwrite_dst)
+        overwrite_dst = overwrite_dst or true
+        return imgui.ImFont_AddRemapChar(this, dst, src, overwrite_dst)
+    end,
+    ---@type fun(this:any, c:ImWchar, visible:boolean):nil
+    ImFont_SetGlyphVisible = imgui.ImFont_SetGlyphVisible,
+    ---@type fun(this:any, c_begin:integer, c_last:integer):boolean
+    ImFont_IsGlyphRangeUnused = imgui.ImFont_IsGlyphRangeUnused,
+    ---@param glsl_version string
+    ImGui_ImplOpenGL3_Init = function(glsl_version)
+        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
+    end,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
+    ---@type fun(draw_data:any):nil
+    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
+    ---@type fun():nil
+    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
+    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
+    ---@type fun(window:any, xoffset:number, yoffset:number):nil
+    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
+    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
+    ---@type fun(window:any, c:integer):nil
+    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
+    ---@type fun(monitor:any, event:integer):nil
+    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
+}
+-----------------------------------------------------------------------------
+-- glad.dll
+-----------------------------------------------------------------------------
+---@type Table<string, any>
+local glad = ffi.load('glad')
+M.cache.glad = glad
+M.libs.glad = {
+    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
+    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
+    ---@type fun(load:GLADloadfunc):integer
+    gladLoadGL = glad.gladLoadGL,
 }
 return M
