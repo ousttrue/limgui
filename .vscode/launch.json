@@ -13,9 +13,15 @@
                 "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
                 "file": "clang_viewer.lua"
             },
+            "args": [
+                // CFLAGS
+                "-DIMGUI_API=__declspec(dllexport)",
+                // Export
+                "-E../libs/imgui/imgui.h,imgui.dll",
+            ],
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-                "LUA_PATH": ";;${workspaceFolder}\\luajitffi",
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin;C:\\Program Files\\LLVM\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\luajitffi\\?.lua",
             }
         },
         {

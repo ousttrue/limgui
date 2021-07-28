@@ -1,8 +1,12 @@
+print(package.path)
+
 local ffi = require("ffi")
 local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
+local CommandLine = require("clangffi.commandline")
+local Parser = require("clangffi.parser")
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
 ---@class GuiClangViewer
@@ -13,8 +17,7 @@ local gui = {
     dockspace_id = ffi.new("ImGuiID[1]"),
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
-    ---@param self GuiClangViewer
-    update = function(self)
+    dockspace = function(self)
         -- We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         -- because it would be confusing to have two docking targets within each others.
         local window_flags = bit.bor(
@@ -105,15 +108,37 @@ local gui = {
 
                 -- we now dock our windows into the docking node we made above
                 imgui.DockBuilderDockWindow("Down", dock_id_down)
-                imgui.DockBuilderDockWindow("Left", dock_id_left)
+                imgui.DockBuilderDockWindow("Cursor", dock_id_left)
                 imgui.DockBuilderFinish(self.dockspace_id[0])
             end
         end
 
         imgui.End()
+    end,
 
-        imgui.Begin("Left")
-        imgui.Text("Hello, left!")
+    ---@param self GuiClangViewer
+    ---@param node Node
+    draw_node = function(self, i, node)
+        if node.children then
+            if imgui.TreeNode__2(i, node.spelling) then
+                for j, child in ipairs(node.children) do
+                    self:draw_node(ffi.cast("void *", j), child)
+                end
+                imgui.TreePop()
+            end
+        else
+            imgui.BulletText(node.spelling)
+        end
+    end,
+
+    ---@param self GuiClangViewer
+    update = function(self)
+        self:dockspace()
+
+        -- draw node tree
+        imgui.Begin("Cursor")
+        imgui.SetNextItemOpen(true, const.ImGuiCond_.ImGuiCond_Once)
+        self:draw_node(ffi.cast("void *", 1), self.root)
         imgui.End()
 
         imgui.Begin("Down")
@@ -122,11 +147,22 @@ local gui = {
     end,
 }
 
+local cmd = CommandLine.parse({ ... })
+local parser = Parser.new()
+parser:parse(cmd.EXPORTS, cmd.CFLAGS)
+print(parser.node_count)
+
+print("remove_duplicated...")
+local count = parser.root:remove_duplicated()
+print(count)
+
 local app = require("app")
 local TITLE = "ClangViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
+
+gui.root = parser.root
 
 -- Main loop
 while app:new_frame() do
