@@ -7,3 +7,6 @@
 [submodule "luajitffi"]
 	path = luajitffi
 	url = https://github.com/ousttrue/luajitffi
+[submodule "luv"]
+	path = luv
+	url = https://github.com/luvit/luv.git
