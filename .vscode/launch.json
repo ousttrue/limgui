@@ -31,13 +31,13 @@
             }
         },
         {
-            "name": "imgui-lua",
+            "name": "example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
                 "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
-                "file": "imgui_test.lua"
+                "file": "example_glfw_opengl3.lua"
             },
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",

@@ -16,10 +16,10 @@ end
 
 local gl, glc, glu, glext
 
----@class App
+---@class ClangViewer
 ---@field window any
 local app = {
-    ---@param self App
+    ---@param self ClangViewer
     ---@return boolean
     initialize = function(self, w, h)
         -- Setup window
