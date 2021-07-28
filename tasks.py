@@ -17,6 +17,9 @@ LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
 LUA_BIN = LUAJIT_DIR / 'luajit.exe'
 # lua
 IMGUI_FFI_DIR = HERE / 'lua/imgui_ffi'
+# luv
+LUV_DIR = HERE / 'luv'
+BUILD_DIR = HERE / 'build'
 
 VCVARS_BAT = pathlib.Path(
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -98,7 +101,7 @@ def clean(c):
 def build_lua(c):
     # type: (Context) -> None
     '''
-    build lua
+    build luajit in luajitffi
     '''
     if not VCVARS_BAT.exists():
         raise Exception('no vcvars64.bat')
@@ -108,7 +111,18 @@ def build_lua(c):
               in_stream=io.StringIO("msvcbuild.bat\r\nexit\r\n')"))
 
 
-@task(build_glfw, build_imgui, build_lua)
+@task
+def build_luv(c):
+    # type: (Context) -> None
+    '''
+    build luv
+    '''
+    with c.cd(HERE):
+        c.run(f'cmake -S {LUV_DIR} -B {BUILD_DIR}')
+        c.run(f'cmake --build {BUILD_DIR}')
+
+
+@task(build_glfw, build_imgui, build_luv)
 def build_all(c):
     # type: (Context) -> None
     '''
@@ -129,4 +143,4 @@ def generate_ffi(c):
                           f"-O{IMGUI_FFI_DIR}"),
               env={
                   'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",
-              })
+        })
