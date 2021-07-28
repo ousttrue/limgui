@@ -3,9 +3,6 @@ local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
-local app = require('app')
-
-local TITLE = "ClangViewer"
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
 ---@class GuiClangViewer
@@ -125,6 +122,8 @@ local gui = {
     end,
 }
 
+local app = require("app")
+local TITLE = "ClangViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
