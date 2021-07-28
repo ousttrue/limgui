@@ -7,8 +7,9 @@ local glad = imgui_ffi.libs.glad
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
 
+local TITLE = "ClangViewer"
 -- GL 3.0 + GLSL 130
-local glsl_version = "#version 130"
+local GLSL_VERSION = "#version 130"
 
 local function glfw_error_callback(error, description)
     print(string.format("Glfw Error %d: %s\n", error, description))
@@ -35,7 +36,7 @@ local app = {
         --glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            -- 3.0+ only
 
         -- Create window with graphics context
-        self.window = glfw.Window:__new(w, h, "Dear ImGui GLFW+OpenGL3 example", nil, nil)
+        self.window = glfw.Window:__new(w, h, TITLE, nil, nil)
         if not self.window then
             assert(false)
         end
@@ -61,20 +62,9 @@ local app = {
 
         -- Setup Platform/Renderer backends
         imgui.ImGui_ImplGlfw_InitForOpenGL(self.window, true)
-        imgui.ImGui_ImplOpenGL3_Init(glsl_version)
+        imgui.ImGui_ImplOpenGL3_Init(GLSL_VERSION)
 
         -- Load Fonts
-        -- - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use imgui.PushFont()/PopFont() to select them.
-        -- - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-        -- - If the file cannot be loaded, the function will return NULL. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-        -- - The fonts will be rasterized at a given size (w/ oversampling) and stored into a texture when calling ImFontAtlas::Build()/GetTexDataAsXXXX(), which ImGui_ImplXXXX_NewFrame below will call.
-        -- - Read 'docs/FONTS.md' for more instructions and details.
-        -- - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-        -- imgui.ImFontAtlas_AddFontDefault(io.Fonts)
-        -- imgui.ImFontAtlas_AddFontFromFileTTF(self.io.Fonts, "C:/Windows/Fonts/meiryo.ttc", 16.0)
-        --io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-        --io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-        --io.Fonts->AddFontFromFileTTF("../../misc/fonts/ProggyTiny.ttf", 10.0f);
         local font = imgui.ImFontAtlas_AddFontFromFileTTF(
             self.io.Fonts,
             "c:\\Windows\\Fonts\\meiryo.ttc",
@@ -148,7 +138,6 @@ gui = {
     dockspace_flags = const.ImGuiDockNodeFlags_.ImGuiDockNodeFlags_PassthruCentralNode,
     first_time = true,
     dockspace_id = ffi.new("ImGuiID[1]"),
-
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
     ---@param self GuiClangViewer
@@ -201,7 +190,19 @@ gui = {
             self.dockspace_id[0] = imgui.GetID("MyDockSpace")
             imgui.DockSpace(self.dockspace_id[0], ffi.new("struct ImVec2"), self.dockspace_flags)
 
+            if imgui.BeginMenuBar() then
+                if imgui.BeginMenu("File") then
+                    if imgui.MenuItem("Open", "Ctrl+O") then
+                        print("open file")
+                    end
+                    imgui.Separator()
+                    imgui.EndMenu()
+                end
+                imgui.EndMenuBar()
+            end
+
             if self.first_time then
+                -- layout dock nodes
                 self.first_time = false
 
                 imgui.DockBuilderRemoveNode(self.dockspace_id[0]) -- clear any previous layout

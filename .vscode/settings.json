@@ -4,5 +4,6 @@
         "glfw",
         "imgui"
     ],
-    "Lua.runtime.version": "LuaJIT"
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.workspace.preloadFileSize": 10000
 }

@@ -18,19 +18,6 @@
             }
         },
         {
-            "name": "glfw-lua",
-            "type": "lua-local",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
-            "program": {
-                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
-                "file": "glfw_test.lua"
-            },
-            "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-            }
-        },
-        {
             "name": "example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",
@@ -42,6 +29,19 @@
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
             },
+        },
+        {
+            "name": "glfw-lua",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "file": "glfw_test.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+            }
         },
         {
             "name": "invoke task",
