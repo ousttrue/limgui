@@ -16,10 +16,10 @@ end
 
 local gl, glc, glu, glext
 
----@class ClangViewer
+---@class AppClangViewer
 ---@field window any
 local app = {
-    ---@param self ClangViewer
+    ---@param self AppClangViewer
     ---@return boolean
     initialize = function(self, w, h)
         -- Setup window
@@ -87,7 +87,7 @@ local app = {
         return true
     end,
 
-    ---@param self App
+    ---@param self AppClangViewer
     ---@return boolean
     new_frame = function(self)
         if self.window:shouldClose(self.window) then
@@ -109,7 +109,7 @@ local app = {
         return true
     end,
 
-    ---@param self App
+    ---@param self AppClangViewer
     ---@param clear_color any
     render = function(self, clear_color)
         -- Rendering
@@ -142,12 +142,8 @@ getmetatable(scope).__gc = function()
 end
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
----@class GUI
----@field show_demo_window any
----@field show_another_window any
+---@class GuiClangViewer
 ---@field clear_color any
----@field f any
----@field counter any
 gui = {
     dockspace_flags = const.ImGuiDockNodeFlags_.ImGuiDockNodeFlags_PassthruCentralNode,
     first_time = true,
@@ -155,7 +151,7 @@ gui = {
 
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
-    ---@param self GUI
+    ---@param self GuiClangViewer
     update = function(self)
         -- We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         -- because it would be confusing to have two docking targets within each others.
