@@ -4,7 +4,7 @@
 --
 local ffi = require("ffi")
 
-local glfw = require("glfw")
+local glfw = require("gl_ffi.glfw")
 local glfwc = glfw.glfwc
 local imgui_ffi = require("imgui_ffi.mod")
 local glad = imgui_ffi.libs.glad
@@ -52,8 +52,8 @@ end
 window:setKeyCallback(key_callback)
 
 window:makeContextCurrent()
-glad.gladLoadGL(glfw.getProcAddress)
-local gllib = require("gl")
+-- glad.gladLoadGL(glfw.getProcAddress)
+local gllib = require("gl_ffi.gl")
 gllib.set_loader(glfw)
 local gl, glc, glu, glext = gllib.libraries()
 glfw.swapInterval(1)

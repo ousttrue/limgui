@@ -1,5 +1,5 @@
 local ffi = require("ffi")
-local glfw = require("glfw")
+local glfw = require("gl_ffi.glfw")
 local glfwc = glfw.glfwc
 local imgui_ffi = require("imgui_ffi.mod")
 local glad = imgui_ffi.libs.glad
@@ -38,7 +38,7 @@ local app = {
 
         -- Initialize OpenGL loader
         glad.gladLoadGL(glfw.getProcAddress)
-        local gllib = require("gl")
+        local gllib = require("gl_ffi.gl")
         gllib.set_loader(glfw)
         gl, glc, glu, glext = gllib.libraries()
 
