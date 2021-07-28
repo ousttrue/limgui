@@ -119,7 +119,7 @@ def build_luv(c):
     '''
     with c.cd(HERE):
         c.run(f'cmake -S {LUV_DIR} -B {BUILD_DIR}')
-        c.run(f'cmake --build {BUILD_DIR}')
+        c.run(f'cmake --build {BUILD_DIR} --config Release')
 
 
 @task(build_glfw, build_imgui, build_luv)
