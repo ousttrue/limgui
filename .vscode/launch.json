@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
-                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
                 "file": "clang_viewer.lua"
             },
             "args": [
@@ -30,7 +30,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
-                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
                 "file": "example_glfw_opengl3.lua"
             },
             "env": {
@@ -43,7 +43,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
-                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
                 "file": "glfw_sample.lua"
             },
             "env": {
@@ -67,7 +67,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/luajitffi",
             "program": {
-                "lua": "${workspaceFolder}/luajitffi/LuaJIT/src/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
                 "file": "main.lua"
             },
             "args": [
