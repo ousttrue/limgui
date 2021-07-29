@@ -1,10 +1,94 @@
 print(package.path)
 
+-- TODO
+-- T | source |
+-- R |        |
+-- E +--------+
+-- E | prop   |
+--
+-- * [ ] filter: cursor kind
+-- * [ ] central: source
+-- * [ ] selection: location
+-- * [ ] node: type kind
+-- * [ ] node: jump reference
+
 local ffi = require("ffi")
 local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
+
+---@class Table
+local Table = {
+    flags = bit.bor(
+        const.ImGuiTableFlags_.ImGuiTableFlags_BordersV,
+        const.ImGuiTableFlags_.ImGuiTableFlags_BordersOuterH,
+        const.ImGuiTableFlags_.ImGuiTableFlags_Resizable,
+        const.ImGuiTableFlags_.ImGuiTableFlags_RowBg,
+        const.ImGuiTableFlags_.ImGuiTableFlags_NoBordersInBody
+    ),
+
+    draw_node = function(self, node)
+        imgui.TableNextRow()
+        imgui.TableNextColumn()
+
+        if node.Children then
+            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth)
+            imgui.TableNextColumn()
+            imgui.TextDisabled("--")
+            imgui.TableNextColumn()
+            imgui.TextUnformatted(node.Type)
+            if open then
+                for i, child in ipairs(node.Children) do
+                    self:draw_node(child)
+                end
+                imgui.TreePop()
+            end
+        else
+            imgui.TreeNodeEx(
+                node.Name,
+                bit.bor(
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Leaf,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Bullet,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_NoTreePushOnOpen,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth
+                )
+            )
+            imgui.TableNextColumn()
+            imgui.Text("%d", node.Size)
+            imgui.TableNextColumn()
+            imgui.TextUnformatted(node.Type)
+        end
+    end,
+
+    ---@param self Table
+    ---@param root any
+    draw = function(self, root)
+        if not self.TEXT_BASE_WIDTH then
+            self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
+        end
+
+        if imgui.BeginTable("3ways", 3, self.flags) then
+            -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
+            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_NoHide)
+            imgui.TableSetupColumn(
+                "Size",
+                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                self.TEXT_BASE_WIDTH * 12.0
+            )
+            imgui.TableSetupColumn(
+                "Type",
+                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                self.TEXT_BASE_WIDTH * 18.0
+            )
+            imgui.TableHeadersRow()
+
+            self:draw_node(root)
+
+            imgui.EndTable()
+        end
+    end,
+}
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
 ---@class GuiClangViewer
@@ -76,8 +160,6 @@ local gui = {
             end
 
             if self.first_time then
-                self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
-
                 -- layout dock nodes
                 self.first_time = false
 
@@ -159,69 +241,6 @@ local gui = {
         },
     },
 
-    display_node = function(self, node)
-        imgui.TableNextRow()
-        imgui.TableNextColumn()
-
-        if node.Children then
-            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth)
-            imgui.TableNextColumn()
-            imgui.TextDisabled("--")
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(node.Type)
-            if open then
-                for i, child in ipairs(node.Children) do
-                    self:display_node(child)
-                end
-                imgui.TreePop()
-            end
-        else
-            imgui.TreeNodeEx(
-                node.Name,
-                bit.bor(
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Leaf,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Bullet,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_NoTreePushOnOpen,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth
-                )
-            )
-            imgui.TableNextColumn()
-            imgui.Text("%d", node.Size)
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(node.Type)
-        end
-    end,
-
-    flags = bit.bor(
-        const.ImGuiTableFlags_.ImGuiTableFlags_BordersV,
-        const.ImGuiTableFlags_.ImGuiTableFlags_BordersOuterH,
-        const.ImGuiTableFlags_.ImGuiTableFlags_Resizable,
-        const.ImGuiTableFlags_.ImGuiTableFlags_RowBg,
-        const.ImGuiTableFlags_.ImGuiTableFlags_NoBordersInBody
-    ),
-
-    table_tree = function(self)
-        if imgui.BeginTable("3ways", 3, self.flags) then
-            -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_NoHide)
-            imgui.TableSetupColumn(
-                "Size",
-                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
-                self.TEXT_BASE_WIDTH * 12.0
-            )
-            imgui.TableSetupColumn(
-                "Type",
-                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
-                self.TEXT_BASE_WIDTH * 18.0
-            )
-            imgui.TableHeadersRow()
-
-            self:display_node(self.sample_node)
-
-            imgui.EndTable()
-        end
-    end,
-
     ---@param self GuiClangViewer
     update = function(self)
         self:dockspace()
@@ -235,7 +254,7 @@ local gui = {
         imgui.End()
 
         imgui.Begin("Down")
-        self:table_tree()
+        Table:draw(self.sample_node)
         imgui.End()
     end,
 }
