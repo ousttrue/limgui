@@ -5,8 +5,6 @@ local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
-local CommandLine = require("clangffi.commandline")
-local Parser = require("clangffi.parser")
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
 ---@class GuiClangViewer
@@ -137,8 +135,10 @@ local gui = {
 
         -- draw node tree
         imgui.Begin("Cursor")
-        imgui.SetNextItemOpen(true, const.ImGuiCond_.ImGuiCond_Once)
-        self:draw_node(ffi.cast("void *", 1), self.root)
+        if self.root then
+            imgui.SetNextItemOpen(true, const.ImGuiCond_.ImGuiCond_Once)
+            self:draw_node(ffi.cast("void *", 1), self.root)
+        end
         imgui.End()
 
         imgui.Begin("Down")
@@ -147,25 +147,57 @@ local gui = {
     end,
 }
 
-local cmd = CommandLine.parse({ ... })
-local parser = Parser.new()
-parser:parse(cmd.EXPORTS, cmd.CFLAGS)
-print(parser.node_count)
-
-print("remove_duplicated...")
-local count = parser.root:remove_duplicated()
-print(count)
-
 local app = require("app")
 local TITLE = "ClangViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
 
-gui.root = parser.root
+local uv = require("luv")
+
+-- enqueue task
+local mp = require("luajit-msgpack-pure")
+local function on_thread(data)
+    local CommandLine = require("clangffi.commandline")
+    local Parser = require("clangffi.parser")
+    local mp = require("luajit-msgpack-pure")
+
+    local offset, args = mp.unpack(data)
+    local cmd = CommandLine.parse(args)
+    local parser = Parser.new()
+    parser:parse(cmd.EXPORTS, cmd.CFLAGS)
+    print(parser.node_count)
+
+    print("remove_duplicated...")
+    local count = parser.root:remove_duplicated()
+    print(count)
+    return mp.pack(parser.root)
+end
+local function on_end(dst, src)
+    local offset, root = mp.unpack(dst)
+    gui.root = root
+end
+
+if true then
+    local ctx = uv.new_work(
+        on_thread, --work,in threadpool
+        on_end --after work, in loop thread
+    )
+    uv.queue_work(ctx, mp.pack({ ... }))
+else
+    --- sync
+    local result = on_thread(mp.pack({ ... }))
+    on_end(result)
+end
 
 -- Main loop
-while app:new_frame() do
+local idle = uv.new_idle()
+idle:start(function()
+    if not app:new_frame() then
+        idle:stop()
+    end
     gui:update()
     app:render(gui.clear_color)
-end
+end)
+
+uv.run("default")

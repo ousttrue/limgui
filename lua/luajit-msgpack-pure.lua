@@ -4,14 +4,6 @@ local math = require "math"
 
 local IS_LUAFFI = not rawget(_G,"jit")
 
--- standard cdefs
-
-ffi.cdef[[
-  void free(void *ptr);
-  void *realloc(void *ptr, size_t size);
-  void *malloc(size_t size);
-]]
-
 -- cache bitops
 local bor,band,rshift = bit.bor,bit.band,bit.rshift
 
@@ -39,25 +31,26 @@ local buffer = {}
 local sbuffer_init = function(self)
   self.size = 0
   self.alloc = MSGPACK_SBUFFER_INIT_SIZE
-  self.data = ffi.cast("unsigned char *",ffi.C.malloc(MSGPACK_SBUFFER_INIT_SIZE))
+  self.data = ffi.new(string.format("unsigned char[%d]", MSGPACK_SBUFFER_INIT_SIZE))
 end
 
 local sbuffer_destroy = function(self)
-  ffi.C.free(buffer.data)
 end
 
 local sbuffer_realloc = function(self,len)
   if self.alloc - self.size < len then
     local nsize = self.alloc * 2
     while nsize < self.alloc + len do nsize = nsize * 2 end
-    self.data = ffi.cast("unsigned char *",ffi.C.realloc(self.data,nsize))
+    local data = ffi.new(string.format("unsigned char[%d]", nsize))
+    ffi.copy(data, self.data, self.size)
+    self.data = data
     self.alloc = nsize
   end
 end
 
 local sbuffer_append_str = function(self,buf,len)
   sbuffer_realloc(self,len)
-  ffi.copy(self.data+self.size,buf,len)
+  ffi.copy(ffi.cast('unsigned char*', self.data)+self.size,buf,len)
   self.size = self.size + len
 end
 
@@ -266,9 +259,18 @@ packers.map = function(data,ndata)
   else
     error("overflow")
   end
-  for k,v in pairs(data) do
-    packers[type(k)](k)
-    packers[type(v)](v)
+  for k,v in pairs(data) do    
+    local tk = type(k)
+    local kk = packers[tk]
+    local tv = type(v)
+    if tv=='cdata' or tv=='function' then
+      tv = 'nil'
+      v = nil
+    end
+    local vv = packers[tv]
+    -- print(k, v)
+    kk(k)
+    vv(v)
   end
 end
 
@@ -306,19 +308,19 @@ end
 
 set_table_classifier(table_classifier_keys)
 
-packers.cdata = function(data) -- msgpack-js
-  local n = ffi.sizeof(data)
-  if not n then
-    error("cannot pack cdata of unknown size")
-  elseif n < 2^16 then
-    sbuffer_append_intx(buffer,n,16,0xd8)
-  elseif n < 2^32 then
-    sbuffer_append_intx(buffer,n,32,0xd9)
-  else
-    error("overflow")
-  end
-  sbuffer_append_str(buffer,data,n)
-end
+-- packers.cdata = function(data) -- msgpack-js
+--   local n = ffi.sizeof(data)
+--   if not n then
+--     error("cannot pack cdata of unknown size")
+--   elseif n < 2^16 then
+--     sbuffer_append_intx(buffer,n,16,0xd8)
+--   elseif n < 2^32 then
+--     sbuffer_append_intx(buffer,n,32,0xd9)
+--   else
+--     error("overflow")
+--   end
+--   sbuffer_append_str(buffer,data,n)
+-- end
 
 -- types decoding
 
