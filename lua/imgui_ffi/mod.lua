@@ -9,15 +9,15 @@ local M = {
 }
 
 -- cdef
-require('imgui_ffi.cdef.vcruntime')
-require('imgui_ffi.cdef.corecrt_wstdio')
-require('imgui_ffi.cdef.vadefs')
 require('imgui_ffi.cdef.gl')
+require('imgui_ffi.cdef.vadefs')
+require('imgui_ffi.cdef.vcruntime')
 require('imgui_ffi.cdef.imgui')
-require('imgui_ffi.cdef.imgui_impl_glfw')
-require('imgui_ffi.cdef.imgui_impl_opengl3')
 require('imgui_ffi.cdef.imstb_textedit')
+require('imgui_ffi.cdef.corecrt_wstdio')
 require('imgui_ffi.cdef.imgui_internal')
+require('imgui_ffi.cdef.imgui_impl_opengl3')
+require('imgui_ffi.cdef.imgui_impl_glfw')
 M.enums = {
     ImGuiWindowFlags_ = {
         ImGuiWindowFlags_None = C.ImGuiWindowFlags_None,
@@ -860,16 +860,11 @@ M.enums = {
         ImGuiTabItemFlags_Preview = C.ImGuiTabItemFlags_Preview,
     },
 }
----@class va_list
----@class GLFWwindow
----@class GLFWmonitor
----@class size_t
----@class StbUndoRecord
----@class StbUndoState
----@class STB_TexteditState
 ---@class GLADapiproc
 ---@class GLADloadfunc
 ---@class GLADuserptrloadfunc
+---@class va_list
+---@class size_t
 ---@class ImGuiCol
 ---@class ImGuiCond
 ---@class ImGuiDataType
@@ -950,6 +945,11 @@ M.enums = {
 ---@class ImGuiViewport
 ---@class ImGuiPlatformIO
 ---@class ImGuiPlatformMonitor
+---@class StbUndoRecord
+---@class StbUndoState
+---@class STB_TexteditState
+---@class _iobuf
+---@class FILE
 ---@class ImGuiDockRequest
 ---@class ImGuiDockNodeSettings
 ---@class ImGuiDataAuthority
@@ -1010,8 +1010,8 @@ M.enums = {
 ---@class ImGuiTableColumnSettings
 ---@class ImGuiTableSettings
 ---@class ImFontBuilderIO
----@class _iobuf
----@class FILE
+---@class GLFWwindow
+---@class GLFWmonitor
 -----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
@@ -1019,6 +1019,24 @@ M.enums = {
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
+    ---@param glsl_version string
+    ImGui_ImplOpenGL3_Init = function(glsl_version)
+        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
+    end,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
+    ---@type fun(draw_data:any):nil
+    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
     ---@type fun(window:any, install_callbacks:boolean):boolean
     ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
     ---@type fun(window:any, install_callbacks:boolean):boolean
@@ -3542,24 +3560,6 @@ M.libs.imgui = {
     ImGuiTabBar_GetTabOrder = imgui.ImGuiTabBar_GetTabOrder,
     ---@type fun(this:any, tab:any):string
     ImGuiTabBar_GetTabName = imgui.ImGuiTabBar_GetTabName,
-    ---@param glsl_version string
-    ImGui_ImplOpenGL3_Init = function(glsl_version)
-        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
-    end,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
-    ---@type fun(draw_data:any):nil
-    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
 }
 -----------------------------------------------------------------------------
 -- glad.dll
