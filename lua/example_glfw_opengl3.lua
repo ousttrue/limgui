@@ -51,9 +51,6 @@ local gui = {
             end
             imgui.End()
         end
-
-        -- Rendering
-        imgui.Render()
     end,
 }
 

@@ -32,7 +32,7 @@ local app = {
         --glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            -- 3.0+ only
 
         -- Create window with graphics context
-        self.window = glfw.Window:__new(w, h, TITLE, nil, nil)
+        self.window = glfw.Window:__new(w, h, title, nil, nil)
         if not self.window then
             return false
         end

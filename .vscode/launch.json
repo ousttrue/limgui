@@ -25,6 +25,21 @@
             }
         },
         {
+            "name": "json_viewer",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "file": "json_viewer.lua"
+            },
+            "args": [],
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+                "JSON_PATH": "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf",
+            },
+        },
+        {
             "name": "example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",
