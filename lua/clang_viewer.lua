@@ -76,6 +76,8 @@ local gui = {
             end
 
             if self.first_time then
+                self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
+
                 -- layout dock nodes
                 self.first_time = false
 
@@ -129,6 +131,97 @@ local gui = {
         end
     end,
 
+    sample_node = {
+        Name = "Root",
+        Type = "Folder",
+        Size = -1,
+        Children = {
+            {
+                Name = "Music",
+                Type = "Folder",
+                Size = -1,
+                Children = {
+                    { Name = "File1_a.wav", Type = "Audio file", Size = 123000 },
+                    { Name = "File1_b.wav", Type = "Audio file", Size = 456000 },
+                },
+            },
+            {
+                Name = "Textures",
+                Type = "Folder",
+                Size = -1,
+                Children = {
+                    { Name = "Image001.png", Type = "Image file", Size = 203128 },
+                    { Name = "Copy of Image001.png", Type = "Image file", Size = 203256 },
+                    { Name = "Copy of Image001 (Final2).png", Type = "Image file", Size = 203512 },
+                },
+            },
+            { Name = "desktop.ini", Type = "System file", Size = 1024 },
+        },
+    },
+
+    display_node = function(self, node)
+        imgui.TableNextRow()
+        imgui.TableNextColumn()
+
+        if node.Children then
+            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth)
+            imgui.TableNextColumn()
+            imgui.TextDisabled("--")
+            imgui.TableNextColumn()
+            imgui.TextUnformatted(node.Type)
+            if open then
+                for i, child in ipairs(node.Children) do
+                    self:display_node(child)
+                end
+                imgui.TreePop()
+            end
+        else
+            imgui.TreeNodeEx(
+                node.Name,
+                bit.bor(
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Leaf,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Bullet,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_NoTreePushOnOpen,
+                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth
+                )
+            )
+            imgui.TableNextColumn()
+            imgui.Text("%d", node.Size)
+            imgui.TableNextColumn()
+            imgui.TextUnformatted(node.Type)
+        end
+    end,
+
+    flags = bit.bor(
+        const.ImGuiTableFlags_.ImGuiTableFlags_BordersV,
+        const.ImGuiTableFlags_.ImGuiTableFlags_BordersOuterH,
+        const.ImGuiTableFlags_.ImGuiTableFlags_Resizable,
+        const.ImGuiTableFlags_.ImGuiTableFlags_RowBg,
+        const.ImGuiTableFlags_.ImGuiTableFlags_NoBordersInBody
+    ),
+
+    table_tree = function(self)
+        if imgui.BeginTable("3ways", 3, self.flags) then
+            -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
+            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_NoHide)
+            imgui.TableSetupColumn(
+                "Size",
+                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                self.TEXT_BASE_WIDTH * 12.0
+            )
+            imgui.TableSetupColumn(
+                "Type",
+                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                self.TEXT_BASE_WIDTH * 18.0
+            )
+            imgui.TableHeadersRow()
+
+            self:display_node(self.sample_node)
+
+            imgui.EndTable()
+        end
+    end,
+
     ---@param self GuiClangViewer
     update = function(self)
         self:dockspace()
@@ -142,7 +235,7 @@ local gui = {
         imgui.End()
 
         imgui.Begin("Down")
-        imgui.Text("Hello, down!")
+        self:table_tree()
         imgui.End()
     end,
 }

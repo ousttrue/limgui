@@ -5,5 +5,11 @@
         "imgui"
     ],
     "Lua.runtime.version": "LuaJIT",
-    "Lua.workspace.preloadFileSize": 10000
+    "Lua.workspace.preloadFileSize": 10000,
+    "Lua.runtime.path": [
+        "?.lua",
+        "?/init.lua",
+        "?/?.lua",
+        "${workspaceFolder}/luajitffi/?.lua",
+    ],
 }
