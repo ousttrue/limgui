@@ -1013,50 +1013,24 @@ M.enums = {
 ---@class GLFWwindow
 ---@class GLFWmonitor
 -----------------------------------------------------------------------------
+-- glad.dll
+-----------------------------------------------------------------------------
+---@type Table<string, any>
+local glad = ffi.load('glad')
+M.cache.glad = glad
+M.libs.glad = {
+    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
+    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
+    ---@type fun(load:GLADloadfunc):integer
+    gladLoadGL = glad.gladLoadGL,
+}
+-----------------------------------------------------------------------------
 -- imgui.dll
 -----------------------------------------------------------------------------
 ---@type Table<string, any>
 local imgui = ffi.load('imgui')
 M.cache.imgui = imgui
 M.libs.imgui = {
-    ---@param glsl_version string
-    ImGui_ImplOpenGL3_Init = function(glsl_version)
-        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
-    end,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
-    ---@type fun(draw_data:any):nil
-    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
-    ---@type fun():boolean
-    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
-    ---@type fun():nil
-    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
-    ---@type fun(window:any, install_callbacks:boolean):boolean
-    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
-    ---@type fun():nil
-    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
-    ---@type fun():nil
-    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
-    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
-    ---@type fun(window:any, xoffset:number, yoffset:number):nil
-    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
-    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
-    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
-    ---@type fun(window:any, c:integer):nil
-    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
-    ---@type fun(monitor:any, event:integer):nil
-    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
     ---@param shared_font_atlas any
     CreateContext = function(shared_font_atlas)
         return imgui.CreateContext(shared_font_atlas)
@@ -3560,17 +3534,43 @@ M.libs.imgui = {
     ImGuiTabBar_GetTabOrder = imgui.ImGuiTabBar_GetTabOrder,
     ---@type fun(this:any, tab:any):string
     ImGuiTabBar_GetTabName = imgui.ImGuiTabBar_GetTabName,
-}
------------------------------------------------------------------------------
--- glad.dll
------------------------------------------------------------------------------
----@type Table<string, any>
-local glad = ffi.load('glad')
-M.cache.glad = glad
-M.libs.glad = {
-    ---@type fun(load:GLADuserptrloadfunc, userptr:any):integer
-    gladLoadGLUserPtr = glad.gladLoadGLUserPtr,
-    ---@type fun(load:GLADloadfunc):integer
-    gladLoadGL = glad.gladLoadGL,
+    ---@param glsl_version string
+    ImGui_ImplOpenGL3_Init = function(glsl_version)
+        return imgui.ImGui_ImplOpenGL3_Init(glsl_version)
+    end,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_Shutdown = imgui.ImGui_ImplOpenGL3_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_NewFrame = imgui.ImGui_ImplOpenGL3_NewFrame,
+    ---@type fun(draw_data:any):nil
+    ImGui_ImplOpenGL3_RenderDrawData = imgui.ImGui_ImplOpenGL3_RenderDrawData,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateFontsTexture = imgui.ImGui_ImplOpenGL3_CreateFontsTexture,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyFontsTexture = imgui.ImGui_ImplOpenGL3_DestroyFontsTexture,
+    ---@type fun():boolean
+    ImGui_ImplOpenGL3_CreateDeviceObjects = imgui.ImGui_ImplOpenGL3_CreateDeviceObjects,
+    ---@type fun():nil
+    ImGui_ImplOpenGL3_DestroyDeviceObjects = imgui.ImGui_ImplOpenGL3_DestroyDeviceObjects,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOpenGL = imgui.ImGui_ImplGlfw_InitForOpenGL,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForVulkan = imgui.ImGui_ImplGlfw_InitForVulkan,
+    ---@type fun(window:any, install_callbacks:boolean):boolean
+    ImGui_ImplGlfw_InitForOther = imgui.ImGui_ImplGlfw_InitForOther,
+    ---@type fun():nil
+    ImGui_ImplGlfw_Shutdown = imgui.ImGui_ImplGlfw_Shutdown,
+    ---@type fun():nil
+    ImGui_ImplGlfw_NewFrame = imgui.ImGui_ImplGlfw_NewFrame,
+    ---@type fun(window:any, button:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_MouseButtonCallback = imgui.ImGui_ImplGlfw_MouseButtonCallback,
+    ---@type fun(window:any, xoffset:number, yoffset:number):nil
+    ImGui_ImplGlfw_ScrollCallback = imgui.ImGui_ImplGlfw_ScrollCallback,
+    ---@type fun(window:any, key:integer, scancode:integer, action:integer, mods:integer):nil
+    ImGui_ImplGlfw_KeyCallback = imgui.ImGui_ImplGlfw_KeyCallback,
+    ---@type fun(window:any, c:integer):nil
+    ImGui_ImplGlfw_CharCallback = imgui.ImGui_ImplGlfw_CharCallback,
+    ---@type fun(monitor:any, event:integer):nil
+    ImGui_ImplGlfw_MonitorCallback = imgui.ImGui_ImplGlfw_MonitorCallback,
 }
 return M
