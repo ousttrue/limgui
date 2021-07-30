@@ -10,17 +10,17 @@ local gui = {
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
     use_work_area = ffi.new("bool[1]", true),
     flags = bit.bor(
-        C.ImGuiWindowFlags_.ImGuiWindowFlags_NoDecoration,
-        C.ImGuiWindowFlags_.ImGuiWindowFlags_NoMove,
-        C.ImGuiWindowFlags_.ImGuiWindowFlags_NoResize,
-        C.ImGuiWindowFlags_.ImGuiWindowFlags_NoSavedSettings
+        C.ImGuiWindowFlags_.NoDecoration,
+        C.ImGuiWindowFlags_.NoMove,
+        C.ImGuiWindowFlags_.NoResize,
+        C.ImGuiWindowFlags_.NoSavedSettings
     ),
     table_flags = bit.bor(
-        C.ImGuiTableFlags_.ImGuiTableFlags_BordersV,
-        C.ImGuiTableFlags_.ImGuiTableFlags_BordersOuterH,
-        C.ImGuiTableFlags_.ImGuiTableFlags_Resizable,
-        C.ImGuiTableFlags_.ImGuiTableFlags_RowBg,
-        C.ImGuiTableFlags_.ImGuiTableFlags_NoBordersInBody
+        C.ImGuiTableFlags_.BordersV,
+        C.ImGuiTableFlags_.BordersOuterH,
+        C.ImGuiTableFlags_.Resizable,
+        C.ImGuiTableFlags_.RowBg,
+        C.ImGuiTableFlags_.NoBordersInBody
     ),
 
     ---@param self GUIJsonViewer
@@ -32,7 +32,7 @@ local gui = {
         local t = type(v)
         if t == "table" then
             -- name
-            local open = imgui.TreeNodeEx(k, C.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth)
+            local open = imgui.TreeNodeEx(k, C.ImGuiTreeNodeFlags_.SpanFullWidth)
 
             imgui.TableNextColumn()
             if #v > 0 then
@@ -59,10 +59,10 @@ local gui = {
             imgui.TreeNodeEx(
                 k,
                 bit.bor(
-                    C.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Leaf,
-                    C.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Bullet,
-                    C.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_NoTreePushOnOpen,
-                    C.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth
+                    C.ImGuiTreeNodeFlags_.Leaf,
+                    C.ImGuiTreeNodeFlags_.Bullet,
+                    C.ImGuiTreeNodeFlags_.NoTreePushOnOpen,
+                    C.ImGuiTreeNodeFlags_.SpanFullWidth
                 )
             )
             imgui.TableNextColumn()
@@ -79,15 +79,15 @@ local gui = {
 
         if imgui.BeginTable("3ways", 3, self.flags) then
             -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            imgui.TableSetupColumn("Name", C.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_NoHide)
+            imgui.TableSetupColumn("Name", C.ImGuiTableColumnFlags_.NoHide)
             imgui.TableSetupColumn(
                 "Type",
-                C.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                C.ImGuiTableColumnFlags_.WidthFixed,
                 self.TEXT_BASE_WIDTH * 18.0
             )
             imgui.TableSetupColumn(
                 "Value",
-                C.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                C.ImGuiTableColumnFlags_.WidthFixed,
                 self.TEXT_BASE_WIDTH * 18.0
             )
             imgui.TableHeadersRow()

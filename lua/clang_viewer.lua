@@ -21,11 +21,11 @@ local const = imgui_ffi.enums
 ---@class Table
 local Table = {
     flags = bit.bor(
-        const.ImGuiTableFlags_.ImGuiTableFlags_BordersV,
-        const.ImGuiTableFlags_.ImGuiTableFlags_BordersOuterH,
-        const.ImGuiTableFlags_.ImGuiTableFlags_Resizable,
-        const.ImGuiTableFlags_.ImGuiTableFlags_RowBg,
-        const.ImGuiTableFlags_.ImGuiTableFlags_NoBordersInBody
+        const.ImGuiTableFlags_.BordersV,
+        const.ImGuiTableFlags_.BordersOuterH,
+        const.ImGuiTableFlags_.Resizable,
+        const.ImGuiTableFlags_.RowBg,
+        const.ImGuiTableFlags_.NoBordersInBody
     ),
 
     draw_node = function(self, node)
@@ -33,7 +33,7 @@ local Table = {
         imgui.TableNextColumn()
 
         if node.Children then
-            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth)
+            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.SpanFullWidth)
             imgui.TableNextColumn()
             imgui.TextDisabled("--")
             imgui.TableNextColumn()
@@ -48,10 +48,10 @@ local Table = {
             imgui.TreeNodeEx(
                 node.Name,
                 bit.bor(
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Leaf,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_Bullet,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_NoTreePushOnOpen,
-                    const.ImGuiTreeNodeFlags_.ImGuiTreeNodeFlags_SpanFullWidth
+                    const.ImGuiTreeNodeFlags_.Leaf,
+                    const.ImGuiTreeNodeFlags_.Bullet,
+                    const.ImGuiTreeNodeFlags_.NoTreePushOnOpen,
+                    const.ImGuiTreeNodeFlags_.SpanFullWidth
                 )
             )
             imgui.TableNextColumn()
@@ -70,15 +70,15 @@ local Table = {
 
         if imgui.BeginTable("3ways", 3, self.flags) then
             -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_NoHide)
+            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.NoHide)
             imgui.TableSetupColumn(
                 "Size",
-                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                const.ImGuiTableColumnFlags_.WidthFixed,
                 self.TEXT_BASE_WIDTH * 12.0
             )
             imgui.TableSetupColumn(
                 "Type",
-                const.ImGuiTableColumnFlags_.ImGuiTableColumnFlags_WidthFixed,
+                const.ImGuiTableColumnFlags_.WidthFixed,
                 self.TEXT_BASE_WIDTH * 18.0
             )
             imgui.TableHeadersRow()
@@ -94,7 +94,7 @@ local Table = {
 ---@class GuiClangViewer
 ---@field clear_color any
 local gui = {
-    dockspace_flags = const.ImGuiDockNodeFlags_.ImGuiDockNodeFlags_PassthruCentralNode,
+    dockspace_flags = const.ImGuiDockNodeFlags_.PassthruCentralNode,
     first_time = true,
     dockspace_id = ffi.new("ImGuiID[1]"),
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
@@ -103,32 +103,32 @@ local gui = {
         -- We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         -- because it would be confusing to have two docking targets within each others.
         local window_flags = bit.bor(
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_MenuBar,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoDocking
+            const.ImGuiWindowFlags_.MenuBar,
+            const.ImGuiWindowFlags_.NoDocking
         )
 
         local viewport = imgui.GetMainViewport()
         imgui.SetNextWindowPos(viewport.Pos)
         imgui.SetNextWindowSize(viewport.Size)
         imgui.SetNextWindowViewport(viewport.ID)
-        imgui.PushStyleVar(const.ImGuiStyleVar_.ImGuiStyleVar_WindowRounding, 0.0)
-        imgui.PushStyleVar(const.ImGuiStyleVar_.ImGuiStyleVar_WindowBorderSize, 0.0)
+        imgui.PushStyleVar(const.ImGuiStyleVar_.WindowRounding, 0.0)
+        imgui.PushStyleVar(const.ImGuiStyleVar_.WindowBorderSize, 0.0)
         window_flags = bit.bor(
             window_flags,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoTitleBar,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoCollapse,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoResize,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoMove
+            const.ImGuiWindowFlags_.NoTitleBar,
+            const.ImGuiWindowFlags_.NoCollapse,
+            const.ImGuiWindowFlags_.NoResize,
+            const.ImGuiWindowFlags_.NoMove
         )
         window_flags = bit.bor(
             window_flags,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoBringToFrontOnFocus,
-            const.ImGuiWindowFlags_.ImGuiWindowFlags_NoNavFocus
+            const.ImGuiWindowFlags_.NoBringToFrontOnFocus,
+            const.ImGuiWindowFlags_.NoNavFocus
         )
 
         -- When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will render our background and handle the pass-thru hole, so we ask Begin() to not render a background.
-        if bit.band(self.dockspace_flags, const.ImGuiDockNodeFlags_.ImGuiDockNodeFlags_PassthruCentralNode) ~= 0 then
-            window_flags = bit.bor(window_flags, const.ImGuiWindowFlags_.ImGuiWindowFlags_NoBackground)
+        if bit.band(self.dockspace_flags, const.ImGuiDockNodeFlags_.PassthruCentralNode) ~= 0 then
+            window_flags = bit.bor(window_flags, const.ImGuiWindowFlags_.NoBackground)
         end
 
         -- Important: note that we proceed even if Begin() returns false (aka window is collapsed).
@@ -136,15 +136,15 @@ local gui = {
         -- all active windows docked into it will lose their parent and become undocked.
         -- We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         -- any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        imgui.PushStyleVar__1(const.ImGuiStyleVar_.ImGuiStyleVar_WindowPadding, ffi.new("struct ImVec2"))
+        imgui.PushStyleVar__1(const.ImGuiStyleVar_.WindowPadding, ffi.new("struct ImVec2"))
         imgui.Begin("DockSpace", nil, window_flags)
         imgui.PopStyleVar()
         imgui.PopStyleVar(2)
 
         -- DockSpace
         local io = imgui.GetIO()
-        io.ConfigFlags = bit.bor(io.ConfigFlags, const.ImGuiConfigFlags_.ImGuiConfigFlags_DockingEnable)
-        if bit.band(io.ConfigFlags, const.ImGuiConfigFlags_.ImGuiConfigFlags_DockingEnable) ~= 0 then
+        io.ConfigFlags = bit.bor(io.ConfigFlags, const.ImGuiConfigFlags_.DockingEnable)
+        if bit.band(io.ConfigFlags, const.ImGuiConfigFlags_.DockingEnable) ~= 0 then
             self.dockspace_id[0] = imgui.GetID("MyDockSpace")
             imgui.DockSpace(self.dockspace_id[0], ffi.new("struct ImVec2"), self.dockspace_flags)
 
@@ -175,14 +175,14 @@ local gui = {
                 --                                                              out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
                 local dock_id_left = imgui.DockBuilderSplitNode(
                     self.dockspace_id[0],
-                    const.ImGuiDir_.ImGuiDir_Left,
+                    const.ImGuiDir_.Left,
                     0.2,
                     nil,
                     self.dockspace_id
                 )
                 local dock_id_down = imgui.DockBuilderSplitNode(
                     self.dockspace_id[0],
-                    const.ImGuiDir_.ImGuiDir_Down,
+                    const.ImGuiDir_.Down,
                     0.25,
                     nil,
                     self.dockspace_id
@@ -248,7 +248,7 @@ local gui = {
         -- draw node tree
         imgui.Begin("Cursor")
         if self.root then
-            imgui.SetNextItemOpen(true, const.ImGuiCond_.ImGuiCond_Once)
+            imgui.SetNextItemOpen(true, const.ImGuiCond_.Once)
             self:draw_node(ffi.cast("void *", 1), self.root)
         end
         imgui.End()
