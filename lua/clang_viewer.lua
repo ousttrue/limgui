@@ -1,111 +1,116 @@
-print(package.path)
-
--- TODO
--- T | source |
--- R |        |
--- E +--------+
--- E | prop   |
---
--- * [ ] filter: cursor kind
--- * [ ] central: source
--- * [ ] selection: location
--- * [ ] node: type kind
--- * [ ] node: jump reference
-
 local ffi = require("ffi")
 local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
 
----@class Table
-local Table = {
-    flags = bit.bor(
-        const.ImGuiTableFlags_.BordersV,
-        const.ImGuiTableFlags_.BordersOuterH,
-        const.ImGuiTableFlags_.Resizable,
-        const.ImGuiTableFlags_.RowBg,
-        const.ImGuiTableFlags_.NoBordersInBody
-    ),
+---@param klass Table<string, any> metatable
+---@param instance Table<string, any> instance
+local function new(klass, instance)
+    klass.__index = klass
+    setmetatable(instance, klass)
+    return instance
+end
 
-    draw_node = function(self, node)
+---@class Column
+---@field label string
+---@field name string
+---@field flag number
+---@field width number
+local Column = {
+    draw = function(self, f)
+        imgui.TableSetupColumn(self.label, self.flag, self.width and self.width * f or nil)
+    end,
+}
+Column.new = function(label, flag, width)
+    return new(Column, {
+        label = label,
+        flag = flag,
+        width = width,
+    })
+end
+
+---@class GUITable
+---@field flags number
+---@field columns Column[]
+---@field root any
+local GuiTable = {
+    draw_node = function(self, node, accessor)
         imgui.TableNextRow()
-        imgui.TableNextColumn()
-
-        if node.Children then
-            local open = imgui.TreeNodeEx(node.Name, const.ImGuiTreeNodeFlags_.SpanFullWidth)
+        local children = accessor.children(node)
+        local open = false
+        for i, col in ipairs(self.columns) do
             imgui.TableNextColumn()
-            imgui.TextDisabled("--")
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(node.Type)
-            if open then
-                for i, child in ipairs(node.Children) do
-                    self:draw_node(child)
+            if i == 1 then
+                local flag = const.ImGuiTreeNodeFlags_.SpanFullWidth
+                if not children then
+                    flag = bit.bor(
+                        flag,
+                        const.ImGuiTreeNodeFlags_.Leaf,
+                        const.ImGuiTreeNodeFlags_.Bullet,
+                        const.ImGuiTreeNodeFlags_.NoTreePushOnOpen
+                    )
                 end
-                imgui.TreePop()
+                open = imgui.TreeNodeEx(accessor.column(node, 1), flag)
+            else
+                local value = accessor.column(node, i)
+                if value then
+                    imgui.TextUnformatted(value)
+                else
+                    imgui.TextDisabled("--")
+                end
             end
-        else
-            imgui.TreeNodeEx(
-                node.Name,
-                bit.bor(
-                    const.ImGuiTreeNodeFlags_.Leaf,
-                    const.ImGuiTreeNodeFlags_.Bullet,
-                    const.ImGuiTreeNodeFlags_.NoTreePushOnOpen,
-                    const.ImGuiTreeNodeFlags_.SpanFullWidth
-                )
-            )
-            imgui.TableNextColumn()
-            imgui.Text("%d", node.Size)
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(node.Type)
+        end
+        if open and children then
+            for j, child in ipairs(children) do
+                self:draw_node(child, accessor)
+            end
+            imgui.TreePop()
         end
     end,
 
-    ---@param self Table
-    ---@param root any
-    draw = function(self, root)
+    draw = function(self, root, accessor)
         if not self.TEXT_BASE_WIDTH then
             self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
         end
 
-        if imgui.BeginTable("3ways", 3, self.flags) then
-            -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            imgui.TableSetupColumn("Name", const.ImGuiTableColumnFlags_.NoHide)
-            imgui.TableSetupColumn(
-                "Size",
-                const.ImGuiTableColumnFlags_.WidthFixed,
-                self.TEXT_BASE_WIDTH * 12.0
-            )
-            imgui.TableSetupColumn(
-                "Type",
-                const.ImGuiTableColumnFlags_.WidthFixed,
-                self.TEXT_BASE_WIDTH * 18.0
-            )
+        if imgui.BeginTable(self.name, #self.columns, self.flags) then
+            -- header
+            for i, col in ipairs(self.columns) do
+                col:draw(self.TEXT_BASE_WIDTH)
+            end
             imgui.TableHeadersRow()
 
-            self:draw_node(root)
+            -- body
+            imgui.SetNextItemOpen(true, const.ImGuiCond_.Once)
+            self:draw_node(root, accessor)
 
             imgui.EndTable()
         end
     end,
 }
+GuiTable.new = function(name)
+    return new(GuiTable, {
+        name = name,
+        flags = bit.bor(
+            const.ImGuiTableFlags_.BordersV,
+            const.ImGuiTableFlags_.BordersOuterH,
+            const.ImGuiTableFlags_.Resizable,
+            const.ImGuiTableFlags_.RowBg,
+            const.ImGuiTableFlags_.NoBordersInBody
+        ),
+    })
+end
 
 --- https://gist.github.com/PossiblyAShrub/0aea9511b84c34e191eaa90dd7225969
 ---@class GuiClangViewer
 ---@field clear_color any
-local gui = {
-    dockspace_flags = const.ImGuiDockNodeFlags_.PassthruCentralNode,
-    first_time = true,
-    dockspace_id = ffi.new("ImGuiID[1]"),
-    clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
-
+---@field table any
+local GuiClangViewer = {
     dockspace = function(self)
         -- We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
         -- because it would be confusing to have two docking targets within each others.
-        local window_flags = bit.bor(
-            const.ImGuiWindowFlags_.MenuBar,
-            const.ImGuiWindowFlags_.NoDocking
-        )
+        local window_flags = bit.bor(const.ImGuiWindowFlags_.MenuBar, const.ImGuiWindowFlags_.NoDocking)
 
         local viewport = imgui.GetMainViewport()
         imgui.SetNextWindowPos(viewport.Pos)
@@ -176,7 +181,7 @@ local gui = {
                 local dock_id_left = imgui.DockBuilderSplitNode(
                     self.dockspace_id[0],
                     const.ImGuiDir_.Left,
-                    0.2,
+                    0.5,
                     nil,
                     self.dockspace_id
                 )
@@ -199,65 +204,29 @@ local gui = {
     end,
 
     ---@param self GuiClangViewer
-    ---@param node Node
-    draw_node = function(self, i, node)
-        if node.children then
-            if imgui.TreeNode__2(i, node.spelling) then
-                for j, child in ipairs(node.children) do
-                    self:draw_node(ffi.cast("void *", j), child)
-                end
-                imgui.TreePop()
-            end
-        else
-            imgui.BulletText(node.spelling)
-        end
-    end,
-
-    sample_node = {
-        Name = "Root",
-        Type = "Folder",
-        Size = -1,
-        Children = {
-            {
-                Name = "Music",
-                Type = "Folder",
-                Size = -1,
-                Children = {
-                    { Name = "File1_a.wav", Type = "Audio file", Size = 123000 },
-                    { Name = "File1_b.wav", Type = "Audio file", Size = 456000 },
-                },
-            },
-            {
-                Name = "Textures",
-                Type = "Folder",
-                Size = -1,
-                Children = {
-                    { Name = "Image001.png", Type = "Image file", Size = 203128 },
-                    { Name = "Copy of Image001.png", Type = "Image file", Size = 203256 },
-                    { Name = "Copy of Image001 (Final2).png", Type = "Image file", Size = 203512 },
-                },
-            },
-            { Name = "desktop.ini", Type = "System file", Size = 1024 },
-        },
-    },
-
-    ---@param self GuiClangViewer
-    update = function(self)
+    update = function(self, root, accessor)
         self:dockspace()
 
         -- draw node tree
         imgui.Begin("Cursor")
-        if self.root then
-            imgui.SetNextItemOpen(true, const.ImGuiCond_.Once)
-            self:draw_node(ffi.cast("void *", 1), self.root)
+        -- self:draw_node(ffi.cast("void *", 1), self.root)
+        if root then
+            self.table:draw(root, accessor)
         end
         imgui.End()
 
         imgui.Begin("Down")
-        Table:draw(self.sample_node)
         imgui.End()
     end,
 }
+GuiClangViewer.new = function()
+    return new(GuiClangViewer, {
+        dockspace_flags = const.ImGuiDockNodeFlags_.PassthruCentralNode,
+        first_time = true,
+        dockspace_id = ffi.new("ImGuiID[1]"),
+        clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
+    })
+end
 
 local app = require("app")
 local TITLE = "ClangViewer"
@@ -285,9 +254,11 @@ local function on_thread(data)
     print(count)
     return mp.pack(parser.root)
 end
+
+local ROOT
 local function on_end(dst, src)
     local offset, root = mp.unpack(dst)
-    gui.root = root
+    ROOT = root
 end
 
 if true then
@@ -302,13 +273,45 @@ else
     on_end(result)
 end
 
+local gui = GuiClangViewer.new()
+gui.table = GuiTable.new("cursor_table")
+gui.table.columns = {
+    Column.new("spelling", const.ImGuiTableColumnFlags_.NoHide),
+    Column.new("cursor", const.ImGuiTableColumnFlags_.WidthFixed, 8.0),
+    Column.new("header", const.ImGuiTableColumnFlags_.WidthFixed, 12.0),
+    Column.new("line", const.ImGuiTableColumnFlags_.WidthFixed, 4.0),
+}
+
 -- Main loop
 local idle = uv.new_idle()
 idle:start(function()
     if not app:new_frame() then
         idle:stop()
     end
-    gui:update()
+    gui:update(ROOT, {
+        children = function(node)
+            return node.children
+        end,
+        column = function(node, i)
+            if i == 1 then
+                return node.spelling
+            elseif i == 2 then
+                return tostring(node.cursor_kind)
+            elseif i == 3 then
+                if node.location then
+                    local m = node.location.path:match("[^\\]+$")
+                    if m then
+                        return m
+                    end
+                    return node.location.path
+                end
+            elseif i == 4 then
+                if node.location then
+                    return tostring(node.location.line)
+                end
+            end
+        end,
+    })
     app:render(gui.clear_color)
 end)
 

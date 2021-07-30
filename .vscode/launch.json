@@ -14,10 +14,10 @@
                 "file": "clang_viewer.lua"
             },
             "args": [
-                // CFLAGS
-                "-DIMGUI_API=__declspec(dllexport)",
+                "-IC:/Program Files/LLVM/include",
                 // Export
-                "-E../libs/imgui/imgui.h,imgui.dll",
+                // "-EC:/Program Files/LLVM/include/clang-c/Index.h,libclang.dll",
+                "-EC:/Program Files/LLVM/include/clang-c/CXString.h,libclang.dll",
             ],
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin;C:\\Program Files\\LLVM\\bin",
