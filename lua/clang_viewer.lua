@@ -84,6 +84,12 @@ local gui = {
     end,
 }
 
+local clang_ffi = require("clang.mod")
+local reverse_map = {}
+for k, v in pairs(clang_ffi.enums.CXCursorKind) do
+    reverse_map[v] = k
+end
+
 local idle = uv.new_idle()
 idle:start(function()
     if not app:new_frame() then
@@ -95,9 +101,9 @@ idle:start(function()
         end,
         column = function(node, i)
             if i == 1 then
-                return node.spelling
+                return string.format("%s##%s", node.spelling, node.hash)
             elseif i == 2 then
-                return tostring(node.cursor_kind)
+                return reverse_map[node.cursor_kind]
             elseif i == 3 then
                 if node.location then
                     local m = node.location.path:match("[^\\]+$")

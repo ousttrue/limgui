@@ -34,8 +34,12 @@ M.GuiTable = {
         local open = false
         for i, col in ipairs(self.columns) do
             imgui.TableNextColumn()
+            local value = accessor.column(node, i)
             if i == 1 then
-                local flag = const.ImGuiTreeNodeFlags_.SpanFullWidth
+                local flag = 0 -- const.ImGuiTreeNodeFlags_.SpanFullWidth
+                if node == self.selected then
+                    -- flag = bit.bor(flag, const.ImGuiTreeNodeFlags_.Selected)
+                end
                 if not children then
                     flag = bit.bor(
                         flag,
@@ -44,9 +48,25 @@ M.GuiTable = {
                         const.ImGuiTreeNodeFlags_.NoTreePushOnOpen
                     )
                 end
-                open = imgui.TreeNodeEx(accessor.column(node, 1), flag)
+                open = imgui.TreeNodeEx(value, flag)
+                -- if imgui.IsItemClicked() then
+                --     self.selected = node
+                -- end
+                imgui.SetItemAllowOverlap()
+            elseif i == 2 then
+                if
+                    imgui.Selectable(
+                        value,
+                        self.selected == node,
+                        const.ImGuiSelectableFlags_.SpanAllColumns
+                    )
+                then
+                    self.selected = node
+                end
+                if imgui.IsItemClicked() then
+                    self.selected = node
+                end
             else
-                local value = accessor.column(node, i)
                 if value then
                     imgui.TextUnformatted(value)
                 else
