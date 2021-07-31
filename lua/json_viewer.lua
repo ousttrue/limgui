@@ -4,102 +4,41 @@ local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
 local json = require("json")
+local W = require("imgui_widgets.init")
+local utils = require("imgui_widgets.utils")
 
----@class GUIJsonViewer
+--- Load JSON
+local arg = os.getenv("JSON_PATH")
+local r = io.open(arg, "rb")
+local src = r:read("*a")
+r:close()
+local json = json.decode(src)
+
+local app = require("app")
+local TITLE = "JsonViewer"
+if not app:initialize(1200, 900, TITLE) then
+    os.exit(1)
+end
+
 local gui = {
+
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
     use_work_area = ffi.new("bool[1]", true),
+
     flags = bit.bor(
         C.ImGuiWindowFlags_.NoDecoration,
         C.ImGuiWindowFlags_.NoMove,
         C.ImGuiWindowFlags_.NoResize,
         C.ImGuiWindowFlags_.NoSavedSettings
     ),
-    table_flags = bit.bor(
-        C.ImGuiTableFlags_.BordersV,
-        C.ImGuiTableFlags_.BordersOuterH,
-        C.ImGuiTableFlags_.Resizable,
-        C.ImGuiTableFlags_.RowBg,
-        C.ImGuiTableFlags_.NoBordersInBody
-    ),
 
-    ---@param self GUIJsonViewer
-    draw_node = function(self, k, v)
-        imgui.TableNextRow()
-        imgui.TableNextColumn()
+    table = W.GuiTable.new("json_tree", {
+        W.Column.new("Name", bit.bor(C.ImGuiTableColumnFlags_.NoHide, C.ImGuiTableColumnFlags_.WidthFixed), 24.0),
+        W.Column.new("Type", C.ImGuiTableColumnFlags_.WidthFixed, 18.0),
+        W.Column.new("Value", C.ImGuiTableColumnFlags_.WidthStretch),
+    }),
 
-        -- print(k, v)
-        local t = type(v)
-        if t == "table" then
-            -- name
-            local open = imgui.TreeNodeEx(k, C.ImGuiTreeNodeFlags_.SpanFullWidth)
-
-            imgui.TableNextColumn()
-            if #v > 0 then
-                -- type
-                imgui.TextUnformatted("[]")
-                if open then
-                    for i, child in ipairs(v) do
-                        self:draw_node(tostring(i), child)
-                    end
-                end
-            else
-                imgui.TextUnformatted("{}")
-                if open then
-                    for k, child in pairs(v) do
-                        self:draw_node(k, child)
-                    end
-                end
-            end
-
-            if open then
-                imgui.TreePop()
-            end
-        else
-            imgui.TreeNodeEx(
-                k,
-                bit.bor(
-                    C.ImGuiTreeNodeFlags_.Leaf,
-                    C.ImGuiTreeNodeFlags_.Bullet,
-                    C.ImGuiTreeNodeFlags_.NoTreePushOnOpen,
-                    C.ImGuiTreeNodeFlags_.SpanFullWidth
-                )
-            )
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(t)
-            imgui.TableNextColumn()
-            imgui.TextUnformatted(string.format("%q", v))
-        end
-    end,
-
-    draw_table = function(self)
-        if not self.TEXT_BASE_WIDTH then
-            self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
-        end
-
-        if imgui.BeginTable("3ways", 3, self.flags) then
-            -- The first column will use the default _WidthStretch when ScrollX is Off and _WidthFixed when ScrollX is On
-            imgui.TableSetupColumn("Name", C.ImGuiTableColumnFlags_.NoHide)
-            imgui.TableSetupColumn(
-                "Type",
-                C.ImGuiTableColumnFlags_.WidthFixed,
-                self.TEXT_BASE_WIDTH * 18.0
-            )
-            imgui.TableSetupColumn(
-                "Value",
-                C.ImGuiTableColumnFlags_.WidthFixed,
-                self.TEXT_BASE_WIDTH * 18.0
-            )
-            imgui.TableHeadersRow()
-
-            self:draw_node("__root__", self.json)
-
-            imgui.EndTable()
-        end
-    end,
-
-    ---@param self GUIJsonViewer
-    update = function(self)
+    update = function(self, root, accessor)
         -- full screen node
         -- We demonstrate using the full viewport area or the work area (without menu-bars, task-bars etc.)
         -- Based on your use case you may want one of the other.
@@ -108,28 +47,57 @@ local gui = {
         imgui.SetNextWindowSize(self.use_work_area[0] and viewport.WorkSize or viewport.Size)
 
         if imgui.Begin("Example: Fullscreen window", nil, self.flags) then
-            -- table
-            self:draw_table()
+            self.table:draw(root, accessor)
         end
-
         imgui.End()
     end,
 }
 
-local arg = os.getenv("JSON_PATH")
-local r = io.open(arg, "rb")
-local src = r:read("*a")
-r:close()
-gui.json = json.decode(src)
-
-local app = require("app")
-local TITLE = "JsonViewer"
-if not app:initialize(1200, 900, TITLE) then
-    os.exit(1)
-end
-
 -- Main loop
 while app:new_frame() do
-    gui:update()
+    gui:update({ "__root__", json }, {
+        children = function(kv)
+            -- local k = kv[1]
+            local v = kv[2]
+            local t = type(v)
+            if t == "table" then
+                if #v > 0 then
+                    -- type
+                    return utils.imap(v, function(i, x)
+                        return { tostring(i), x }
+                    end)
+                else
+                    return utils.map(v, function(k, x)
+                        return { k, x }
+                    end)
+                end
+            end
+        end,
+        column = function(kv, i)
+            if i == 1 then
+                return kv[1]
+            elseif i == 2 then
+                local t = type(kv[2])
+                if t == "table" then
+                    if #kv[2] > 0 then
+                        return "array"
+                    else
+                        return "object"
+                    end
+                end
+                return t
+            elseif i == 3 then
+                local t = type(kv[2])
+                if t == "table" then
+                    if #kv[2] > 0 then
+                        return "[]"
+                    else
+                        return "{}"
+                    end
+                end
+                return tostring(kv[2])
+            end
+        end,
+    })
     app:render(gui.clear_color)
 end

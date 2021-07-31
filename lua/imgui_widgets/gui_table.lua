@@ -84,7 +84,8 @@ M.GuiTable = {
 
     draw = function(self, root, accessor)
         if not self.TEXT_BASE_WIDTH then
-            self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
+            -- self.TEXT_BASE_WIDTH = imgui.CalcTextSize("A").x
+            self.TEXT_BASE_WIDTH = 10
         end
 
         if imgui.BeginTable(self.name, #self.columns, self.flags) then
