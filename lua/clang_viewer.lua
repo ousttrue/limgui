@@ -44,13 +44,23 @@ else
     on_end(result)
 end
 
+-- Main loop
+local app = require("app")
+local TITLE = "ClangViewer"
+if not app:initialize(1200, 900, TITLE) then
+    os.exit(1)
+end
+
 --
 -- gui
 --
 local gui = {
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
-    dockspace = W.GuiDockspace.new("dockspace"),
+    dockspace = W.GuiDockSpace.new("dockspace", {
+        W.DockNode.new("Left", const.ImGuiDir_.Left, 0.5),
+        W.DockNode.new("Down", const.ImGuiDir_.Down, 0.25),
+    }),
 
     table = W.GuiTable.new("cursor_table", {
         W.Column.new("spelling", const.ImGuiTableColumnFlags_.NoHide),
@@ -63,24 +73,16 @@ local gui = {
         self.dockspace:draw()
 
         -- draw node tree
-        imgui.Begin("Cursor")
-        -- self:draw_node(ffi.cast("void *", 1), self.root)
+        imgui.Begin(self.dockspace.nodes[1].name)
         if root then
             self.table:draw(root, accessor)
         end
         imgui.End()
 
-        imgui.Begin("Down")
+        imgui.Begin(self.dockspace.nodes[2].name)
         imgui.End()
     end,
 }
-
--- Main loop
-local app = require("app")
-local TITLE = "ClangViewer"
-if not app:initialize(1200, 900, TITLE) then
-    os.exit(1)
-end
 
 local idle = uv.new_idle()
 idle:start(function()
