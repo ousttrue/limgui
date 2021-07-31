@@ -3,7 +3,7 @@ local bit = require("bit")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
-local json = require("json")
+local json = require("libs.json")
 local W = require("imgui_widgets.init")
 local utils = require("imgui_widgets.utils")
 

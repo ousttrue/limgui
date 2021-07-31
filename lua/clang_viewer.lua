@@ -8,11 +8,10 @@ local uv = require("luv")
 --
 -- libclang task
 --
-local mp = require("luajit-msgpack-pure")
 local function on_thread(data)
     local CommandLine = require("clangffi.commandline")
     local Parser = require("clangffi.parser")
-    local mp = require("luajit-msgpack-pure")
+    local mp = require("libs.luajit-msgpack-pure")
 
     local offset, args = mp.unpack(data)
     local cmd = CommandLine.parse(args)
@@ -26,6 +25,7 @@ local function on_thread(data)
     return mp.pack(parser.root)
 end
 
+local mp = require("libs.luajit-msgpack-pure")
 local ROOT
 local function on_end(dst, src)
     local offset, root = mp.unpack(dst)
