@@ -4,8 +4,8 @@ local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
 local json = require("libs.json")
-local W = require("imgui_widgets.init")
-local utils = require("imgui_widgets.utils")
+local W = require("limgui")
+local utils = require("limgui.utils")
 
 --- Load JSON
 local arg = os.getenv("JSON_PATH")

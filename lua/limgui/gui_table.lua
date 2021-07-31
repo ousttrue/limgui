@@ -1,7 +1,7 @@
 local imgui_ffi = require("imgui_ffi.mod")
 local const = imgui_ffi.enums
 local imgui = imgui_ffi.libs.imgui
-local utils = require("imgui_widgets.utils")
+local utils = require("limgui.utils")
 
 local M = {}
 

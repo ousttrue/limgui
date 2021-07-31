@@ -2,7 +2,7 @@ local ffi = require("ffi")
 local imgui_ffi = require("imgui_ffi.mod")
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
-local W = require("imgui_widgets.init")
+local W = require("limgui")
 local uv = require("luv")
 
 --
