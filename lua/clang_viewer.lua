@@ -118,6 +118,9 @@ idle:start(function()
                 end
             end
         end,
+        equal = function(a, b)
+            return a == b
+        end,
     })
     app:render(gui.clear_color)
 end)

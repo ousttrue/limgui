@@ -62,14 +62,17 @@ while app:new_frame() do
             local t = type(v)
             if t == "table" then
                 if #v > 0 then
-                    -- type
                     return utils.imap(v, function(i, x)
                         return { tostring(i), x }
                     end)
                 else
-                    return utils.map(v, function(k, x)
+                    local result = utils.map(v, function(k, x)
                         return { k, x }
                     end)
+                    table.sort(result, function(a, b)
+                        return a[1] < b[1]
+                    end)
+                    return result
                 end
             end
         end,
@@ -96,6 +99,15 @@ while app:new_frame() do
                     end
                 end
                 return tostring(kv[2])
+            end
+        end,
+        equal = function(a, b)
+            if a and b then
+                return (a and a[2]) == (b and b[2])
+            elseif not a and not b then
+                return true
+            else
+                return false
             end
         end,
     })
