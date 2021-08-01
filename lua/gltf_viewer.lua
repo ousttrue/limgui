@@ -8,7 +8,7 @@ local W = require("limgui")
 local utils = require("limgui.utils")
 
 --- Load JSON
-local args = {...}
+local args = { ... }
 local r = io.open(args[1], "rb")
 local src = r:read("*a")
 r:close()

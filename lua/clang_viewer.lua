@@ -57,10 +57,17 @@ end
 local gui = {
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
-    dockspace = W.GuiDockSpace.new("dockspace", {
-        W.DockNode.new("Left", const.ImGuiDir_.Left, 0.5),
-        W.DockNode.new("Down", const.ImGuiDir_.Down, 0.25),
-    }),
+    dockspace = W.GuiDockSpace.new(
+        "dockspace",
+        -- dock node tree
+        W.DockNode.new("Root", {
+            W.DockNode.new("Left", const.ImGuiDir_.Left, 0.5),
+            W.DockNode.new("Right", {
+                W.DockNode.new("Down", const.ImGuiDir_.Down, 0.25),
+                W.DockNode.new("Central"),
+            }),
+        })
+    ),
 
     table = W.GuiTable.new("cursor_table", {
         W.Column.new("spelling", const.ImGuiTableColumnFlags_.NoHide),
@@ -73,13 +80,13 @@ local gui = {
         self.dockspace:draw()
 
         -- draw node tree
-        imgui.Begin(self.dockspace.nodes[1].name)
+        imgui.Begin("Left")
         if root then
             self.table:draw(root, accessor)
         end
         imgui.End()
 
-        imgui.Begin(self.dockspace.nodes[2].name)
+        imgui.Begin("Down")
         imgui.End()
     end,
 }
