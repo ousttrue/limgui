@@ -12,4 +12,7 @@
         "?/?.lua",
         "${workspaceFolder}/luajitffi/?.lua",
     ],
+    "Lua.diagnostics.globals": [
+        "newproxy"
+    ]
 }

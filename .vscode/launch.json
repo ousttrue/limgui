@@ -37,6 +37,7 @@
                 "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf",
             ],
             "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
                 "LUA_PATH": ";;${workspaceFolder}\\luajitffi\\?.lua",
             }
         },
