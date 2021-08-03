@@ -83,6 +83,8 @@ for k, v in pairs(clang_ffi.enums.CXCursorKind) do
     reverse_map[v] = k
 end
 
+local CURSOR = "Cursor"
+
 ---@class ClangViewerGUI
 ---@field kind_list CursorKind[]
 ---@field kind_map Table<number, CursorKind>
@@ -92,10 +94,10 @@ local gui = {
     dockspace = W.GuiDockSpace.new(
         "dockspace",
         -- dock node tree
-        W.DockNode.new("Root", {
-            W.DockNode.new("Left", const.ImGuiDir_.Left, 0.5),
-            W.DockNode.new("Right", {
-                W.DockNode.new("Down", const.ImGuiDir_.Down, 0.25),
+        W.DockNode.new("Root", const.ImGuiDir_.Left, 0.5, {
+            W.DockNode.new(CURSOR),
+            W.DockNode.new("Right", const.ImGuiDir_.Down, 0.25, {
+                W.DockNode.new("Down"),
                 W.DockNode.new("Central"),
             }),
         })
@@ -131,7 +133,7 @@ local gui = {
         self.dockspace:draw()
 
         -- draw node tree
-        imgui.Begin("Left")
+        imgui.Begin(CURSOR)
         if root then
             if self.kind_map then
                 for i, kind in ipairs(self.kind_list) do

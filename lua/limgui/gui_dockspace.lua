@@ -19,24 +19,21 @@ M.DockNode = {
         if self.children then
             local first = self.children[1]
             local second = self.children[2]
-            imgui.DockBuilderSplitNode(self.id[0], first.dir, first.fraction, first.id, second.id)
+            imgui.DockBuilderSplitNode(self.id[0], self.dir, self.fraction, first.id, second.id)
             for i, child in ipairs(self.children) do
                 child:split()
             end
         end
     end,
 }
-M.DockNode.new = function(name, dir_or_children, fraction)
+M.DockNode.new = function(name, dir, fraction, children)
     local node = utils.new(M.DockNode, {
         name = name,
         id = ffi.new("ImGuiID[1]"),
+        dir = dir,
+        fraction = fraction,
+        children = children,
     })
-    if type(dir_or_children) == "table" then
-        node.children = dir_or_children
-    else
-        node.dir = dir_or_children
-        node.fraction = fraction
-    end
     return node
 end
 
