@@ -18,8 +18,8 @@ void main()
 };
 ]]
 
+local gllib = require("libs.gl_ffi.gl")
 local initialized = false
-local gl, glc, glu, glext
 local program
 local function initialize()
     if initialized then
@@ -27,13 +27,12 @@ local function initialize()
     end
     initialized = true
     -- glad.gladLoadGL(glfw.getProcAddress)
-    local gllib = require("libs.gl_ffi.gl")
     gllib.set_loader(glfw)
-    gl, glc, glu, glext = gllib.libraries()
+    -- gl, glc, glu, glext = gllib.libraries()
 
     local vertex_buffer = ffi.new("GLuint[1]")
-    glext.glGenBuffers(1, vertex_buffer)
-    glext.glBindBuffer(glc.GL_ARRAY_BUFFER, vertex_buffer[0])
+    gllib.glext.glGenBuffers(1, vertex_buffer)
+    gllib.glext.glBindBuffer(gllib.glc.GL_ARRAY_BUFFER, vertex_buffer[0])
 
     -- static const struct
     -- {
@@ -55,28 +54,28 @@ local function initialize()
     -- 2
     vertices[2][0] = 0.0
     vertices[2][1] = 0.6
-    glext.glBufferData(glc.GL_ARRAY_BUFFER, ffi.sizeof(vertices), vertices, glc.GL_STATIC_DRAW)
+    gllib.glext.glBufferData(gllib.glc.GL_ARRAY_BUFFER, ffi.sizeof(vertices), vertices, gllib.glc.GL_STATIC_DRAW)
 
-    local vertex_shader = glext.glCreateShader(glc.GL_VERTEX_SHADER)
+    local vertex_shader = gllib.glext.glCreateShader(gllib.glc.GL_VERTEX_SHADER)
     local pp = ffi.new("const char *[1]")
     pp[0] = vertex_shader_text
-    glext.glShaderSource(vertex_shader, 1, pp, nil)
-    glext.glCompileShader(vertex_shader)
+    gllib.glext.glShaderSource(vertex_shader, 1, pp, nil)
+    gllib.glext.glCompileShader(vertex_shader)
 
-    local fragment_shader = glext.glCreateShader(glc.GL_FRAGMENT_SHADER)
+    local fragment_shader = gllib.glext.glCreateShader(gllib.glc.GL_FRAGMENT_SHADER)
     pp[0] = fragment_shader_text
-    glext.glShaderSource(fragment_shader, 1, pp, nil)
-    glext.glCompileShader(fragment_shader)
+    gllib.glext.glShaderSource(fragment_shader, 1, pp, nil)
+    gllib.glext.glCompileShader(fragment_shader)
 
-    program = glext.glCreateProgram()
-    glext.glAttachShader(program, vertex_shader)
-    glext.glAttachShader(program, fragment_shader)
-    glext.glLinkProgram(program)
+    program = gllib.glext.glCreateProgram()
+    gllib.glext.glAttachShader(program, vertex_shader)
+    gllib.glext.glAttachShader(program, fragment_shader)
+    gllib.glext.glLinkProgram(program)
 
     -- local mvp_location = glext.glGetUniformLocation(program, "MVP")
-    local vpos_location = glext.glGetAttribLocation(program, "vPos")
-    glext.glEnableVertexAttribArray(vpos_location)
-    glext.glVertexAttribPointer(vpos_location, 2, glc.GL_FLOAT, glc.GL_FALSE, 8, nil)
+    local vpos_location = gllib.glext.glGetAttribLocation(program, "vPos")
+    gllib.glext.glEnableVertexAttribArray(vpos_location)
+    gllib.glext.glVertexAttribPointer(vpos_location, 2, gllib.glc.GL_FLOAT, gllib.glc.GL_FALSE, 8, nil)
 end
 
 M.Renderer = {
@@ -86,17 +85,17 @@ M.Renderer = {
         --         mat4x4 m, p, mvp;
         local ratio = width / height
 
-        gl.glViewport(0, 0, width, height)
-        gl.glClear(glc.GL_COLOR_BUFFER_BIT)
+        gllib.gl.glViewport(0, 0, width, height)
+        gllib.gl.glClear(gllib.glc.GL_COLOR_BUFFER_BIT)
 
         --         mat4x4_identity(m);
         --         mat4x4_rotate_Z(m, m, (float) glfwGetTime());
         --         mat4x4_ortho(p, -ratio, ratio, -1.f, 1.f, 1.f, -1.f);
         --         mat4x4_mul(mvp, p, m);
 
-        glext.glUseProgram(program)
+        gllib.glext.glUseProgram(program)
         --         glUniformMatrix4fv(mvp_location, 1, GL_FALSE, (const GLfloat*) mvp);
-        gl.glDrawArrays(glc.GL_TRIANGLES, 0, 3)
+        gllib.gl.glDrawArrays(gllib.glc.GL_TRIANGLES, 0, 3)
     end,
 }
 M.Renderer.new = function()
