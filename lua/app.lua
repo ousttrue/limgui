@@ -107,11 +107,8 @@ local app = {
     end,
 
     ---@param self AppClangViewer
-    ---@param clear_color any
-    render = function(self, clear_color)
-        -- Rendering
-        imgui.Render()
-
+    ---@param clear_color number[]
+    clear = function(self, clear_color)
         local display_w, display_h = self.window:getFramebufferSize()
         gl.glViewport(0, 0, display_w, display_h)
         gl.glClearColor(
@@ -121,8 +118,13 @@ local app = {
             clear_color[3]
         )
         gl.glClear(glc.GL_COLOR_BUFFER_BIT)
-        imgui.ImGui_ImplOpenGL3_RenderDrawData(imgui.GetDrawData())
+    end,
 
+    ---@param self AppClangViewer
+    render = function(self)
+        -- Rendering
+        imgui.Render()
+        imgui.ImGui_ImplOpenGL3_RenderDrawData(imgui.GetDrawData())
         self.window:swapBuffers()
     end,
 }

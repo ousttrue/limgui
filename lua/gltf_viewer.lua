@@ -6,6 +6,7 @@ local C = imgui_ffi.enums
 local json = require("libs.json")
 local W = require("limgui")
 local utils = require("limgui.utils")
+local renderer = require("limgui.renderer")
 
 --- Load JSON
 local args = { ... }
@@ -15,7 +16,7 @@ r:close()
 local json = json.decode(src)
 
 local app = require("app")
-local TITLE = "JsonViewer"
+local TITLE = "GltfViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
@@ -52,6 +53,8 @@ local gui = {
         imgui.End()
     end,
 }
+
+local r = renderer.Renderer.new()
 
 -- Main loop
 while app:new_frame() do
@@ -111,5 +114,8 @@ while app:new_frame() do
             end
         end,
     })
-    app:render(gui.clear_color)
+    app:clear(gui.clear_color)
+    local width, height = app.window:getFramebufferSize()
+    r:render(width, height)
+    app:render()
 end
