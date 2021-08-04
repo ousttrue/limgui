@@ -95,10 +95,32 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "generate gl interface",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;C:\\Program Files\\LLVM\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\luajitffi\\?.lua",
+            },
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "file": "libs/gl_ffi/generate_emmy_annotation.lua"
+            },
+            "args": [
+                "libs/gl_ffi/mod.lua",
+                "${workspaceFolder}/libs/glfw/deps/glad/gl.h",
+            ],
+        },
+        {
             "name": "generate imgui ffi",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/luajitffi",
+            "env": {
+                // path to libclang.dll
+                "PATH": "${env:PATH};C:\\Program Files\\LLVM\\bin",
+            },
             "program": {
                 "lua": "${workspaceFolder}/build/Release/luajit.exe",
                 "file": "main.lua"
@@ -118,10 +140,6 @@
                 // OUt
                 "-O../lua/imgui_ffi",
             ],
-            "env": {
-                // path to libclang.dll
-                "PATH": "${env:PATH};C:\\Program Files\\LLVM\\bin",
-            },
         },
     ]
 }
