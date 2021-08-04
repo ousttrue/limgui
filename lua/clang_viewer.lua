@@ -178,13 +178,23 @@ local function table_filter(t, filter)
 end
 
 local accessor = {
-    children = function(node)
-        if not node.children then
-            return
+    has_child = function(node)
+        if node.children then
+            for i, v in ipairs(node.children) do
+                if gui.kind_map[v.cursor_kind].visible[0] then
+                    return true
+                end
+            end
         end
-        return table_filter(node.children, function(i, v)
-            return gui.kind_map[v.cursor_kind].visible[0]
-        end)
+    end,
+    each = function(node, callback)
+        if node.children then
+            for i, v in ipairs(node.children) do
+                if gui.kind_map[v.cursor_kind].visible[0] then
+                    callback(i, v)
+                end
+            end
+        end
     end,
     column = function(node, i)
         if i == 1 then
@@ -210,6 +220,9 @@ local accessor = {
     end,
 }
 
+-- local profiler = require("libs.profiler")
+-- profiler.start()
+
 local idle = uv.new_idle()
 idle:start(function()
     if not app:new_frame() then
@@ -222,3 +235,7 @@ idle:start(function()
 end)
 
 uv.run("default")
+
+-- -- Code block and/or called functions to profile --
+-- profiler.stop()
+-- profiler.report("profiler.log")

@@ -1,0 +1,72 @@
+> Total time: 22.430000 s
+--------------------------------------------------------------------------------------
+| FILE                : FUNCTION                    : LINE   : TIME   : %     : #    |
+--------------------------------------------------------------------------------------
+| clang_viewer        : Anon                        :   227  : 17.8680: 79.7  :   55 |
+| clang_viewer        : update                      :   137  : 17.2610: 77.0  :   55 |
+| .\limgui\gui_table  : draw                        :    80  : 17.1310: 76.4  :   53 |
+| clang_viewer        : each                        :   190  : 17.1250: 76.3  :   53 |
+| .\limgui\gui_table  : callback                    :    73  : 16.1080: 71.8  : 215127|
+| .\limgui\gui_table  : draw_node                   :    32  : 15.4460: 68.9  : 215180|
+| .\libs\luajit-msgpac: unpack                      :   563  : 4.5600 : 20.3  :    1 |
+| clang_viewer        : Anon                        :    30  : 4.5600 : 20.3  :    1 |
+| .\libs\luajit-msgpac: dynamic                     :   396  : 3.0990 : 13.8  : 23556|
+| .\libs\luajit-msgpac: dynamic                     :   415  : 1.7410 : 7.8   : 8445 |
+| clang_viewer        : column                      :   199  : 1.4400 : 6.4   : 860720|
+| .\libs\luajit-msgpac: dynamic                     :   481  : 1.2180 : 5.4   : 127452|
+| .\libs\luajit-msgpac: dynamic                     :   385  : 0.8040 : 3.6   : 27379|
+| .\app               : render                      :   105  : 0.5080 : 2.3   :   55 |
+| .\libs\luajit-msgpac: type_for                    :   352  : 0.3510 : 1.6   : 254021|
+| clang_viewer        : equal                       :   218  : 0.3450 : 1.5   : 215180|
+| .\libs\luajit-msgpac: rcopy                       :    20  : 0.3060 : 1.4   : 37730|
+| clang_viewer        : has_child                   :   181  : 0.2990 : 1.3   : 215180|
+| .\libs\luajit-msgpac: dynamic                     :   505  : 0.2740 : 1.2   : 10349|
+| .\libs\luajit-msgpac: dynamic                     :   450  : 0.0820 : 0.4   : 27030|
+| .\app               : new_frame                   :    84  : 0.0800 : 0.4   :   55 |
+| clang_viewer        : build_map                   :   117  : 0.0670 : 0.3   : 10540|
+| clang_viewer        : increment                   :    60  : 0.0160 : 0.1   : 10529|
+| .\libs\gl_ffi\mod   : load                        :  4182  : 0.0100 : 0.0   :   55 |
+| .\limgui\renderer   : clear                       :    84  : 0.0100 : 0.0   :   55 |
+| clang_viewer        : update                      :    64  : 0.0080 : 0.0   :  583 |
+| .\limgui\renderer   : Anon                        :     0  : 0.0070 : 0.0   :    1 |
+| .\limgui\gui_dockspa: draw                        :    46  : 0.0050 : 0.0   :   55 |
+| .\libs\luajit-msgpac: dynamic                     :   442  : 0.0050 : 0.0   : 1986 |
+| .\libs\gl_ffi\mod   : Anon                        :     0  : 0.0050 : 0.0   :    1 |
+| clang_viewer        : new                         :    69  : 0.0010 : 0.0   :   11 |
+| .\libs\luajit-msgpac: dynamic                     :   454  : 0.0010 : 0.0   :  392 |
+| .\libs\luajit-msgpac: sbuffer_append_str          :    51  : 0.0010 : 0.0   :    1 |
+| .\libs\luajit-msgpac: sbuffer_realloc             :    40  : 0.0010 : 0.0   :    1 |
+| .\limgui\gui_table  : draw                        :    14  : 0.0010 : 0.0   :  212 |
+--------------------------------------------------------------------------------------
+| .\libs\luajit-msgpac: dynamic                     :   446  : ~      : ~     :   50 |
+| .\libs\luajit-msgpac: dynamic                     :   438  : ~      : ~     :    3 |
+| .\libs\luajit-msgpac: dynamic                     :   519  : ~      : ~     : 8443 |
+| .\libs\luajit-msgpac: dynamic                     :   524  : ~      : ~     :    2 |
+| .\libs\luajit-msgpac: dynamic                     :   427  : ~      : ~     : 226642|
+| .\libs\luajit-msgpac: unpack_number               :   375  : ~      : ~     : 37730|
+| .\libs\luajit-msgpac: dynamic                     :   536  : ~      : ~     : 23556|
+| .\libs\luajit-msgpac: sbuffer_destroy             :    37  : ~      : ~     :    1 |
+| .\imgui_ffi\mod     : IsItemClicked               :  2569  : ~      : ~     : 215180|
+| .\imgui_ffi\mod     : Selectable                  :  2129  : ~      : ~     : 215180|
+| .\libs\profiler     : stop                        :   225  : ~      : ~     :    1 |
+| .\imgui_ffi\mod     : TextUnformatted             :  1415  : ~      : ~     : 392624|
+| .\imgui_ffi\mod     : TableSetupColumn            :  2377  : ~      : ~     :  212 |
+| .\imgui_ffi\mod     : BeginTable                  :  2354  : ~      : ~     :   53 |
+| .\imgui_ffi\mod     : TreeNodeEx                  :  2084  : ~      : ~     : 215180|
+| .\imgui_ffi\mod     : SetNextItemOpen             :  2121  : ~      : ~     :   53 |
+| .\imgui_ffi\mod     : TableNextRow                :  2364  : ~      : ~     : 215180|
+| .\imgui_ffi\mod     : Begin                       :  1097  : ~      : ~     :  220 |
+| .\imgui_ffi\mod     : PopStyleVar                 :  1295  : ~      : ~     :  110 |
+| .\imgui_ffi\mod     : DockSpace                   :  2473  : ~      : ~     :   55 |
+| .\imgui_ffi\mod     : SetNextWindowSize           :  1163  : ~      : ~     :   55 |
+| .\libs\gl_ffi\glfw  : shouldClose                 :   700  : ~      : ~     :   55 |
+| .\libs\gl_ffi\glfw  : pollEvents                  :   607  : ~      : ~     :   54 |
+| .\imgui_ffi\mod     : SetNextWindowPos            :  1156  : ~      : ~     :   55 |
+| .\libs\luajit-msgpac: sbuffer_init                :    31  : ~      : ~     :    1 |
+| .\libs\gl_ffi\glfw  : getProcAddress              :   504  : ~      : ~     :  756 |
+| .\libs\gl_ffi\glfw  : swapBuffers                 :   504  : ~      : ~     :   55 |
+| .\imgui_ffi\mod     : BeginMenu                   :  2259  : ~      : ~     :   55 |
+| .\imgui_ffi\mod     : DockBuilderAddNode          :  3354  : ~      : ~     :    1 |
+| .\limgui\gui_dockspa: split                       :    17  : ~      : ~     :    5 |
+| .\libs\gl_ffi\glfw  : getFramebufferSize          :   671  : ~      : ~     :   55 |
+--------------------------------------------------------------------------------------

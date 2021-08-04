@@ -31,14 +31,14 @@ end
 M.GuiTable = {
     draw_node = function(self, node, accessor)
         imgui.TableNextRow()
-        local children = accessor.children(node)
+        local has_child = accessor.has_child(node)
         local open = false
         for i, col in ipairs(self.columns) do
             imgui.TableNextColumn()
             local value = accessor.column(node, i)
             if i == 1 then
                 local flag = 0 -- const.ImGuiTreeNodeFlags_.SpanFullWidth
-                if not children then
+                if not has_child then
                     flag = bit.bor(
                         flag,
                         const.ImGuiTreeNodeFlags_.Leaf,
@@ -69,10 +69,10 @@ M.GuiTable = {
                 end
             end
         end
-        if open and children then
-            for j, child in ipairs(children) do
+        if open and has_child then
+            accessor.each(node, function(j, child)
                 self:draw_node(child, accessor)
-            end
+            end)
             imgui.TreePop()
         end
     end,
