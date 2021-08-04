@@ -114,8 +114,9 @@ while app:new_frame() do
             end
         end,
     })
-    app:clear(gui.clear_color)
+
     local width, height = app.window:getFramebufferSize()
-    r:render(width, height)
+    renderer.clear(width, height, gui.clear_color)
+    r:render()
     app:render()
 end

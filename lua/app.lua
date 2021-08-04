@@ -11,8 +11,6 @@ local function glfw_error_callback(error, description)
     print(string.format("Glfw Error %d: %s\n", error, description))
 end
 
-local gl, glc, glu, glext
-
 ---@class AppClangViewer
 ---@field window any
 local app = {
@@ -40,9 +38,6 @@ local app = {
         self.window:makeContextCurrent()
         -- Initialize OpenGL loader
         glad.gladLoadGL(glfw.getProcAddress)
-        local gllib = require("libs.gl_ffi.gl")
-        gllib.set_loader(glfw)
-        gl, glc, glu, glext = gllib.libraries()
 
         glfw.swapInterval(1) -- Enable vsync
 
@@ -107,21 +102,7 @@ local app = {
     end,
 
     ---@param self AppClangViewer
-    ---@param clear_color number[]
-    clear = function(self, clear_color)
-        local display_w, display_h = self.window:getFramebufferSize()
-        gl.glViewport(0, 0, display_w, display_h)
-        gl.glClearColor(
-            clear_color[0] * clear_color[3],
-            clear_color[1] * clear_color[3],
-            clear_color[2] * clear_color[3],
-            clear_color[3]
-        )
-        gl.glClear(glc.GL_COLOR_BUFFER_BIT)
-    end,
-
-    ---@param self AppClangViewer
-    render = function(self)
+    render = function(self, w, h, clear_color)
         -- Rendering
         imgui.Render()
         imgui.ImGui_ImplOpenGL3_RenderDrawData(imgui.GetDrawData())

@@ -40,9 +40,11 @@ glfw.swapInterval(1)
 local renderer = require("limgui.renderer")
 local r = renderer.Renderer.new()
 
+local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do
     local width, height = window:getFramebufferSize()
-    r:render(width, height)
+    renderer.clear(width, height, clear_color)
+    r:render()
     window:swapBuffers()
     glfw.pollEvents()
 end

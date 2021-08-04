@@ -77,15 +77,29 @@ local function initialize()
     gl.glVertexAttribPointer(vpos_location, 2, gl.GL_FLOAT, gl.GL_FALSE, 8, nil)
 end
 
+--- clear active RenderBuffer
+---@param w any
+---@param h any
+---@param clear_color table
+M.clear = function(w, h, clear_color)
+    gl.load(glfw)
+    gl.glViewport(0, 0, w, h)
+    gl.glClearColor(
+        clear_color[0] * clear_color[3],
+        clear_color[1] * clear_color[3],
+        clear_color[2] * clear_color[3],
+        clear_color[3]
+    )
+    gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+end
+
 M.Renderer = {
-    render = function(self, width, height)
+
+    render = function(self)
         initialize()
 
         --         mat4x4 m, p, mvp;
-        local ratio = width / height
-
-        gl.glViewport(0, 0, width, height)
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+        -- local ratio = width / height
 
         --         mat4x4_identity(m);
         --         mat4x4_rotate_Z(m, m, (float) glfwGetTime());

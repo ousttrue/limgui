@@ -216,7 +216,9 @@ idle:start(function()
         idle:stop()
     end
     gui:update(ROOT, accessor)
-    app:render(gui.clear_color)
+    local w, h = app.window:getFramebufferSize()
+    require("limgui.renderer").clear(w, h, gui.clear_color)
+    app:render()
 end)
 
 uv.run("default")

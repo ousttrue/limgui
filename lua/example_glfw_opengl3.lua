@@ -63,5 +63,7 @@ end
 -- Main loop
 while app:new_frame() do
     gui:update()
-    app:render(gui.clear_color)
+    local width, height = app.window:getFramebufferSize()
+    require("limgui.renderer").clear(width, height, gui.clear_color)
+    app:render()
 end
