@@ -4,6 +4,7 @@ local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
 local W = require("limgui")
 local uv = require("luv")
+local utils = require("limgui.utils")
 
 --
 -- libclang task
@@ -93,6 +94,8 @@ local SELECTED = "Selected"
 local gui = {
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
 
+    cache_map = {},
+
     dockspace = W.GuiDockSpace.new(
         "dockspace",
         -- dock node tree
@@ -160,8 +163,15 @@ local gui = {
         end
 
         imgui.Begin(SELECTED)
-        if self.table.selected then
-            imgui.TextUnformatted(self.table.selected.spelling)
+        if self.table.selected and self.table.selected.location then
+            local path = self.table.selected.location.path
+            imgui.TextUnformatted(path)
+            local text = self.cache_map[path]
+            if not text then
+                text = utils.read_file(path)
+                self.cache_map[path] = text
+            end
+            imgui.TextUnformatted(text)
         end
         imgui.End()
     end,

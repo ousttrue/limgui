@@ -30,4 +30,13 @@ M.imap = function(t, filter)
     return result
 end
 
+M.read_file = function(path)
+    local file = io.open(path, "rb") -- r read mode and b binary mode
+    if file then
+        local content = file:read("*a") -- *a or *all reads the whole file
+        file:close()
+        return content
+    end
+end
+
 return M
