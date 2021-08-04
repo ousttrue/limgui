@@ -27,6 +27,7 @@ end
 ---@field flags number
 ---@field columns Column[]
 ---@field root any
+---@field selected any
 M.GuiTable = {
     draw_node = function(self, node, accessor)
         imgui.TableNextRow()

@@ -62,7 +62,7 @@ local CursorKind = {
     end,
 
     update = function(self)
-        imgui.Checkbox(self.name, self.visible)
+        imgui.Checkbox(string.format("%s(%d)", self.name, self.count), self.visible)
     end,
 }
 ---@param name string
@@ -85,6 +85,7 @@ end
 
 local KIND = "Kind"
 local CURSOR = "Cursor"
+local SELECTED = "Selected"
 
 ---@class ClangViewerGUI
 ---@field kind_list CursorKind[]
@@ -100,10 +101,7 @@ local gui = {
                 W.DockNode.new(KIND),
                 W.DockNode.new(CURSOR),
             }),
-            W.DockNode.new("Right", const.ImGuiDir_.Down, 0.25, {
-                W.DockNode.new("Down"),
-                W.DockNode.new("Central"),
-            }),
+            W.DockNode.new(SELECTED),
         })
     ),
 
@@ -133,6 +131,9 @@ local gui = {
         end
     end,
 
+    ---@param self ClangViewerGUI
+    ---@param root any
+    ---@param accessor any
     update = function(self, root, accessor)
         self.dockspace:draw()
 
@@ -158,7 +159,10 @@ local gui = {
             self:build_map(root)
         end
 
-        imgui.Begin("Down")
+        imgui.Begin(SELECTED)
+        if self.table.selected then
+            imgui.TextUnformatted(self.table.selected.spelling)
+        end
         imgui.End()
     end,
 }

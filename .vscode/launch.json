@@ -14,10 +14,11 @@
                 "file": "clang_viewer.lua"
             },
             "args": [
-                "-IC:/Program Files/LLVM/include",
-                // Export
-                // "-EC:/Program Files/LLVM/include/clang-c/Index.h,libclang.dll",
-                "-EC:/Program Files/LLVM/include/clang-c/CXString.h,libclang.dll",
+                // "-IC:/Program Files/LLVM/include",
+                // // Export
+                // // "-EC:/Program Files/LLVM/include/clang-c/Index.h,libclang.dll",
+                // "-EC:/Program Files/LLVM/include/clang-c/CXString.h,libclang.dll",
+                "-E${workspaceFolder}/libs/glfw/deps/glad/gl.h,glad.dll",
             ],
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin;C:\\Program Files\\LLVM\\bin",
