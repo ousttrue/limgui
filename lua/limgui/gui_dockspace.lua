@@ -43,6 +43,20 @@ end
 ---@field dockspace_flags number
 ---@field root GuiDockNode
 M.GuiDockSpace = {
+    ---@param self GuiDockSpace
+    passthru = function(self, enable)
+        if enable then
+            self.dockspace_flags = bit.bor(self.dockspace_flags, const.ImGuiDockNodeFlags_.PassthruCentralNode)
+        else
+            self.dockspace_flags = bit.band(
+                self.dockspace_flags,
+                bit.bnot(const.ImGuiDockNodeFlags_.PassthruCentralNode)
+            )
+        end
+        return self
+    end,
+
+    ---@param self GuiDockSpace
     draw = function(self)
         local viewport = imgui.GetMainViewport()
         imgui.SetNextWindowPos(viewport.Pos)
@@ -127,7 +141,6 @@ M.GuiDockSpace.new = function(name, root)
         name = name,
         first_time = true,
         dockspace_id = ffi.new("ImGuiID[1]"),
-        -- dockspace_flags = const.ImGuiDockNodeFlags_.PassthruCentralNode,
         dockspace_flags = 0,
         root = root,
     })
