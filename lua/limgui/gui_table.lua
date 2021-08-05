@@ -70,7 +70,7 @@ M.GuiTable = {
             end
         end
         if open and has_child then
-            accessor.each(node, function(j, child)
+            accessor.each(node, function(child)
                 self:draw_node(child, accessor)
             end)
             imgui.TreePop()

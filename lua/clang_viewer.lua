@@ -201,7 +201,7 @@ local accessor = {
         if node.children then
             for i, v in ipairs(node.children) do
                 if gui.kind_map[v.cursor_kind].visible[0] then
-                    callback(i, v)
+                    callback(v)
                 end
             end
         end

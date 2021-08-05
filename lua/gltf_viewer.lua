@@ -59,23 +59,27 @@ local r = renderer.Renderer.new()
 -- Main loop
 while app:new_frame() do
     gui:update({ "__root__", json }, {
-        children = function(kv)
+        has_child = function(kv)
+            return type(kv[2]) == "table"
+        end,
+        each = function(kv, callback)
             -- local k = kv[1]
             local v = kv[2]
             local t = type(v)
             if t == "table" then
                 if #v > 0 then
-                    return utils.imap(v, function(i, x)
-                        return { tostring(i), x }
-                    end)
+                    for i, x in ipairs(v) do
+                        callback({ tostring(i), x })
+                    end
                 else
-                    local result = utils.map(v, function(k, x)
-                        return { k, x }
-                    end)
-                    table.sort(result, function(a, b)
-                        return a[1] < b[1]
-                    end)
-                    return result
+                    local keys = {}
+                    for k, v in pairs(v) do
+                        table.insert(keys, k)
+                    end
+                    table.sort(keys)
+                    for i, k in ipairs(keys) do
+                        callback({ k, v[k] })
+                    end
                 end
             end
         end,
