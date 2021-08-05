@@ -1,6 +1,5 @@
 local ffi = require("ffi")
 local utils = require("limgui.utils")
-local glfw = require("libs.gl_ffi.glfw")
 local M = {}
 local gl = require("libs.gl_ffi.mod")
 
@@ -121,7 +120,6 @@ M.Renderer = {
     ---@param h any
     ---@param clear_color table
     clear = function(self, w, h, clear_color)
-        gl.load(glfw)
         gl.glViewport(0, 0, w, h)
         gl.glClearColor(
             clear_color[0] * clear_color[3],
