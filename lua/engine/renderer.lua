@@ -1,38 +1,16 @@
-local ffi = require("ffi")
 local utils = require("limgui.utils")
 local M = {}
 local gl = require("libs.gl_ffi.mod")
 local shaders = require("engine.shaders")
-
----@class VertexBuffer
----@field vbo any
----@field vertex_count number
-M.VBO = {
-    ---@param self VertexBuffer
-    render = function(self)
-        gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo[0])
-        gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.vertex_count)
-    end,
-}
-
-M.VBO.create = function(vertices, vertex_count)
-    local vbo = ffi.new("GLuint[1]")
-    gl.glGenBuffers(1, vbo)
-    gl.glBindBuffer(gl.GL_ARRAY_BUFFER, vbo[0])
-    gl.glBufferData(gl.GL_ARRAY_BUFFER, ffi.sizeof(vertices), vertices, gl.GL_STATIC_DRAW)
-    return utils.new(M.VBO, {
-        vbo = vbo,
-        vertex_count = vertex_count,
-    })
-end
+local VBO = require("engine.vbo").VBO
 
 ---@class Drawable
 ---@field vbo VertexBuffer
 ---@field shader Shader
 M.Drawable = {
     ---@param self Drawable
-    render = function(self)
-        self.shader:activate()
+    render = function(self, variables)
+        self.shader:activate(variables)
         self.vbo:render()
     end,
 }
@@ -40,7 +18,7 @@ M.Drawable = {
 ---@return Drawable
 M.Drawable.create = function(scene)
     local shader = shaders.create(scene.shader_name)
-    local vbo = M.VBO.create(scene.vertices, scene.vertex_count)
+    local vbo = VBO.create(scene.vertices, scene.vertex_count)
     return utils.new(M.Drawable, {
         vbo = vbo,
         shader = shader,
@@ -81,9 +59,9 @@ M.Renderer = {
     ---render scene
     ---@param self Renderer
     ---@param scene Scene
-    render = function(self, scene)
+    render = function(self, scene, variables)
         local drawable = self:get_or_create_drawable(scene)
-        drawable:render()
+        drawable:render(variables)
     end,
 }
 M.Renderer.new = function()

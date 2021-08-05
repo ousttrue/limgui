@@ -38,13 +38,17 @@ glfw.swapInterval(1)
 local engine = require("engine.mod")
 engine.load(glfw)
 local renderer = engine.Renderer.new()
-local scene = engine.Scene.triangle()
+local scene = engine.Scene.xyrgb_triangle()
+
+local MVP = ffi.new("float[4][4]", { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 }, { 0, 0, 0, 1 })
 
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do
     local width, height = window:getFramebufferSize()
     renderer:clear(width, height, clear_color)
-    renderer:render(scene)
+    renderer:render(scene, {
+        MVP = MVP,
+    })
     window:swapBuffers()
     glfw.pollEvents()
 end
