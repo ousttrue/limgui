@@ -6,8 +6,7 @@ local C = imgui_ffi.enums
 local json = require("libs.json")
 local W = require("limgui")
 local utils = require("limgui.utils")
-local Renderer = require("limgui.renderer").Renderer
-local Scene = require("limgui.scene").Scene
+local engine = require("engine.mod")
 
 --- Load JSON
 local args = { ... }
@@ -23,8 +22,8 @@ if not app:initialize(1200, 900, TITLE) then
 end
 -- load OpenGL
 require("libs.gl_ffi.mod").load(require("libs.gl_ffi.glfw"))
-local renderer = Renderer.new()
-local triangle = Scene:triangle()
+local renderer = engine.Renderer.new()
+local triangle = engine.Scene:triangle()
 
 -- GUI
 local JSON = "JSON"
