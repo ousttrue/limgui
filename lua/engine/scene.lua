@@ -6,6 +6,7 @@ local M = {}
 ---@class Scene
 ---@field vertices any
 ---@field vertex_count number
+---@field shader_name string
 M.Scene = {}
 M.Scene.triangle = function()
     -- static const struct
@@ -32,6 +33,7 @@ M.Scene.triangle = function()
     return utils.new(M.Scene, {
         vertices = vertices,
         vertex_count = 3,
+        shader_name = "MINIMAL",
     })
 end
 

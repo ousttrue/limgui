@@ -4,7 +4,7 @@ local utils = require("limgui.utils")
 
 local M = {}
 
-local MINIMAL_vs = [[#version 110
+M.MINIMAL_vs = [[#version 110
 attribute vec2 vPos;
 void main()
 {
@@ -12,10 +12,30 @@ void main()
 };
 ]]
 
-local MINIMAL_fs = [[#version 110
+M.MINIMAL_fs = [[#version 110
 void main()
 {
     gl_FragColor = vec4(1, 1, 1, 1);
+};
+]]
+
+M.MVP_vs = [[#version 110
+uniform mat4 MVP;
+attribute vec3 vCol;
+attribute vec2 vPos;
+varying vec3 color;
+void main()
+{
+    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
+    color = vCol;
+};
+]]
+
+M.MVP_fs = [[#version 110
+varying vec3 color;
+void main()
+{
+    gl_FragColor = vec4(color, 1.0);
 };
 ]]
 
@@ -57,8 +77,10 @@ M.Shader.create = function(vs, fs)
     })
 end
 
-M.create_minimal = function()
-    return M.Shader.create(MINIMAL_vs, MINIMAL_fs)
+M.create = function(name)
+    local vs_name = name .. "_vs"
+    local fs_name = name .. "_fs"
+    return M.Shader.create(M[vs_name], M[fs_name])
 end
 
 return M
