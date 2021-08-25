@@ -1,10 +1,10 @@
 local luaunit = require("luaunit")
 
-function testPass()
+function TestPass()
     luaunit.assertEquals({ 1, 2, 3 }, { 1, 2, 3 })
 end
 
--- function testFail()
+-- function TestFail()
 --     luaunit.assertEquals({ 1, 2, 3 }, { 1, 2, 4 })
 -- end
 
