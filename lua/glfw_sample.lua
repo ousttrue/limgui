@@ -44,7 +44,11 @@ local MVP = ffi.new("float[4][4]", { 1, 0, 0, 0 }, { 0, 1, 0, 0 }, { 0, 0, 1, 0 
 
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do
+    -- update
     local width, height = window:getFramebufferSize()
+
+
+    -- render
     renderer:clear(width, height, clear_color)
     renderer:render(scene, {
         MVP = MVP,

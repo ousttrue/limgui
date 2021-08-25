@@ -14,5 +14,7 @@
     ],
     "Lua.diagnostics.globals": [
         "newproxy"
-    ]
+    ],
+    "luaTestAdapter.luaExe": "luajitffi/LuaJIT/src/luajit.exe",
+    "luaTestAdapter.testGlob": "tests/*.lua",
 }
