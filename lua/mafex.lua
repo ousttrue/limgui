@@ -425,6 +425,21 @@ mat4 = {
             m._44 = 1
             return m
         end,
+
+        z_rotation = function (angle)
+            local c = math.cos(angle)
+            local s = math.sin(angle)
+            local m = mat4()
+
+            m._11 = c
+            m._12 = s
+            m._21 = -s
+            m._22 = c
+            m._33 = 1
+            m._44 = 1
+
+            return m
+        end,
     },
 }
 
@@ -439,7 +454,7 @@ if ffi then
             float _31, _32, _33, _34;
             float _41, _42, _43, _44;
         };
-        float _m[16];
+        float array[16];
     } mat4;
 ]])
 

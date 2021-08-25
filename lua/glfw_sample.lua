@@ -41,17 +41,17 @@ local renderer = engine.Renderer.new()
 local scene = engine.Scene.xyrgb_triangle()
 
 local maf = require("mafex")
-local MVP = maf.mat4.identity()
 
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()
+    local m = maf.mat4.z_rotation(glfw.getTime())
 
     -- render
     renderer:clear(width, height, clear_color)
     renderer:render(scene, {
-        MVP = MVP._m,
+        MVP = m.array,
     })
     window:swapBuffers()
     glfw.pollEvents()
