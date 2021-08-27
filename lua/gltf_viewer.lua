@@ -52,6 +52,7 @@ local gui = {
         self.dockspace:draw()
 
         imgui.Begin(JSON)
+        self.table:draw(root, accessor)
         imgui.End()
     end,
 }
