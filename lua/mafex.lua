@@ -2,10 +2,14 @@
 -- https://github.com/bjornbytes/maf
 -- MIT License
 --
--- extend mat4
+-- [extended]
+-- * mat4
+-- * array
 
 local ffi = type(jit) == "table" and jit.status() and require "ffi"
 local vec3, quat, mat4
+
+local M = {}
 
 local forward
 local vtmp1
@@ -471,9 +475,8 @@ forward = vec3(0, 0, -1)
 vtmp1 = vec3()
 vtmp2 = vec3()
 qtmp1 = quat()
+M.vec3 = vec3
+M.quat = quat
+M.mat4 = mat4
 
-return {
-    vec3 = vec3,
-    quat = quat,
-    mat4 = mat4,
-}
+return M
