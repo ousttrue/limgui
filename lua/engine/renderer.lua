@@ -61,9 +61,7 @@ M.Renderer = {
     ---@param scene Scene
     render = function(self, scene, variables)
         local drawable = self:get_or_create_drawable(scene)
-        if variables then
-            drawable:render(variables)
-        end
+        drawable:render(variables or {})
     end,
 }
 M.Renderer.new = function()
