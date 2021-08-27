@@ -3,17 +3,13 @@ local bit = require "bit"
 local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
-local json = require "libs.json"
 local W = require "limgui"
 local utils = require "limgui.utils"
 local engine = require "engine.mod"
 
 --- Load JSON
 local args = { ... }
-local r = io.open(args[1], "rb")
-local src = r:read "*a"
-r:close()
-local json = json.decode(src)
+local loader = require("engine.gltf").GltfLoader.from_path(args[1])
 
 local app = require "app"
 local TITLE = "GltfViewer"
@@ -23,7 +19,6 @@ end
 -- load OpenGL
 require("libs.gl_ffi.mod").load(require "libs.gl_ffi.glfw")
 local renderer = engine.Renderer.new()
-local loader = require("engine.gltf").GltfLoader.load(json)
 local scene = engine.Scene.triangle()
 
 -- GUI

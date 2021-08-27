@@ -39,4 +39,12 @@ M.read_file = function(path)
     end
 end
 
+---@param path string
+---@return string|table
+M.dirname = function(path)
+    local m = path:match "([^/\\]*)$"
+    local dir = path:sub(1, #path - #m - 1)
+    return dir
+end
+
 return M
