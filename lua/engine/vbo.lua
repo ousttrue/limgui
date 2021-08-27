@@ -1,6 +1,6 @@
-local ffi = require("ffi")
-local gl = require("libs.gl_ffi.mod")
-local utils = require("limgui.utils")
+local ffi = require "ffi"
+local gl = require "libs.gl_ffi.mod"
+local utils = require "limgui.utils"
 
 local M = {}
 ---@class VertexBuffer
@@ -21,7 +21,7 @@ M.VBO = {
 }
 
 M.VBO.create = function(vertices, vertex_count)
-    local vbo = ffi.new("GLuint[1]")
+    local vbo = ffi.new "GLuint[1]"
     gl.glGenBuffers(1, vbo)
     local buffer = utils.new(M.VBO, {
         vbo = vbo,

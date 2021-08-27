@@ -1,7 +1,7 @@
-local imgui_ffi = require("imgui_ffi.mod")
+local imgui_ffi = require "imgui_ffi.mod"
 local const = imgui_ffi.enums
 local imgui = imgui_ffi.libs.imgui
-local utils = require("limgui.utils")
+local utils = require "limgui.utils"
 
 local M = {}
 
@@ -71,7 +71,7 @@ M.GuiTable = {
                 if value then
                     imgui.TextUnformatted(value)
                 else
-                    imgui.TextDisabled("--")
+                    imgui.TextDisabled "--"
                 end
             end
         end

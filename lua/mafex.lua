@@ -4,7 +4,7 @@
 --
 -- extend mat4
 
-local ffi = type(jit) == "table" and jit.status() and require("ffi")
+local ffi = type(jit) == "table" and jit.status() and require "ffi"
 local vec3, quat, mat4
 
 local forward
@@ -33,7 +33,7 @@ vec3 = {
         elseif type(u) == "number" then
             return v:scale(u, vec3())
         else
-            error("vec3s can only be multiplied by vec3s and numbers")
+            error "vec3s can only be multiplied by vec3s and numbers"
         end
     end,
     __div = function(v, u)
@@ -42,7 +42,7 @@ vec3 = {
         elseif type(u) == "number" then
             return v:scale(1 / u, vec3())
         else
-            error("vec3s can only be divided by vec3s and numbers")
+            error "vec3s can only be divided by vec3s and numbers"
         end
     end,
     __unm = function(v)
@@ -202,7 +202,7 @@ quat = {
         elseif vec3.isvec3(r) then
             return r:rotate(q, vec3())
         else
-            error("quats can only be multiplied by quats and vec3s")
+            error "quats can only be multiplied by quats and vec3s"
         end
     end,
     __unm = function(q)
@@ -426,7 +426,7 @@ mat4 = {
             return m
         end,
 
-        z_rotation = function (angle)
+        z_rotation = function(angle)
             local c = math.cos(angle)
             local s = math.sin(angle)
             local m = mat4()
@@ -444,7 +444,7 @@ mat4 = {
 }
 
 if ffi then
-    ffi.cdef([[
+    ffi.cdef [[
     typedef struct { float x, y, z; } vec3;
     typedef struct { float x, y, z, w; } quat;
     typedef union {
@@ -456,7 +456,7 @@ if ffi then
         };
         float array[16];
     } mat4;
-]])
+]]
 
     vec3 = ffi.metatype("vec3", vec3)
     quat = ffi.metatype("quat", quat)

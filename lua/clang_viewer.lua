@@ -1,18 +1,18 @@
-local ffi = require("ffi")
-local imgui_ffi = require("imgui_ffi.mod")
+local ffi = require "ffi"
+local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 local const = imgui_ffi.enums
-local W = require("limgui")
-local uv = require("luv")
-local utils = require("limgui.utils")
+local W = require "limgui"
+local uv = require "luv"
+local utils = require "limgui.utils"
 
 --
 -- libclang task
 --
 local function on_thread(data)
-    local CommandLine = require("clangffi.commandline")
-    local Parser = require("clangffi.parser")
-    local mp = require("libs.luajit-msgpack-pure")
+    local CommandLine = require "clangffi.commandline"
+    local Parser = require "clangffi.parser"
+    local mp = require "libs.luajit-msgpack-pure"
 
     local offset, args = mp.unpack(data)
     local cmd = CommandLine.parse(args)
@@ -20,13 +20,13 @@ local function on_thread(data)
     parser:parse(cmd.EXPORTS, cmd.CFLAGS)
     print(parser.node_count)
 
-    print("remove_duplicated...")
+    print "remove_duplicated..."
     local count = parser.root:remove_duplicated()
     print(count)
     return mp.pack(parser.root)
 end
 
-local mp = require("libs.luajit-msgpack-pure")
+local mp = require "libs.luajit-msgpack-pure"
 local ROOT
 local function on_end(dst, src)
     local offset, root = mp.unpack(dst)
@@ -39,15 +39,15 @@ if ON_THREAD then
         on_thread, --work,in threadpool
         on_end --after work, in loop thread
     )
-    uv.queue_work(ctx, mp.pack({ ... }))
+    uv.queue_work(ctx, mp.pack { ... })
 else
     --- sync
-    local result = on_thread(mp.pack({ ... }))
+    local result = on_thread(mp.pack { ... })
     on_end(result)
 end
 
 -- Main loop
-local app = require("app")
+local app = require "app"
 local TITLE = "ClangViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
@@ -78,7 +78,7 @@ CursorKind.new = function(name)
     return instance
 end
 
-local clang_ffi = require("clang.mod")
+local clang_ffi = require "clang.mod"
 local reverse_map = {}
 for k, v in pairs(clang_ffi.enums.CXCursorKind) do
     reverse_map[v] = k
@@ -213,7 +213,7 @@ local accessor = {
             return reverse_map[node.cursor_kind]
         elseif i == 3 then
             if node.location then
-                local m = node.location.path:match("[^\\]+$")
+                local m = node.location.path:match "[^\\]+$"
                 if m then
                     return m
                 end
@@ -246,7 +246,7 @@ idle:start(function()
     app:render()
 end)
 
-uv.run("default")
+uv.run "default"
 
 -- -- Code block and/or called functions to profile --
 -- profiler.stop()

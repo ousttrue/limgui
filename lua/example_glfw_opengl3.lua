@@ -1,13 +1,13 @@
-local ffi = require("ffi")
-local imgui_ffi = require("imgui_ffi.mod")
+local ffi = require "ffi"
+local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 
 ---@class GUIExampleGlfwGl3
 local gui = {
     show_demo_window = ffi.new("bool[1]", true),
-    show_another_window = ffi.new("bool[1]"),
+    show_another_window = ffi.new "bool[1]",
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
-    f = ffi.new("float[1]"),
+    f = ffi.new "float[1]",
     counter = ffi.new("long long[1]", 1),
 
     ---@param self GUIExampleGlfwGl3
@@ -19,16 +19,16 @@ local gui = {
 
         -- 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
         do
-            imgui.Begin("Hello, world!") -- Create a window called "Hello, world!" and append into it.
+            imgui.Begin "Hello, world!"
 
-            imgui.Text("This is some useful text.") -- Display some text (you can use a format strings too)
+            imgui.Text "This is some useful text."
             imgui.Checkbox("Demo Window", self.show_demo_window) -- Edit bools storing our window open/close state
             imgui.Checkbox("Another Window", self.show_another_window)
 
             imgui.SliderFloat("float", self.f, 0.0, 1.0) -- Edit 1 float using a slider from 0.0f to 1.0f
             imgui.ColorEdit3("clear color", self.clear_color) -- Edit 3 floats representing a color
 
-            if imgui.Button("Button") then -- Buttons return true when clicked (most widgets return true when edited/activated)
+            if imgui.Button "Button" then -- Buttons return true when clicked (most widgets return true when edited/activated)
                 self.counter[0] = self.counter[0] + 1
             end
             imgui.SameLine()
@@ -45,8 +45,8 @@ local gui = {
         -- 3. Show another simple window.
         if self.show_another_window[0] then
             imgui.Begin("Another Window", self.show_another_window) -- Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            imgui.Text("Hello from another window!")
-            if imgui.Button("Close Me") then
+            imgui.Text "Hello from another window!"
+            if imgui.Button "Close Me" then
                 self.show_another_window[0] = false
             end
             imgui.End()
@@ -54,7 +54,7 @@ local gui = {
     end,
 }
 
-local app = require("app")
+local app = require "app"
 local TITLE = "Dear ImGui GLFW+OpenGL3 example"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)

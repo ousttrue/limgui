@@ -2,9 +2,9 @@
 --
 -- * https://www.glfw.org/docs/latest/quick.html
 --
-local ffi = require("ffi")
+local ffi = require "ffi"
 
-local glfw = require("libs.gl_ffi.glfw")
+local glfw = require "libs.gl_ffi.glfw"
 local glfwc = glfw.glfwc
 
 local function error_callback(error, description)
@@ -35,12 +35,12 @@ window:setKeyCallback(key_callback)
 window:makeContextCurrent()
 glfw.swapInterval(1)
 
-local engine = require("engine.mod")
+local engine = require "engine.mod"
 engine.load(glfw)
 local renderer = engine.Renderer.new()
 local scene = engine.Scene.xyrgb_triangle()
 
-local maf = require("mafex")
+local maf = require "mafex"
 
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do

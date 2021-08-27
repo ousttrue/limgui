@@ -1,5 +1,5 @@
-local utils = require("limgui.utils")
-local ffi = require("ffi")
+local utils = require "limgui.utils"
+local ffi = require "ffi"
 
 local M = {}
 
@@ -16,7 +16,7 @@ end
 ---@field layout VertexLayout[]
 M.Scene = {}
 M.Scene.triangle = function()
-    local vertices = ffi.new("float[3][2]")
+    local vertices = ffi.new "float[3][2]"
     -- 0
     vertices[0][0] = -0.6
     vertices[0][1] = -0.4
@@ -31,20 +31,18 @@ M.Scene.triangle = function()
         vertices = vertices,
         vertex_count = 3,
         shader_name = "MINIMAL",
-        layout = M.VertexLayout.new({
-            
-        }),
+        layout = M.VertexLayout.new {},
     })
 end
 
 -- https://www.glfw.org/docs/latest/quick.html
-ffi.cdef([[
+ffi.cdef [[
 struct Vertex2DRGB
 {
     float x, y;
     float r, g, b;
 };
-]])
+]]
 M.Scene.xyrgb_triangle = function()
     local vertices = ffi.new(
         "struct Vertex2DRGB[3]",

@@ -1,20 +1,20 @@
-local ffi = require("ffi")
-local bit = require("bit")
-local imgui_ffi = require("imgui_ffi.mod")
+local ffi = require "ffi"
+local bit = require "bit"
+local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
-local json = require("libs.json")
-local W = require("limgui")
-local utils = require("limgui.utils")
+local json = require "libs.json"
+local W = require "limgui"
+local utils = require "limgui.utils"
 
 --- Load JSON
-local arg = os.getenv("JSON_PATH")
+local arg = os.getenv "JSON_PATH"
 local r = io.open(arg, "rb")
-local src = r:read("*a")
+local src = r:read "*a"
 r:close()
 local json = json.decode(src)
 
-local app = require("app")
+local app = require "app"
 local TITLE = "JsonViewer"
 if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
@@ -67,7 +67,7 @@ local tree_accessor = {
         if t == "table" then
             if #v > 0 then
                 for i, x in ipairs(v) do
-                    callback({ tostring(i), x })
+                    callback { tostring(i), x }
                 end
             else
                 local result = utils.map(v, function(k, x)

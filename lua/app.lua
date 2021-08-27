@@ -1,6 +1,6 @@
-local glfw = require("libs.gl_ffi.glfw")
+local glfw = require "libs.gl_ffi.glfw"
 local glfwc = glfw.glfwc
-local imgui_ffi = require("imgui_ffi.mod")
+local imgui_ffi = require "imgui_ffi.mod"
 local glad = imgui_ffi.libs.glad
 local imgui = imgui_ffi.libs.imgui
 
@@ -38,7 +38,7 @@ local app = {
         self.window:makeContextCurrent()
         -- Initialize OpenGL loader
         glad.gladLoadGL(glfw.getProcAddress)
-        local engine = require("engine.mod")
+        local engine = require "engine.mod"
         engine.load(glfw)
 
         glfw.swapInterval(1) -- Enable vsync
@@ -70,7 +70,7 @@ local app = {
         -- finalizer
         self.finalizer = newproxy(true)
         getmetatable(self.finalizer).__gc = function()
-            print("shutdown...")
+            print "shutdown..."
             imgui.ImGui_ImplOpenGL3_Shutdown()
             imgui.ImGui_ImplGlfw_Shutdown()
             imgui.DestroyContext(nil)

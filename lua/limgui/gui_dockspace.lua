@@ -1,9 +1,9 @@
-local ffi = require("ffi")
-local bit = require("bit")
-local imgui_ffi = require("imgui_ffi.mod")
+local ffi = require "ffi"
+local bit = require "bit"
+local imgui_ffi = require "imgui_ffi.mod"
 local const = imgui_ffi.enums
 local imgui = imgui_ffi.libs.imgui
-local utils = require("limgui.utils")
+local utils = require "limgui.utils"
 
 local M = {}
 
@@ -29,7 +29,7 @@ M.DockNode = {
 M.DockNode.new = function(name, dir, fraction, children)
     local node = utils.new(M.DockNode, {
         name = name,
-        id = ffi.new("ImGuiID[1]"),
+        id = ffi.new "ImGuiID[1]",
         dir = dir,
         fraction = fraction,
         children = children,
@@ -76,7 +76,7 @@ M.GuiDockSpace = {
         -- all active windows docked into it will lose their parent and become undocked.
         -- We cannot preserve the docking relationship between an active window and an inactive docking, otherwise
         -- any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
-        imgui.PushStyleVar__1(const.ImGuiStyleVar_.WindowPadding, ffi.new("struct ImVec2"))
+        imgui.PushStyleVar__1(const.ImGuiStyleVar_.WindowPadding, ffi.new "struct ImVec2")
         imgui.Begin(self.name, nil, window_flags)
         imgui.PopStyleVar()
         imgui.PopStyleVar(2)
@@ -86,12 +86,12 @@ M.GuiDockSpace = {
         io.ConfigFlags = bit.bor(io.ConfigFlags, const.ImGuiConfigFlags_.DockingEnable)
         if bit.band(io.ConfigFlags, const.ImGuiConfigFlags_.DockingEnable) ~= 0 then
             self.dockspace_id[0] = imgui.GetID(self.name)
-            imgui.DockSpace(self.dockspace_id[0], ffi.new("struct ImVec2"), self.dockspace_flags)
+            imgui.DockSpace(self.dockspace_id[0], ffi.new "struct ImVec2", self.dockspace_flags)
 
             if imgui.BeginMenuBar() then
-                if imgui.BeginMenu("File") then
+                if imgui.BeginMenu "File" then
                     if imgui.MenuItem("Open", "Ctrl+O") then
-                        print("open file")
+                        print "open file"
                     end
                     imgui.Separator()
                     imgui.EndMenu()
@@ -140,7 +140,7 @@ M.GuiDockSpace.new = function(name, root)
         window_flags = window_flags,
         name = name,
         first_time = true,
-        dockspace_id = ffi.new("ImGuiID[1]"),
+        dockspace_id = ffi.new "ImGuiID[1]",
         dockspace_flags = 0,
         root = root,
     })

@@ -1,14 +1,14 @@
-local ffi = require("ffi")
-local gl = require("libs.gl_ffi.mod")
-local utils = require("limgui.utils")
+local ffi = require "ffi"
+local gl = require "libs.gl_ffi.mod"
+local utils = require "limgui.utils"
 
 local M = {}
 
 --- Get vertex attribute layouts from vertex shader source
 local function parse_vs(vs)
     local layouts = {}
-    for l in vs:gmatch("([^\n]+)") do
-        local t, name = l:match("attribute%s+(vec%d)%s+(%w+);")
+    for l in vs:gmatch "([^\n]+)" do
+        local t, name = l:match "attribute%s+(vec%d)%s+(%w+);"
         if t and name then
             local layout = {}
             if t == "vec2" then
@@ -127,7 +127,7 @@ M.Shader = {
 }
 M.Shader.create = function(vs, fs)
     local vertex_shader = gl.glCreateShader(gl.GL_VERTEX_SHADER)
-    local pp = ffi.new("const char *[1]")
+    local pp = ffi.new "const char *[1]"
     pp[0] = vs
     gl.glShaderSource(vertex_shader, 1, pp, nil)
     gl.glCompileShader(vertex_shader)

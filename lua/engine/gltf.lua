@@ -1,4 +1,4 @@
-local utils = require("limgui.utils")
+local utils = require "limgui.utils"
 local M = {}
 
 ---@class GltfLoader
