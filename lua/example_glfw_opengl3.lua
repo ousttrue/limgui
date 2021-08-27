@@ -60,10 +60,12 @@ if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
 
+local render = require("engine.mod").Renderer.new()
+
 -- Main loop
 while app:new_frame() do
     gui:update()
     local width, height = app.window:getFramebufferSize()
-    require("limgui.renderer").clear(width, height, gui.clear_color)
+    render:clear(width, height, gui.clear_color)
     app:render()
 end

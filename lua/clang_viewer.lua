@@ -233,6 +233,8 @@ local accessor = {
 -- local profiler = require("libs.profiler")
 -- profiler.start()
 
+local renderer = require("engine.mod").Renderer.new()
+
 local idle = uv.new_idle()
 idle:start(function()
     if not app:new_frame() then
@@ -240,7 +242,7 @@ idle:start(function()
     end
     gui:update(ROOT, accessor)
     local w, h = app.window:getFramebufferSize()
-    require("limgui.renderer").clear(w, h, gui.clear_color)
+    renderer:clear(w, h, gui.clear_color)
     app:render()
 end)
 

@@ -38,6 +38,8 @@ local app = {
         self.window:makeContextCurrent()
         -- Initialize OpenGL loader
         glad.gladLoadGL(glfw.getProcAddress)
+        local engine = require("engine.mod")
+        engine.load(glfw)
 
         glfw.swapInterval(1) -- Enable vsync
 
