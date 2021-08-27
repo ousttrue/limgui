@@ -23,7 +23,8 @@ end
 -- load OpenGL
 require("libs.gl_ffi.mod").load(require("libs.gl_ffi.glfw"))
 local renderer = engine.Renderer.new()
-local triangle = engine.Scene:triangle()
+local loader = require("engine.gltf").GltfLoader.load(json)
+local scene = engine.Scene.triangle()
 
 -- GUI
 local JSON = "JSON"
@@ -123,6 +124,6 @@ while app:new_frame() do
     gui:update({ "__root__", json }, accessor)
     local width, height = app.window:getFramebufferSize()
     renderer:clear(width, height, gui.clear_color)
-    renderer:render(triangle)
+    renderer:render(scene)
     app:render()
 end
