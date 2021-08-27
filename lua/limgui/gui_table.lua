@@ -23,6 +23,12 @@ M.Column.new = function(label, flag, width)
     })
 end
 
+-- accessor require
+-- has_child(node) -> bool
+-- column(node, i) -> value
+-- equal(node, node) -> bool
+-- each(parent, function(node))
+
 ---@class GUITable
 ---@field flags number
 ---@field columns Column[]
