@@ -3,6 +3,14 @@ local json = require "json"
 local ffi = require "ffi"
 local maf = require "mafex"
 
+ffi.cdef [[
+typedef struct {
+    vec3 position;
+    float u;
+    float v;
+} vertex;
+]]
+
 local M = {}
 
 ---@class Buffer
@@ -61,22 +69,54 @@ end
 -- caution !! lua is 1 origin, but gltf all index is 0 origin.
 --
 
+---@class Vertices
+
 ---@class GltfLoader
 ---@field gltf Gltf
 ---@field uri_map table<string, ffi.cdata*>
+---@field meshes Vertices[]
 M.GltfLoader = {
     ---comment
     ---@param self GltfLoader
     load = function(self)
         for i, mesh in ipairs(self.gltf.meshes) do
-            local prims = {}
+            local buffers = {}
+            local vertex_count = 0
+            local index_count = 0
             for j, prim in ipairs(mesh.primitives) do
-                table.insert(prims, {
-                    position = {self:load_bytes(prim.attributes.POSITION)},
-                    indices = {self:load_bytes(prim.indices)},
-                })
+                local buffer = {
+                    position = self:typed_slice(prim.attributes.POSITION),
+                    indices = self:typed_slice(prim.indices),
+                }
+                vertex_count = vertex_count + buffer.position.count
+                index_count = index_count + buffer.indices.count
+                table.insert(buffers, buffer)
             end
-            local a = 0
+
+            local vertices = ffi.new("vertex[?]", vertex_count)
+            local indices = ffi.new("uint32_t[?]", index_count)
+
+            local vertex_offset = 0
+            local index_offset = 0
+            for i, buffer in ipairs(buffers) do
+                local slice = buffer.position.slice
+                for j = 0, buffer.position.count - 1 do
+                    vertices[vertex_offset + j].position = slice[j]
+                end
+                local slice = buffer.indices.slice
+                for j = 0, buffer.indices.count - 1 do
+                    indices[index_offset + j] = vertex_offset + slice[j]
+                end
+                vertex_offset = vertex_offset + buffer.position.count
+                index_offset = index_offset + buffer.indices.count
+            end
+
+            table.insert(self.meshes, {
+                vertices = vertices,
+                vertex_count = vertex_count,
+                indices = indices,
+                index_count = index_count,
+            })
         end
     end,
 
@@ -107,7 +147,7 @@ M.GltfLoader = {
 
     ---get accessor bytes
     ---@param accessor_index integer
-    load_bytes = function(self, accessor_index)
+    typed_slice = function(self, accessor_index)
         local accessor = self.gltf.accessors[accessor_index + 1]
         local bufferView = self.gltf.bufferViews[accessor.bufferView + 1]
         local buffer = self.gltf.buffers[bufferView.buffer + 1]
@@ -116,7 +156,10 @@ M.GltfLoader = {
         local maf_type = accessor_type(accessor)
 
         local slice = ffi.cast(maf_type .. "*", buffer_bytes + offset)
-        return slice, accessor.count
+        return {
+            slice = slice,
+            count = accessor.count,
+        }
     end,
 }
 
