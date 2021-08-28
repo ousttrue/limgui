@@ -7,28 +7,32 @@ local ffi = require "ffi"
 local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
 local utils = require "limgui.utils"
+local engine = require "engine.mod"
 
 --
 -- scene
 --
 
-local vs = [[#version 110
+local vs = [[#version 400
+in vec2 vPos;
+in vec3 vCol;
 uniform mat4 MVP;
-attribute vec2 vPos;
-attribute vec3 vCol;
-varying vec3 color;
+out vec3 Color;
+
 void main()
 {
     gl_Position = MVP * vec4(vPos, 0.0, 1.0);
-    color = vCol;
+    Color = vCol;
 };
 ]]
 
-local fs = [[#version 110
-varying vec3 color;
+local fs = [[#version 400
+in vec3 Color;
+out vec4 FragColor;
+
 void main()
 {
-    gl_FragColor = vec4(color, 1.0);
+    FragColor = vec4(Color, 1.0);
 };
 ]]
 
@@ -55,15 +59,9 @@ local function error_callback(error, description)
     print(string.format("Error: %s\n", description))
 end
 glfw.setErrorCallback(error_callback)
-
--- init
 if glfw.init() == 0 then
     assert(false)
 end
-
--- window
-glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MAJOR, 3)
-glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MINOR, 0)
 local window = glfw.Window:__new(640, 480, "Simple example", nil, nil)
 if not window then
     glfw.terminate()
@@ -76,19 +74,26 @@ local function key_callback(window, key, scancode, action, mods)
 end
 window:setKeyCallback(key_callback)
 
+--- opengl
+glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MAJOR, 4)
+glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MINOR, 0)
+glfw.hint(glfwc.GLFW_OPENGL_PROFILE, glfwc.GLFW_OPENGL_CORE_PROFILE)
 window:makeContextCurrent()
 glfw.swapInterval(1)
+local gl = require "gl_ffi.mod"
+gl.load(glfw)
+local function gl_string(key)
+    local p = gl.glGetString(key)
+    return ffi.string(ffi.cast("const char*", p))
+end
+print(gl_string(gl.GL_RENDERER))
+print(gl_string(gl.GL_VENDOR))
+print(gl_string(gl.GL_VERSION))
+print(gl_string(gl.GL_SHADING_LANGUAGE_VERSION))
 
 --
 -- scene setup
 --
-
-local gl = require "gl_ffi.mod"
-gl.load(glfw)
-
-local engine = require "engine.mod"
-local renderer = engine.Renderer.new()
-
 local scene = utils.new(engine.Scene, {
     vertices = vertices,
     vertex_count = 3,
@@ -98,13 +103,13 @@ local scene = utils.new(engine.Scene, {
         fs = fs,
     },
 })
-
 local maf = require "mafex"
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 
 --
 -- main loop
 --
+local renderer = engine.Renderer.new()
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()
@@ -118,5 +123,4 @@ while not window:shouldClose(window) do
     window:swapBuffers()
     glfw.pollEvents()
 end
-
 glfw.terminate()

@@ -19,6 +19,20 @@
             }
         },
         {
+            "name": "glfw: mouse camera",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
+                "file": "${workspaceFolder}/samples/glfw_mouse_camera.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
+            }
+        },
+        {
             "name": "imgui: example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",

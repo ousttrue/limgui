@@ -7,11 +7,13 @@ local M = {}
 ---@class VertexBuffer
 ---@field vbo_ibo any
 ---@field vao any
----@field vertex_count number
----@field index_count number
+---@field vertex_count integer
+---@field vertex_stride integer
+---@field index_count integer
 M.VBO = {
     ---@param self VertexBuffer
-    render = function(self)
+    ---@param attributes VertexAttribute[]
+    render = function(self, attributes)
         if not self.vao then
             -- create vao
             local vao = ffi.new "GLuint[1]"
@@ -25,7 +27,19 @@ M.VBO = {
             end
             -- position
             gl.glEnableVertexAttribArray(0)
-            gl.glVertexAttribPointer(0, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, nil)
+
+            local offset = 0
+            for i, attribute in ipairs(attributes) do
+                gl.glVertexAttribPointer(
+                    attribute.location,
+                    attribute.element_count,
+                    attribute.element_type,
+                    gl.GL_FALSE,
+                    self.vertex_stride or 0,
+                    ffi.cast("const void*", offset)
+                )
+                offset = offset + attribute.stride
+            end
         end
 
         -- use vao
@@ -39,10 +53,11 @@ M.VBO = {
         end
     end,
 
-    set_vertices = function(self, vertices, vertex_count)
+    set_vertices = function(self, vertices, vertex_count, vertex_stride)
         gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo_ibo[0])
         gl.glBufferData(gl.GL_ARRAY_BUFFER, ffi.sizeof(vertices), vertices, gl.GL_STATIC_DRAW)
         self.vertex_count = vertex_count
+        self.vertex_stride = vertex_stride
     end,
 
     set_indices = function(self, indices, index_count)
@@ -52,17 +67,20 @@ M.VBO = {
     end,
 }
 
-M.VBO.create = function(vertices, vertex_count, indices, index_count)
+M.VBO.create = function(vertices, vertex_count, vertex_stride, indices, index_count)
     local vbo_ibo = ffi.new "GLuint[2]"
     gl.glGenBuffers(2, vbo_ibo)
 
     local buffer = utils.new(M.VBO, {
         vbo_ibo = vbo_ibo,
     })
-    buffer:set_vertices(vertices, vertex_count)
+
+    buffer:set_vertices(vertices, vertex_count, vertex_stride)
     if indices and index_count then
         buffer:set_indices(indices, index_count)
     end
+
+    
     return buffer
 end
 

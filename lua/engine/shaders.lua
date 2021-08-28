@@ -7,26 +7,31 @@ local M = {}
 --- Get vertex attribute layouts from vertex shader source
 local function parse_vs(vs)
     local layouts = {}
+    local use_in = false
     for l in vs:gmatch "([^\n]+)" do
-        local t, name = l:match "attribute%s+(vec%d)%s+(%w+);"
-        if t and name then
-            local layout = {}
-            if t == "vec2" then
-                layout.name = name
-                layout.element_type = gl.GL_FLOAT
-                layout.element_count = 2
-                layout.stride = 8
-                layout.normalized = gl.GL_FALSE
-            elseif t == "vec3" then
-                layout.name = name
-                layout.element_type = gl.GL_FLOAT
-                layout.element_count = 3
-                layout.stride = 12
-                layout.normalized = gl.GL_FALSE
-            else
-                assert(false)
+        if l:match "#version 400" then
+            use_in = true
+        else
+            local t, name = l:match(use_in and "in%s+(vec%d)%s+(%w+);" or "attribute%s+(vec%d)%s+(%w+);")
+            if t and name then
+                local layout = {}
+                if t == "vec2" then
+                    layout.name = name
+                    layout.element_type = gl.GL_FLOAT
+                    layout.element_count = 2
+                    layout.stride = 8
+                    layout.normalized = gl.GL_FALSE
+                elseif t == "vec3" then
+                    layout.name = name
+                    layout.element_type = gl.GL_FLOAT
+                    layout.element_count = 3
+                    layout.stride = 12
+                    layout.normalized = gl.GL_FALSE
+                else
+                    assert(false)
+                end
+                table.insert(layouts, layout)
             end
-            table.insert(layouts, layout)
         end
     end
     return layouts
@@ -105,23 +110,61 @@ M.Shader = {
         end
     end,
 }
-M.Shader.create = function(vs, fs)
-    local vertex_shader = gl.glCreateShader(gl.GL_VERTEX_SHADER)
+
+---comment
+---@param source string
+---@param shader_type integer
+---@return integer
+local function compile_shader(source, shader_type)
+    local shader = gl.glCreateShader(shader_type)
     local pp = ffi.new "const char *[1]"
-    pp[0] = vs
-    gl.glShaderSource(vertex_shader, 1, pp, nil)
-    gl.glCompileShader(vertex_shader)
+    pp[0] = source
+    gl.glShaderSource(shader, 1, pp, nil)
+    gl.glCompileShader(shader)
 
-    local fragment_shader = gl.glCreateShader(gl.GL_FRAGMENT_SHADER)
-    pp[0] = fs
-    gl.glShaderSource(fragment_shader, 1, pp, nil)
-    gl.glCompileShader(fragment_shader)
+    local result = ffi.new "uint32_t[1]"
+    gl.glGetShaderiv(shader, gl.GL_COMPILE_STATUS, result)
+    if result[0] == gl.GL_FALSE then
+        print("compile error", shader_type == gl.GL_VERTEX_SHADER and "vs" or "fs")
+        local len = ffi.new "uint32_t[1]"
+        gl.glGetShaderiv(shader, gl.GL_INFO_LOG_LENGTH, len)
+        if len[0] > 0 then
+            local log = ffi.new("char[?]", len[0])
+            local written = ffi.new "uint32_t[1]"
+            gl.glGetShaderInfoLog(shader, len[0], written, log)
+            print(ffi.string(log))
+        end
+    end
 
+    return shader
+end
+
+local function link_program(vertex_shader, fragment_shader)
     local program = gl.glCreateProgram()
     gl.glAttachShader(program, vertex_shader)
     gl.glAttachShader(program, fragment_shader)
     gl.glLinkProgram(program)
+    local result = ffi.new "uint32_t[1]"
+    gl.glGetProgramiv(program, gl.GL_LINK_STATUS, result)
+    if result[0] == gl.GL_FALSE then
+        print "link error"
+        local len = ffi.new "uint32_t[1]"
+        gl.glGetProgramiv(program, gl.GL_INFO_LOG_LENGTH, len)
+        if len[0] > 0 then
+            local log = ffi.new("char[?]", len[0])
+            local written = ffi.new "uint32_t[1]"
+            gl.glGetProgramInfoLog(program, len[0], written, log)
+            print(ffi.string(log))
+        end
+    end
 
+    return program
+end
+
+M.Shader.create = function(vs, fs)
+    local vertex_shader = compile_shader(vs, gl.GL_VERTEX_SHADER)
+    local fragment_shader = compile_shader(fs, gl.GL_FRAGMENT_SHADER)
+    local program = link_program(vertex_shader, fragment_shader)
     return utils.new(M.Shader, {
         program = program,
         vertex_attributes = {},

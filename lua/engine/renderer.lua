@@ -11,14 +11,14 @@ M.Drawable = {
     ---@param self Drawable
     render = function(self, variables)
         self.shader:activate(variables)
-        self.vbo:render()
+        self.vbo:render(self.shader.vertex_attributes)
     end,
 }
 ---@param scene Scene
 ---@return Drawable
 M.Drawable.create = function(scene)
     local shader = shaders.create(scene.shader)
-    local vbo = VBO.create(scene.vertices, scene.vertex_count, scene.indices, scene.index_count)
+    local vbo = VBO.create(scene.vertices, scene.vertex_count, scene.vertex_stride, scene.indices, scene.index_count)
     return utils.new(M.Drawable, {
         vbo = vbo,
         shader = shader,

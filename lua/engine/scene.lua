@@ -12,6 +12,7 @@ end
 ---@class Scene
 ---@field vertices any
 ---@field vertex_count integer
+---@field vertex_stride integer
 ---@field indices any
 ---@field index_count integer
 ---@field shader string|table
@@ -42,10 +43,11 @@ end
 ---@param vertices ffi.cdata* Hoge[]
 ---@param indices ffi.cdata* uint8_t[]
 ---@return table<string, any>
-M.Scene.create = function(vertices, vertex_count, indices, index_count)
+M.Scene.create = function(vertices, vertex_count, vertex_stride, indices, index_count)
     return utils.new(M.Scene, {
         vertices = vertices,
         vertex_count = vertex_count,
+        vertex_stride = vertex_stride,
         indices = indices,
         index_count = index_count,
         shader = "MINIMAL",
