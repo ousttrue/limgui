@@ -9,20 +9,19 @@ luajit + ffi + imgui
 
 external native libraries
 
-* glad
-* glfw
-* imgui
+### glfw(submodule)
+### imgui(submodule)
 
 ## lua
 
 lua libraries. add `LUA_PATH`
 
-## luajitffi
+## luajitffi(submodule)
 
 * generate imgui_ffi
 * generate gl_ffi
 
-## luv
+## luv(submodule)
 
 build `invoke build-luv`
 

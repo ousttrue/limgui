@@ -5,13 +5,55 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "clang-viewer",
+            "name": "glfw-sample",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
                 "lua": "${workspaceFolder}/build/Release/luajit.exe",
-                "file": "clang_viewer.lua"
+                "file": "${workspaceFolder}/samples/glfw_sample.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+            }
+        },
+        {
+            "name": "imgui: example_glfw_opengl3",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "file": "${workspaceFolder}/samples/example_glfw_opengl3.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+            },
+        },
+        {
+            "name": "imgui: json-viewer",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "file": "${workspaceFolder}/samples/json_viewer.lua"
+            },
+            "args": [
+                "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf"
+            ],
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+            },
+        },
+        {
+            "name": "imgui: clang-viewer",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/lua",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "file": "${workspaceFolder}/samples/clang_viewer.lua"
             },
             "args": [
                 // "-IC:/Program Files/LLVM/include",
@@ -26,13 +68,13 @@
             }
         },
         {
-            "name": "gltf-viewer",
+            "name": "imgui: gltf-viewer",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
             "program": {
                 "lua": "${workspaceFolder}/build/Release/luajit.exe",
-                "file": "gltf_viewer.lua"
+                "file": "${workspaceFolder}/samples/gltf_viewer.lua"
             },
             "args": [
                 "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf",
@@ -43,48 +85,7 @@
             }
         },
         {
-            "name": "json-viewer",
-            "type": "lua-local",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
-            "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
-                "file": "json_viewer.lua"
-            },
-            "args": [],
-            "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-                "JSON_PATH": "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf",
-            },
-        },
-        {
-            "name": "example_glfw_opengl3",
-            "type": "lua-local",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
-            "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
-                "file": "example_glfw_opengl3.lua"
-            },
-            "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-            },
-        },
-        {
-            "name": "glfw-sample",
-            "type": "lua-local",
-            "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
-            "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
-                "file": "glfw_sample.lua"
-            },
-            "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-            }
-        },
-        {
-            "name": "invoke task",
+            "name": "py: invoke task",
             "type": "python",
             "request": "launch",
             "module": "invoke",
@@ -95,7 +96,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "generate gl interface",
+            "name": "generate: gl interface",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/lua",
@@ -113,7 +114,7 @@
             ],
         },
         {
-            "name": "generate imgui ffi",
+            "name": "generate: imgui ffi",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}/luajitffi",
