@@ -8,51 +8,54 @@
             "name": "glfw-sample",
             "type": "lua-local",
             "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
+            "cwd": "${workspaceFolder}",
             "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
                 "file": "${workspaceFolder}/samples/glfw_sample.lua"
             },
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
             }
         },
         {
             "name": "imgui: example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
+            "cwd": "${workspaceFolder}",
             "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
                 "file": "${workspaceFolder}/samples/example_glfw_opengl3.lua"
             },
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
             },
         },
         {
             "name": "imgui: json-viewer",
             "type": "lua-local",
             "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
+            "cwd": "${workspaceFolder}",
             "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
                 "file": "${workspaceFolder}/samples/json_viewer.lua"
             },
             "args": [
                 "${env:GLTF_SAMPLE_MODELS}/2.0/Cube/glTF/Cube.gltf"
             ],
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
             },
         },
         {
             "name": "imgui: clang-viewer",
             "type": "lua-local",
             "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
+            "cwd": "${workspaceFolder}",
             "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
                 "file": "${workspaceFolder}/samples/clang_viewer.lua"
             },
             "args": [
@@ -60,20 +63,20 @@
                 // // Export
                 // // "-EC:/Program Files/LLVM/include/clang-c/Index.h,libclang.dll",
                 // "-EC:/Program Files/LLVM/include/clang-c/CXString.h,libclang.dll",
-                "-E${workspaceFolder}/libs/glfw/deps/glad/gl.h,glad.dll",
+                "-E${workspaceFolder}/_external/glfw/glfw/deps/glad/gl.h,glad.dll",
             ],
             "env": {
-                "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin;C:\\Program Files\\LLVM\\bin",
-                "LUA_PATH": ";;${workspaceFolder}\\luajitffi\\?.lua",
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin;C:\\Program Files\\LLVM\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua;${workspaceFolder}\\_external\\luajitffi\\?.lua",
             }
         },
         {
             "name": "imgui: gltf-viewer",
             "type": "lua-local",
             "request": "launch",
-            "cwd": "${workspaceFolder}/lua",
+            "cwd": "${workspaceFolder}",
             "program": {
-                "lua": "${workspaceFolder}/build/Release/luajit.exe",
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
                 "file": "${workspaceFolder}/samples/gltf_viewer.lua"
             },
             "args": [
@@ -81,7 +84,7 @@
             ],
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\libs\\glfw\\build\\src\\Release;${workspaceFolder}\\libs\\build\\Release\\bin",
-                "LUA_PATH": ";;${workspaceFolder}\\luajitffi\\?.lua",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
             }
         },
         {

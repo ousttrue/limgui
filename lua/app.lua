@@ -1,4 +1,4 @@
-local glfw = require "libs.gl_ffi.glfw"
+local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
 local imgui_ffi = require "imgui_ffi.mod"
 local glad = imgui_ffi.libs.glad

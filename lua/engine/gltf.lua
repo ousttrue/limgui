@@ -1,5 +1,5 @@
 local utils = require "limgui.utils"
-local json = require "libs.json"
+local json = require "json"
 local ffi = require "ffi"
 local maf = require "mafex"
 

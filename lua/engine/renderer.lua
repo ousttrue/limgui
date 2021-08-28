@@ -1,6 +1,6 @@
 local utils = require "limgui.utils"
 local M = {}
-local gl = require "libs.gl_ffi.mod"
+local gl = require "gl_ffi.mod"
 local shaders = require "engine.shaders"
 local VBO = require("engine.vbo").VBO
 

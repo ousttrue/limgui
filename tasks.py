@@ -6,20 +6,15 @@ from invoke import task, Context
 import pathlib
 
 HERE = pathlib.Path(__file__).absolute().parent
-# libs
-GLFW_DIR = HERE / 'libs/glfw'
-GLFW_BUILD_DIR = GLFW_DIR / 'build'
-LIBS_DIR = HERE / 'libs'
-LIBS_BUILD_DIR = HERE / 'libs/build'
+BUILD_DIR = HERE / 'build'
+
 # luajitffi
-LUAJITFFI_DIR = HERE / 'luajitffi'
+LUAJITFFI_DIR = HERE / '_external/luajitffi'
 LUAJIT_DIR = LUAJITFFI_DIR / 'LuaJIT/src'
 LUA_BIN = LUAJIT_DIR / 'luajit.exe'
+
 # lua
 IMGUI_FFI_DIR = HERE / 'lua/imgui_ffi'
-# luv
-LUV_DIR = HERE / 'luv'
-BUILD_DIR = HERE / 'build'
 
 VCVARS_BAT = pathlib.Path(
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat"
@@ -54,47 +49,12 @@ def commandline(exe: pathlib.Path, *args: str):
 
 
 @task
-def build_glfw(c):
-    # type: (Context) -> None
-    '''
-    build libs/glfw/build/src/Release/glfw3.dll
-    '''
-    cmake = get_cmake()
-    GLFW_BUILD_DIR.mkdir(exist_ok=True)
-    with c.cd(GLFW_BUILD_DIR):
-        c.run(
-            commandline(cmake, '-DBUILD_SHARED_LIBS=1',
-                        '-DGLFW_BUILD_EXAMPLES=0', '-DGLFW_BUILD_TESTS=0',
-                        '..'))
-        c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
-        # fix
-        shutil.copy((GLFW_BUILD_DIR / 'src/Release/glfw3dll.exp'),
-                    (GLFW_BUILD_DIR / 'src/Release/glfw3.exp'))
-        shutil.copy((GLFW_BUILD_DIR / 'src/Release/glfw3dll.lib'),
-                    (GLFW_BUILD_DIR / 'src/Release/glfw3.lib'))
-
-
-@task
-def build_imgui(c):
-    # type: (Context) -> None
-    '''
-    build libs/build/Release/glad.dll
-    build libs/build/Release/imgui.dll
-    '''
-    cmake = get_cmake()
-    LIBS_BUILD_DIR.mkdir(exist_ok=True)
-    with c.cd(LIBS_BUILD_DIR):
-        c.run(commandline(cmake, '..'))
-        c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
-
-
-@task
 def clean(c):
     # type: (Context) -> None
     '''
-    remove libs/glfw/build
+    remove build
     '''
-    shutil.rmtree(GLFW_BUILD_DIR)
+    shutil.rmtree(BUILD_DIR)
 
 
 @task
@@ -112,23 +72,17 @@ def build_lua(c):
 
 
 @task
-def build_luv(c):
+def build(c):
     # type: (Context) -> None
     '''
-    build luv
+    build glfw, imgui, luv
     '''
-    with c.cd(HERE):
-        c.run(f'cmake -S {LUV_DIR} -B {BUILD_DIR}')
-        c.run(f'cmake --build {BUILD_DIR} --config Release')
-
-
-@task(build_glfw, build_imgui, build_luv)
-def build_all(c):
-    # type: (Context) -> None
-    '''
-    build all
-    '''
-    print('build all')
+    cmake = get_cmake()
+    BUILD_DIR.mkdir(exist_ok=True)
+    with c.cd(BUILD_DIR):
+        c.run(f'{os.environ["COMSPEC"]} /K "{VCVARS_BAT}"',
+              in_stream=io.StringIO("cmake -B . -S ..\r\nexit\r\n')"))
+        c.run(commandline(cmake, '--build', '.', '--config', 'Release'))
 
 
 @task
@@ -139,7 +93,7 @@ def generate_ffi(c):
     '''
     with c.cd(LUAJITFFI_DIR):
         c.run(commandline(LUA_BIN, "main.lua",
-                          f"-E{LIBS_DIR}/imgui/imgui.h,ImGui.dll",
+                          f"-E{HERE}/_external/imgui/imgui/imgui.h,ImGui.dll",
                           f"-O{IMGUI_FFI_DIR}"),
               env={
                   'PATH': f"{os.environ['PATH']};C:\\Program Files\\LLVM\\bin",

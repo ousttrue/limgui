@@ -17,7 +17,7 @@ if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
 -- load OpenGL
-require("libs.gl_ffi.mod").load(require "libs.gl_ffi.glfw")
+require("gl_ffi.mod").load(require "gl_ffi.glfw")
 local renderer = engine.Renderer.new()
 local scene = engine.Scene.triangle()
 

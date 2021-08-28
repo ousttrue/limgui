@@ -1,6 +1,6 @@
 SET(TARGET_NAME imgui)
-SET(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/../imgui)
-SET(GLFW_DIR ${CMAKE_CURRENT_LIST_DIR}/../glfw)
+SET(SRC_DIR ${CMAKE_CURRENT_LIST_DIR}/imgui)
+SET(GLFW_DIR ${CMAKE_CURRENT_LIST_DIR}/../glfw/glfw)
 ADD_LIBRARY(${TARGET_NAME} SHARED
     ${SRC_DIR}/imgui.cpp
     ${SRC_DIR}/imgui_widgets.cpp
@@ -25,6 +25,6 @@ TARGET_LINK_DIRECTORIES(${TARGET_NAME} PRIVATE
     "$<$<CONFIG:Debug>:${GLFW_DIR}/build/src/Debug>"
 )
 TARGET_LINK_LIBRARIES(${TARGET_NAME} PUBLIC
-    glfw3
+    glfw
     glad
 )

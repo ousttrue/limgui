@@ -4,7 +4,7 @@
 --
 local ffi = require "ffi"
 
-local glfw = require "libs.gl_ffi.glfw"
+local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
 
 local function error_callback(error, description)

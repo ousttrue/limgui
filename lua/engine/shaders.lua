@@ -1,5 +1,5 @@
 local ffi = require "ffi"
-local gl = require "libs.gl_ffi.mod"
+local gl = require "gl_ffi.mod"
 local utils = require "limgui.utils"
 
 local M = {}

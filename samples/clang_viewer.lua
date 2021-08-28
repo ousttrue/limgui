@@ -12,7 +12,7 @@ local utils = require "limgui.utils"
 local function on_thread(data)
     local CommandLine = require "clangffi.commandline"
     local Parser = require "clangffi.parser"
-    local mp = require "libs.luajit-msgpack-pure"
+    local mp = require "luajit-msgpack-pure"
 
     local offset, args = mp.unpack(data)
     local cmd = CommandLine.parse(args)
@@ -26,7 +26,7 @@ local function on_thread(data)
     return mp.pack(parser.root)
 end
 
-local mp = require "libs.luajit-msgpack-pure"
+local mp = require "luajit-msgpack-pure"
 local ROOT
 local function on_end(dst, src)
     local offset, root = mp.unpack(dst)
@@ -230,7 +230,7 @@ local accessor = {
     end,
 }
 
--- local profiler = require("libs.profiler")
+-- local profiler = require("profiler")
 -- profiler.start()
 
 local renderer = require("engine.mod").Renderer.new()
