@@ -14,7 +14,7 @@ end
 ---@field vertex_count integer
 ---@field indices any
 ---@field index_count integer
----@field shader_name string
+---@field shader string|table
 ---@field layout VertexLayout[]
 M.Scene = {}
 M.Scene.triangle = function()
@@ -32,33 +32,8 @@ M.Scene.triangle = function()
     return utils.new(M.Scene, {
         vertices = vertices,
         vertex_count = 3,
-        shader_name = "MINIMAL",
+        shader = "MINIMAL",
         layout = M.VertexLayout.new {},
-    })
-end
-
--- https://www.glfw.org/docs/latest/quick.html
-ffi.cdef [[
-struct Vertex2DRGB
-{
-    float x, y;
-    float r, g, b;
-};
-]]
-M.Scene.xyrgb_triangle = function()
-    local vertices = ffi.new(
-        "struct Vertex2DRGB[3]",
-        { -0.6, -0.4, 1., 0., 0. },
-        { 0.6, -0.4, 0., 1., 0. },
-        { 0., 0.6, 0., 0., 1. }
-    )
-
-    assert(vertices[2].b == 1.0)
-
-    return utils.new(M.Scene, {
-        vertices = vertices,
-        vertex_count = 3,
-        shader_name = "MVP",
     })
 end
 
@@ -73,7 +48,7 @@ M.Scene.create = function(vertices, vertex_count, indices, index_count)
         vertex_count = vertex_count,
         indices = indices,
         index_count = index_count,
-        shader_name = "MINIMAL",
+        shader = "MINIMAL",
     })
 end
 

@@ -2,10 +2,54 @@
 --
 -- * https://www.glfw.org/docs/latest/quick.html
 --
-local ffi = require "ffi"
 
+local ffi = require "ffi"
 local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
+local utils = require "limgui.utils"
+
+--
+-- scene
+--
+
+local vs = [[#version 110
+uniform mat4 MVP;
+attribute vec2 vPos;
+attribute vec3 vCol;
+varying vec3 color;
+void main()
+{
+    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
+    color = vCol;
+};
+]]
+
+local fs = [[#version 110
+varying vec3 color;
+void main()
+{
+    gl_FragColor = vec4(color, 1.0);
+};
+]]
+
+ffi.cdef [[
+struct Vertex2DRGB
+{
+    float x, y;
+    float r, g, b;
+};
+]]
+local vertices = ffi.new(
+    "struct Vertex2DRGB[3]",
+    { -0.6, -0.4, 1., 0., 0. },
+    { 0.6, -0.4, 0., 1., 0. },
+    { 0., 0.6, 0., 0., 1. }
+)
+assert(vertices[2].b == 1.0)
+
+--
+-- glfw setup
+--
 
 local function error_callback(error, description)
     print(string.format("Error: %s\n", description))
@@ -35,14 +79,29 @@ window:setKeyCallback(key_callback)
 window:makeContextCurrent()
 glfw.swapInterval(1)
 
+--
+-- scene setup
+--
+
 local engine = require "engine.mod"
 engine.load(glfw)
 local renderer = engine.Renderer.new()
-local scene = engine.Scene.xyrgb_triangle()
+
+local scene = utils.new(engine.Scene, {
+    vertices = vertices,
+    vertex_count = 3,
+    shader = {
+        vs = vs,
+        fs = fs,
+    },
+})
 
 local maf = require "mafex"
-
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
+
+--
+-- main loop
+--
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()

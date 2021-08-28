@@ -50,26 +50,6 @@ void main()
 };
 ]]
 
-M.MVP_vs = [[#version 110
-uniform mat4 MVP;
-attribute vec2 vPos;
-attribute vec3 vCol;
-varying vec3 color;
-void main()
-{
-    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
-    color = vCol;
-};
-]]
-
-M.MVP_fs = [[#version 110
-varying vec3 color;
-void main()
-{
-    gl_FragColor = vec4(color, 1.0);
-};
-]]
-
 ---@class VertexAttribute
 ---@field location any
 ---@field element_count number
@@ -149,12 +129,20 @@ M.Shader.create = function(vs, fs)
     })
 end
 
-M.create = function(name)
-    local vs_name = name .. "_vs"
-    local fs_name = name .. "_fs"
-    local shader = M.Shader.create(M[vs_name], M[fs_name])
+M.create = function(shader)
+    local vs, fs
+    if type(shader) == "table" then
+        vs = shader.vs
+        fs = shader.fs
+    else
+        local vs_name = shader .. "_vs"
+        local fs_name = shader .. "_fs"
+        vs = M[vs_name]
+        fs = M[fs_name]
+    end
+    local shader = M.Shader.create(vs, fs)
 
-    local layouts = parse_vs(M[vs_name])
+    local layouts = parse_vs(vs)
     local stride = 0
     for i, layout in ipairs(layouts) do
         stride = stride + layout.stride
