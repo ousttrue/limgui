@@ -5,13 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "glfw-sample",
+            "name": "glfw: 2D triangle",
             "type": "lua-local",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "program": {
                 "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
-                "file": "${workspaceFolder}/samples/glfw_sample.lua"
+                "file": "${workspaceFolder}/samples/glfw_triangle_2D.lua"
             },
             "env": {
                 "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
