@@ -1,12 +1,12 @@
 [submodule "libs/glfw"]
-	path = libs/glfw
+	path = _external/glfw/glfw
 	url = https://github.com/glfw/glfw.git
 [submodule "libs/imgui"]
-	path = libs/imgui
+	path = _external/imgui/imgui
 	url = https://github.com/ocornut/imgui.git
 [submodule "luajitffi"]
-	path = luajitffi
+	path = _external/luajitffi
 	url = https://github.com/ousttrue/luajitffi
 [submodule "luv"]
-	path = luv
+	path = _external/luv/luv
 	url = https://github.com/luvit/luv.git

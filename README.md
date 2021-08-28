@@ -3,30 +3,36 @@ luajit + ffi + imgui
 
 * lua/imgui_ffi/mod.lua
 
+# build dll
+
+```
+invoke build-all
+```
+
 # directory
 
-## libs
+## _external
 
-external native libraries
+submodules
 
-### glfw(submodule)
-### imgui(submodule)
+### glfw
+### imgui
 
-## lua
-
-lua libraries. add `LUA_PATH`
-
-## luajitffi(submodule)
+### luajitffi
 
 * generate imgui_ffi
 * generate gl_ffi
 
-## luv(submodule)
+### luv
 
 build `invoke build-luv`
 
 * `build/Release/luajit.exe`
 * `build/Release/luv.dll`
+
+## lua
+
+lua libraries. add `LUA_PATH`
 
 ## tests
 
