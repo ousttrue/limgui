@@ -380,6 +380,7 @@ quat = {
     },
 }
 
+---@class mat4
 mat4 = {
     __call = function(
         _, --
@@ -420,7 +421,63 @@ mat4 = {
         }, mat4)
     end,
 
+    __mul = function(self, rhs)
+        local m = mat4()
+
+        m._11 = self._11 * rhs._11 + self._12 * rhs._21 + self._13 * rhs._31 + self._14 * rhs._41
+        m._12 = self._11 * rhs._12 + self._12 * rhs._22 + self._13 * rhs._32 + self._14 * rhs._42
+        m._13 = self._11 * rhs._13 + self._12 * rhs._23 + self._13 * rhs._33 + self._14 * rhs._43
+        m._14 = self._11 * rhs._14 + self._12 * rhs._24 + self._13 * rhs._34 + self._14 * rhs._44
+
+        m._21 = self._21 * rhs._11 + self._22 * rhs._21 + self._23 * rhs._31 + self._24 * rhs._41
+        m._22 = self._21 * rhs._12 + self._22 * rhs._22 + self._23 * rhs._32 + self._24 * rhs._42
+        m._23 = self._21 * rhs._13 + self._22 * rhs._23 + self._23 * rhs._33 + self._24 * rhs._43
+        m._24 = self._21 * rhs._14 + self._22 * rhs._24 + self._23 * rhs._34 + self._24 * rhs._44
+
+        m._31 = self._31 * rhs._11 + self._32 * rhs._21 + self._33 * rhs._31 + self._34 * rhs._41
+        m._32 = self._31 * rhs._12 + self._32 * rhs._22 + self._33 * rhs._32 + self._34 * rhs._42
+        m._33 = self._31 * rhs._13 + self._32 * rhs._23 + self._33 * rhs._33 + self._34 * rhs._43
+        m._34 = self._31 * rhs._14 + self._32 * rhs._24 + self._33 * rhs._34 + self._34 * rhs._44
+
+        m._41 = self._41 * rhs._11 + self._42 * rhs._21 + self._43 * rhs._31 + self._44 * rhs._41
+        m._42 = self._41 * rhs._12 + self._42 * rhs._22 + self._43 * rhs._32 + self._44 * rhs._42
+        m._43 = self._41 * rhs._13 + self._42 * rhs._23 + self._43 * rhs._33 + self._44 * rhs._43
+        m._44 = self._41 * rhs._14 + self._42 * rhs._24 + self._43 * rhs._34 + self._44 * rhs._44
+
+        return m
+    end,
+
     __index = {
+        frustum = function(b, t, l, r, n, f)
+            local m = mat4()
+            m._11 = 2 * n / (r - l)
+            m._22 = 2 * n / (t - b)
+
+            m._31 = (r + l) / (r - l)
+            m._32 = (t + b) / (t - b)
+            m._33 = -(f + n) / (f - n)
+            m._34 = -1
+
+            m._43 = -2 * f * n / (f - n)
+
+            return m
+        end,
+
+        ---like gluPerspective
+        ---@param fovy_degree number
+        ---@param aspectRatio number
+        ---@param near number
+        ---@param far number
+        ---@return mat4
+        perspective = function(fovy_degree, aspectRatio, near, far)
+            local scale = math.tan(fovy_degree * 0.5 * math.pi / 180) * near
+            local r = aspectRatio * scale
+            local l = -r
+            local t = scale
+            local b = -t
+            return mat4.frustum(b, t, l, r, near, far)
+        end,
+
         identity = function()
             local m = mat4()
             m._11 = 1
@@ -430,17 +487,67 @@ mat4 = {
             return m
         end,
 
-        z_rotation = function(angle)
-            local c = math.cos(angle)
-            local s = math.sin(angle)
+        translation = function(t)
+            local m = mat4.identity()
+            m._41 = t.x
+            m._42 = t.y
+            m._43 = t.z
+            return m
+        end,
+
+        ---1
+        --- cS
+        --- sc
+        rotation_x = function(degree)
+            local rad = degree / 180.0 * math.pi
+            local c = math.cos(rad)
+            local s = math.sin(rad)
+            local m = mat4()
+
+            m._11 = 1
+            m._22 = c
+            m._33 = c
+            m._44 = 1
+            m._23 = -s
+            m._32 = s
+
+            return m
+        end,
+
+        ---c S
+        --- 1
+        ---s c
+        rotation_y = function(degree)
+            local rad = degree / 180.0 * math.pi
+            local c = math.cos(rad)
+            local s = math.sin(rad)
             local m = mat4()
 
             m._11 = c
-            m._12 = s
-            m._21 = -s
+            m._22 = 1
+            m._33 = c
+            m._44 = 1
+            m._13 = -s
+            m._31 = s
+
+            return m
+        end,
+
+        ---cS
+        ---sc
+        ---  1
+        rotation_z = function(degree)
+            local rad = degree / 180.0 * math.pi
+            local c = math.cos(rad)
+            local s = math.sin(rad)
+            local m = mat4()
+
+            m._11 = c
             m._22 = c
             m._33 = 1
             m._44 = 1
+            m._21 = -s
+            m._12 = s
 
             return m
         end,

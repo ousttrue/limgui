@@ -50,11 +50,9 @@ assert(vertices[2].b == 1.0)
 --
 -- glfw setup
 --
-
-local function error_callback(error, description)
+glfw.setErrorCallback(function(error, description)
     print(string.format("Error: %s\n", description))
-end
-glfw.setErrorCallback(error_callback)
+end)
 
 -- init
 if glfw.init() == 0 then
@@ -69,12 +67,12 @@ if not window then
     glfw.terminate()
     assert(false)
 end
-local function key_callback(window, key, scancode, action, mods)
+
+window:setKeyCallback(function(window, key, scancode, action, mods)
     if key == glfwc.GLFW_KEY_ESCAPE and action == glfwc.GLFW_PRESS then
         window:setShouldClose(true)
     end
-end
-window:setKeyCallback(key_callback)
+end)
 
 window:makeContextCurrent()
 glfw.swapInterval(1)

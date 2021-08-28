@@ -8,6 +8,8 @@ local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
 local utils = require "limgui.utils"
 local engine = require "engine.mod"
+local maf = require "mafex"
+local math = require "math"
 
 --
 -- scene
@@ -55,10 +57,9 @@ assert(vertices[2].b == 1.0)
 -- glfw setup
 --
 
-local function error_callback(error, description)
+glfw.setErrorCallback(function(error, description)
     print(string.format("Error: %s\n", description))
-end
-glfw.setErrorCallback(error_callback)
+end)
 if glfw.init() == 0 then
     assert(false)
 end
@@ -67,12 +68,108 @@ if not window then
     glfw.terminate()
     assert(false)
 end
-local function key_callback(window, key, scancode, action, mods)
+
+window:setKeyCallback(function(window, key, scancode, action, mods)
     if key == glfwc.GLFW_KEY_ESCAPE and action == glfwc.GLFW_PRESS then
         window:setShouldClose(true)
     end
-end
-window:setKeyCallback(key_callback)
+end)
+
+local camera = {
+    mouse_left = false,
+    mouse_middle = false,
+    mouse_right = false,
+
+    matrix = function(self)
+        return self.view * self.projection
+    end,
+
+    --projection
+    projection = maf.mat4.identity(),
+    near = 0.01,
+    far = 100,
+    fovy_degree = 50,
+    width = 640,
+    height = 480,
+    update_projection = function(self)
+        self.projection = maf.mat4.perspective(self.fovy_degree, self.width / self.height, self.near, self.far)
+    end,
+
+    resize = function(self, w, h)
+        self.width = w
+        self.height = h
+        self:update_projection()
+    end,
+
+    --view
+    view = maf.mat4.identity(),
+    shift = maf.vec3(0, 0, -5),
+    yaw_degree = 0,
+    pitch_degree = 0,
+    update_view = function(self)
+        self.view = maf.mat4.rotation_y(self.yaw_degree)
+            * maf.mat4.rotation_x(self.pitch_degree)
+            * maf.mat4.translation(self.shift)
+    end,
+
+    mouse_move = function(self, x, y)
+        if self.x then
+            local dx = x - self.x
+            local dy = y - self.y
+            if self.mouse_right then
+                self.yaw_degree = self.yaw_degree + dx
+                self.pitch_degree = self.pitch_degree - dy
+                self:update_view()
+            end
+            if self.mouse_middle then
+                local t = math.tan(self.fovy_degree * 0.5 * math.pi / 180)
+                self.shift.x = self.shift.x - (dx / self.height) * t * self.shift.z * 2
+                self.shift.y = self.shift.y + (dy / self.height) * t * self.shift.z * 2
+                self:update_view()
+            end
+        end
+        self.x = x
+        self.y = y
+    end,
+
+    mouse_button = function(self, button, is_down)
+        if button == 0 then
+            self.mouse_left = is_down
+        elseif button == 1 then
+            self.mouse_right = is_down
+        elseif button == 2 then
+            self.mouse_middle = is_down
+        end
+    end,
+
+    mouse_wheel = function(self, d)
+        if d > 0 then
+            self.shift.z = self.shift.z * 0.9
+            self:update_view()
+        elseif d < 0 then
+            self.shift.z = self.shift.z * 1.1
+            self:update_view()
+        end
+    end,
+}
+camera:update_projection()
+camera:update_view()
+
+window:setCursorPosCallback(function(window, x, y)
+    camera:mouse_move(x, y)
+end)
+
+window:setMouseButtonCallback(function(window, button, is_down)
+    camera:mouse_button(button, is_down ~= 0)
+end)
+
+window:setScrollCallback(function(window, x, y)
+    camera:mouse_wheel(y)
+end)
+
+window:setSizeCallback(function(window, w, h)
+    camera:resize(w, h)
+end)
 
 --- opengl
 glfw.hint(glfwc.GLFW_CONTEXT_VERSION_MAJOR, 4)
@@ -103,7 +200,6 @@ local scene = utils.new(engine.Scene, {
         fs = fs,
     },
 })
-local maf = require "mafex"
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 
 --
@@ -113,12 +209,11 @@ local renderer = engine.Renderer.new()
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()
-    local m = maf.mat4.z_rotation(glfw.getTime())
 
     -- render
     renderer:clear(width, height, clear_color)
     renderer:render(scene, {
-        MVP = m.array,
+        MVP = camera:matrix().array,
     })
     window:swapBuffers()
     glfw.pollEvents()
