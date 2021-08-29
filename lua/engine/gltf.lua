@@ -3,11 +3,11 @@ local json = require "json"
 local ffi = require "ffi"
 local maf = require "mafex"
 
+-- assets/gltf.vs
 ffi.cdef [[
 typedef struct {
     vec3 position;
-    float u;
-    float v;
+    vec3 normal;
 } vertex;
 ]]
 
@@ -50,6 +50,7 @@ end
 
 ---@class Attributes
 ---@field POSITION integer
+---@field NORMAL integer
 
 ---@class Primitive
 ---@field attributes Attributes
@@ -97,6 +98,7 @@ M.GltfLoader = {
             for j, prim in ipairs(mesh.primitives) do
                 local buffer = {
                     position = self:typed_slice(prim.attributes.POSITION),
+                    normal = self:typed_slice(prim.attributes.NORMAL),
                     indices = self:typed_slice(prim.indices),
                 }
                 vertex_count = vertex_count + buffer.position.count
@@ -110,13 +112,26 @@ M.GltfLoader = {
             local vertex_offset = 0
             local index_offset = 0
             for i, buffer in ipairs(buffers) do
-                local slice = buffer.position.slice
-                for j = 0, buffer.position.count - 1 do
-                    vertices[vertex_offset + j].position = slice[j]
+                -- position
+                do
+                    local slice = buffer.position.slice
+                    for j = 0, buffer.position.count - 1 do
+                        vertices[vertex_offset + j].position = slice[j]
+                    end
                 end
-                local slice = buffer.indices.slice
-                for j = 0, buffer.indices.count - 1 do
-                    indices[index_offset + j] = vertex_offset + slice[j]
+                if buffer.normal then
+                    assert(buffer.position.count == buffer.normal.count)
+                    local slice = buffer.normal.slice
+                    for j = 0, buffer.normal.count - 1 do
+                        vertices[vertex_offset + j].normal = slice[j]
+                    end
+                end
+                -- indices
+                do
+                    local slice = buffer.indices.slice
+                    for j = 0, buffer.indices.count - 1 do
+                        indices[index_offset + j] = vertex_offset + slice[j]
+                    end
                 end
                 vertex_offset = vertex_offset + buffer.position.count
                 index_offset = index_offset + buffer.indices.count
@@ -167,6 +182,10 @@ M.GltfLoader = {
     ---get accessor bytes
     ---@param accessor_index integer
     typed_slice = function(self, accessor_index)
+        if not accessor_index then
+            return
+        end
+
         local accessor = self.gltf.accessors[accessor_index + 1]
         local bufferView = self.gltf.bufferViews[accessor.bufferView + 1]
         local buffer = self.gltf.buffers[bufferView.buffer + 1]
@@ -192,9 +211,9 @@ M.GltfLoader.from_path = function(path)
 
     local gltf, bin
     if src:sub(1, 4) == "glTF" then
-        -- local bytes = ffi.new("uint8_t[?]", #src, src)
         local p = ffi.cast("uint8_t*", src)
         local version = ffi.cast("uint32_t*", p + 4)[0]
+        assert(version == 2)
         local len = ffi.cast("uint32_t*", p + 8)[0]
         -- print(version, len)
         local pos = 12
