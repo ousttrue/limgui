@@ -102,6 +102,20 @@
             }
         },
         {
+            "name": "---- test",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
+                "file": "${workspaceFolder}/tests/test_gui.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
+            }
+        },
+        {
             "name": "py: invoke task",
             "type": "python",
             "request": "launch",
