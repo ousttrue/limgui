@@ -82,6 +82,7 @@ local componentTypeMap = {
 
 ---@class GltfLoader
 ---@field gltf Gltf
+---@field bin ffi.cdata* glb chunk
 ---@field uri_map table<string, ffi.cdata*>
 ---@field meshes Vertices[]
 M.GltfLoader = {
@@ -142,6 +143,11 @@ M.GltfLoader = {
     ---@param uri string
     ---@return ffi.cdata*
     uri_bytes = function(self, uri)
+        if not uri then
+            -- return glb chunk
+            return self.bin
+        end
+
         local bytes = self.uri_map[uri]
         if bytes then
             return bytes
@@ -183,12 +189,40 @@ M.GltfLoader.from_path = function(path)
     local r = io.open(path, "rb")
     local src = r:read "*a"
     r:close()
-    local gltf = json.decode(src)
+
+    local gltf, bin
+    if src:sub(1, 4) == "glTF" then
+        -- local bytes = ffi.new("uint8_t[?]", #src, src)
+        local p = ffi.cast("uint8_t*", src)
+        local version = ffi.cast("uint32_t*", p + 4)[0]
+        local len = ffi.cast("uint32_t*", p + 8)[0]
+        -- print(version, len)
+        local pos = 12
+        while pos < len do
+            local chunk_length = ffi.cast("uint32_t*", p + pos)[0]
+            pos = pos + 4
+            local chunk_type = src:sub(pos + 1, pos + 4)
+            pos = pos + 4
+            local chunk_data = src:sub(pos + 1, pos + chunk_length - 1)
+            pos = pos + chunk_length
+            if chunk_type == "JSON" then
+                gltf = chunk_data
+            elseif chunk_type == "BIN\0" then
+                bin = ffi.new("uint8_t[?]", chunk_length, chunk_data)
+            else
+                -- skip
+            end
+        end
+    else
+        -- as gltf
+        gltf = src
+    end
 
     local instance = utils.new(M.GltfLoader, {
         path = path,
+        gltf = json.decode(gltf),
+        bin = bin,
         uri_map = {},
-        gltf = gltf,
         meshes = {},
     })
 
