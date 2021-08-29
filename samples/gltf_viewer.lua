@@ -21,7 +21,7 @@ require("gl_ffi.mod").load(require "gl_ffi.glfw")
 local renderer = engine.Renderer.new()
 
 local mesh = loader.meshes[1]
-local scene = engine.Scene.create(mesh.vertices, mesh.vertex_count, mesh.indices, mesh.index_count)
+local scene = engine.Scene.create(mesh.vertices, mesh.vertex_count, mesh.vertex_stride, mesh.indices, mesh.index_count, mesh.index_stride, mesh.shader)
 
 -- GUI
 local JSON = "JSON"
@@ -116,11 +116,32 @@ local accessor = {
         end
     end,
 }
+
+--- camera
+local w, h = app.window:getSize()
+local camera = engine.OrbitCamera.new(w, h)
+
+-- bind event
+app.window:setCursorPosCallback(function(window, x, y)
+    camera:mouse_move(x, y)
+end)
+app.window:setMouseButtonCallback(function(window, button, is_down)
+    camera:mouse_button(button, is_down ~= 0)
+end)
+app.window:setScrollCallback(function(window, x, y)
+    camera:mouse_wheel(y)
+end)
+app.window:setSizeCallback(function(window, w, h)
+    camera:resize(w, h)
+end)
+
 -- Main loop
 while app:new_frame() do
     gui:update({ "__root__", loader.gltf }, accessor)
     local width, height = app.window:getFramebufferSize()
     renderer:clear(width, height, gui.clear_color)
-    renderer:render(scene)
+    renderer:render(scene, {
+        MVP = camera:matrix().array,
+    })
     app:render()
 end

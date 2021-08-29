@@ -2,6 +2,12 @@ local ffi = require "ffi"
 local gl = require "gl_ffi.mod"
 local utils = require "limgui.utils"
 
+local index_stride_map = {
+    [1] = gl.GL_UNSIGNED_BYTE,
+    [2] = gl.GL_UNSIGNED_SHORT,
+    [4] = gl.GL_UNSIGNED_INT,
+}
+
 local M = {}
 --- Interleaved vertex buffer
 ---@class VertexBuffer
@@ -10,6 +16,7 @@ local M = {}
 ---@field vertex_count integer
 ---@field vertex_stride integer
 ---@field index_count integer
+---@field index_stride integer
 M.VBO = {
     ---@param self VertexBuffer
     ---@param attributes VertexAttribute[]
@@ -46,7 +53,7 @@ M.VBO = {
         gl.glBindVertexArray(self.vao[0])
         if self.index_count then
             -- with index
-            gl.glDrawElements(gl.GL_TRIANGLES, self.index_count, gl.GL_UNSIGNED_INT, nil)
+            gl.glDrawElements(gl.GL_TRIANGLES, self.index_count, self.index_stride, nil)
         else
             -- without index
             gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.vertex_count)
@@ -60,14 +67,15 @@ M.VBO = {
         self.vertex_stride = vertex_stride
     end,
 
-    set_indices = function(self, indices, index_count)
+    set_indices = function(self, indices, index_count, index_stride)
         gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.vbo_ibo[1])
         gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER, ffi.sizeof(indices), indices, gl.GL_STATIC_DRAW)
         self.index_count = index_count
+        self.index_stride = index_stride_map[index_stride]
     end,
 }
 
-M.VBO.create = function(vertices, vertex_count, vertex_stride, indices, index_count)
+M.VBO.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride)
     local vbo_ibo = ffi.new "GLuint[2]"
     gl.glGenBuffers(2, vbo_ibo)
 
@@ -77,10 +85,9 @@ M.VBO.create = function(vertices, vertex_count, vertex_stride, indices, index_co
 
     buffer:set_vertices(vertices, vertex_count, vertex_stride)
     if indices and index_count then
-        buffer:set_indices(indices, index_count)
+        buffer:set_indices(indices, index_count, index_stride)
     end
 
-    
     return buffer
 end
 

@@ -15,6 +15,7 @@ end
 ---@field vertex_stride integer
 ---@field indices any
 ---@field index_count integer
+---@field index_stride integer
 ---@field shader string|table
 ---@field layout VertexLayout[]
 M.Scene = {}
@@ -40,17 +41,22 @@ end
 
 --- create vertex buffer
 --- TODO: layout
----@param vertices ffi.cdata* Hoge[]
----@param indices ffi.cdata* uint8_t[]
+---@param vertices any
+---@param vertex_count any
+---@param vertex_stride any
+---@param indices any
+---@param index_count any
+---@param index_stride any
 ---@return table<string, any>
-M.Scene.create = function(vertices, vertex_count, vertex_stride, indices, index_count)
+M.Scene.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
     return utils.new(M.Scene, {
         vertices = vertices,
         vertex_count = vertex_count,
         vertex_stride = vertex_stride,
         indices = indices,
         index_count = index_count,
-        shader = "MINIMAL",
+        index_stride = index_stride,
+        shader = shader or "MINIMAL",
     })
 end
 

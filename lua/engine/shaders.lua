@@ -55,6 +55,24 @@ void main()
 };
 ]]
 
+M.GLTF_vs = [[#version 110
+uniform mat4 MVP;
+attribute vec3 vPos;
+attribute vec2 vCol;
+
+void main()
+{
+    gl_Position = MVP * vec4(vPos, 1.0);
+};
+]]
+
+M.GLTF_fs = [[#version 110
+void main()
+{
+    gl_FragColor = vec4(1, 1, 1, 1);
+};
+]]
+
 ---@class VertexAttribute
 ---@field location any
 ---@field element_count number

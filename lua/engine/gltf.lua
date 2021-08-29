@@ -71,6 +71,15 @@ end
 
 ---@class Vertices
 
+---componentType integer [5120:BYTE, 5121:UBYTE, 5122:SHORT, 5123:USHORT, 5125:UINT, 5126:FLOAT]
+local componentTypeMap = {
+    [5120] = 1,
+    [5121] = 1,
+    [5122] = 2,
+    [5123] = 2,
+    [5125] = 4,
+}
+
 ---@class GltfLoader
 ---@field gltf Gltf
 ---@field uri_map table<string, ffi.cdata*>
@@ -83,6 +92,7 @@ M.GltfLoader = {
             local buffers = {}
             local vertex_count = 0
             local index_count = 0
+            -- local index_stride = componentTypeMap[self.gltf.accessors[mesh.primitives[1].indices + 1].componentType]
             for j, prim in ipairs(mesh.primitives) do
                 local buffer = {
                     position = self:typed_slice(prim.attributes.POSITION),
@@ -114,8 +124,11 @@ M.GltfLoader = {
             table.insert(self.meshes, {
                 vertices = vertices,
                 vertex_count = vertex_count,
+                vertex_stride = 20,
                 indices = indices,
                 index_count = index_count,
+                index_stride = 4,
+                shader = "GLTF",
             })
         end
     end,

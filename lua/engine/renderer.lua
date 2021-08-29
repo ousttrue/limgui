@@ -18,7 +18,7 @@ M.Drawable = {
 ---@return Drawable
 M.Drawable.create = function(scene)
     local shader = shaders.create(scene.shader)
-    local vbo = VBO.create(scene.vertices, scene.vertex_count, scene.vertex_stride, scene.indices, scene.index_count)
+    local vbo = VBO.create(scene.vertices, scene.vertex_count, scene.vertex_stride, scene.indices, scene.index_count, scene.index_stride)
     return utils.new(M.Drawable, {
         vbo = vbo,
         shader = shader,
