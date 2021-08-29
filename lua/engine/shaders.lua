@@ -1,6 +1,7 @@
 local ffi = require "ffi"
 local gl = require "gl_ffi.mod"
 local utils = require "limgui.utils"
+local asset = require "engine.asset"
 
 local M = {}
 
@@ -36,42 +37,6 @@ local function parse_vs(vs)
     end
     return layouts
 end
-
---
--- minimal shader
---
-M.MINIMAL_vs = [[#version 110
-attribute vec2 vPos;
-void main()
-{
-    gl_Position = vec4(vPos, 0.0, 1.0);
-};
-]]
-
-M.MINIMAL_fs = [[#version 110
-void main()
-{
-    gl_FragColor = vec4(1, 1, 1, 1);
-};
-]]
-
-M.GLTF_vs = [[#version 110
-uniform mat4 MVP;
-attribute vec3 vPos;
-attribute vec2 vCol;
-
-void main()
-{
-    gl_Position = MVP * vec4(vPos, 1.0);
-};
-]]
-
-M.GLTF_fs = [[#version 110
-void main()
-{
-    gl_FragColor = vec4(1, 1, 1, 1);
-};
-]]
 
 ---@class VertexAttribute
 ---@field location any
@@ -196,10 +161,8 @@ M.create = function(shader)
         vs = shader.vs
         fs = shader.fs
     else
-        local vs_name = shader .. "_vs"
-        local fs_name = shader .. "_fs"
-        vs = M[vs_name]
-        fs = M[fs_name]
+        vs = asset.get(shader .. ".vs")
+        fs = asset.get(shader .. ".fs")
     end
     local shader = M.Shader.create(vs, fs)
 
