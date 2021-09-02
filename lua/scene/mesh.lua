@@ -45,7 +45,7 @@ end
 ---@param index_count any
 ---@param index_stride any
 ---@return table<string, any>
-M.SceneMesh.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
+M.SceneMesh.new = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
     return utils.new(M.SceneMesh, {
         vertices = vertices,
         vertex_count = vertex_count,

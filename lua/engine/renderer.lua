@@ -3,6 +3,7 @@ local M = {}
 local gl = require "gl_ffi.mod"
 local shaders = require "engine.shaders"
 local VBO = require("engine.vbo").VBO
+local maf = require "mafex"
 
 ---@class Drawable
 ---@field vbo VertexBuffer
@@ -18,7 +19,14 @@ M.Drawable = {
 ---@return Drawable
 M.Drawable.create = function(scene)
     local shader = shaders.create(scene.shader)
-    local vbo = VBO.create(scene.vertices, scene.vertex_count, scene.vertex_stride, scene.indices, scene.index_count, scene.index_stride)
+    local vbo = VBO.create(
+        scene.vertices,
+        scene.vertex_count,
+        scene.vertex_stride,
+        scene.indices,
+        scene.index_count,
+        scene.index_stride
+    )
     return utils.new(M.Drawable, {
         vbo = vbo,
         shader = shader,
@@ -58,10 +66,29 @@ M.Renderer = {
 
     ---render scene
     ---@param self Renderer
-    ---@param scene Scene
-    render = function(self, scene, variables)
-        local drawable = self:get_or_create_drawable(scene)
+    ---@param mesh SceneMesh
+    render = function(self, mesh, variables)
+        local drawable = self:get_or_create_drawable(mesh)
         drawable:render(variables or {})
+    end,
+
+    ---comment
+    ---@param self Renderer
+    ---@param node SceneNode
+    ---@param m mat4
+    render_recursive = function(self, node, m, v, p)
+        m = m or maf.mat4.identity()
+        if node.mesh then
+            self:render(node.mesh, {
+                MVP = m * v * p,
+            })
+        end
+
+        if node.children then
+            for i, child in ipairs(node.children) do
+                self:render_recursive(child, m * child:local_matrix(), v, p)
+            end
+        end
     end,
 }
 M.Renderer.new = function()

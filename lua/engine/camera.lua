@@ -3,6 +3,9 @@ local utils = require "limgui.utils"
 
 local M = {}
 
+---@class Camera
+---@field view mat4
+---@field projection mat4
 M.OrbitCamera = {
     matrix = function(self)
         return self.view * self.projection

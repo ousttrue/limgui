@@ -576,6 +576,37 @@ mat4 = {
 
             return m
         end,
+
+        ---comment
+        ---@param q quat
+        rotation = function(q)
+            local m = mat4()
+            m._11 = 1
+            m._22 = 1
+            m._33 = 1
+            m._44 = 1
+            return m
+        end,
+
+        ---comment
+        ---@param s vec3
+        ---@return mat4
+        scale = function(s)
+            local m = mat4()
+            m._11 = s.x
+            m._22 = s.y
+            m._33 = s.z
+            m._44 = 1
+            return m
+        end,
+
+        ---comment
+        ---@param t vec3
+        ---@param r quat
+        ---@param s vec3
+        trs = function(t, r, s)
+            return mat4.scale(s) * mat4.rotation(r) * mat4.translation(t)
+        end,
     },
 }
 

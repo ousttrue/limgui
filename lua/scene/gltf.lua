@@ -2,6 +2,8 @@ local utils = require "limgui.utils"
 local json = require "json"
 local ffi = require "ffi"
 local maf = require "mafex"
+local SceneMesh = require("scene.mesh").SceneMesh
+local SceneNode = require("scene.node").SceneNode
 
 -- assets/gltf.vs
 ffi.cdef [[
@@ -13,14 +15,14 @@ typedef struct {
 
 local M = {}
 
----@class Buffer
+---@class GltfBuffer
 ---@field uri string
 
----@class BufferView
+---@class GltfBufferView
 ---@field byteOffset integer
 ---@field byteLength integer
 
----@class Accessor
+---@class GltfAccessor
 ---@field bufferView integer
 ---@field byteOffset integer
 ---@field type string ["SCALAR", "VEC2", "VEC3", "VEC4", "MAT2", "MAT3", "MAT4"]
@@ -28,7 +30,7 @@ local M = {}
 ---@field count integer
 
 ---comment
----@param accessor Accessor
+---@param accessor GltfAccessor
 ---@return string cdef in mafex
 local function accessor_type(accessor)
     if accessor.componentType == 5126 then
@@ -48,23 +50,34 @@ local function accessor_type(accessor)
     end
 end
 
----@class Attributes
+---@class GltfAttributes
 ---@field POSITION integer
 ---@field NORMAL integer
 
----@class Primitive
----@field attributes Attributes
+---@class GltfPrimitive
+---@field attributes GltfAttributes
 ---@field indices integer
 ---@field material integer
 
----@class Mesh
----@field primitives Primitive[]
+---@class GltfMesh
+---@field primitives GltfPrimitive[]
+
+---@class GltfNode
+---@field name string
+---@field children integer[]
+---@field matrix number[]
+---@field rotation number[]
+---@field scale number[]
+---@field translation number[]
+---@field mesh integer
+---@field skin integer
 
 ---@class Gltf
----@field buffers Buffer[]
----@field bufferViews BufferView[]
----@field accessors Accessor[]
----@field meshes Mesh[]
+---@field buffers GltfBuffer[]
+---@field bufferViews GltfBufferView[]
+---@field accessors GltfAccessor[]
+---@field meshes GltfMesh[]
+---@field nodes GltfNode[]
 
 --
 -- caution !! lua is 1 origin, but gltf all index is 0 origin.
@@ -85,11 +98,15 @@ local componentTypeMap = {
 ---@field gltf Gltf
 ---@field bin ffi.cdata* glb chunk
 ---@field uri_map table<string, ffi.cdata*>
----@field meshes Vertices[]
+---@field meshes SceneMesh[]
+---@field nodes SceneNode[]
+---@field root SceneNode
 M.GltfLoader = {
     ---comment
     ---@param self GltfLoader
     load = function(self)
+        self.uri_map = {}
+        self.meshes = {}
         for i, mesh in ipairs(self.gltf.meshes) do
             local buffers = {}
             local vertex_count = 0
@@ -137,15 +154,39 @@ M.GltfLoader = {
                 index_offset = index_offset + buffer.indices.count
             end
 
-            table.insert(self.meshes, {
-                vertices = vertices,
-                vertex_count = vertex_count,
-                vertex_stride = 20,
-                indices = indices,
-                index_count = index_count,
-                index_stride = 4,
-                shader = "GLTF",
-            })
+            local scene_mesh = SceneMesh.new(vertices, vertex_count, 24, indices, index_count, 4, "GLTF")
+            table.insert(self.meshes, scene_mesh)
+        end
+
+        self.nodes = {}
+        for i, node in ipairs(self.gltf.nodes) do
+            local scene_node = SceneNode.new(node.name)
+            if node.matrix then
+                scene_node.transform.matrix = maf.mat4(node.matrix)
+            else
+                scene_node.transform.t = maf.vec3(node.translation or { 0, 0, 0 })
+                scene_node.transform.r = maf.quat(node.rotation or { 0, 0, 0, 1 })
+                scene_node.transform.s = maf.vec3(node.scale or { 1, 1, 1 })
+            end
+            if node.mesh then
+                scene_node.mesh = self.meshes[node.mesh + 1]
+            end
+            table.insert(self.nodes, scene_node)
+        end
+
+        for i, node in ipairs(self.gltf.nodes) do
+            if node.children then
+                for _, child in ipairs(node.children) do
+                    self.nodes[i]:add_child(self.nodes[child + 1])
+                end
+            end
+        end
+
+        for i, node in ipairs(self.nodes) do
+            if not node.parent then
+                assert(not self.root)
+                self.root = node
+            end
         end
     end,
 
@@ -241,8 +282,6 @@ M.GltfLoader.from_path = function(path)
         path = path,
         gltf = json.decode(gltf),
         bin = bin,
-        uri_map = {},
-        meshes = {},
     })
 
     instance:load()

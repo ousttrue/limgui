@@ -7,10 +7,7 @@ local W = require "limgui"
 local utils = require "limgui.utils"
 local engine = require "engine.mod"
 local scene = require "scene.init"
-
---- Load JSON
-local args = { ... }
-local loader = require("engine.gltf").GltfLoader.from_path(args[1])
+local maf = require "mafex"
 
 local app = require "app"
 local TITLE = "GltfViewer"
@@ -20,17 +17,6 @@ end
 -- load OpenGL
 require("gl_ffi.mod").load(require "gl_ffi.glfw")
 local renderer = engine.Renderer.new()
-
-local src = loader.meshes[1]
-local mesh = scene.Mesh.create(
-    src.vertices,
-    src.vertex_count,
-    src.vertex_stride,
-    src.indices,
-    src.index_count,
-    src.index_stride,
-    src.shader
-)
 
 -- GUI
 local JSON = "JSON"
@@ -126,6 +112,10 @@ local accessor = {
     end,
 }
 
+--- Load JSON
+local args = { ... }
+local loader = scene.GltfLoader.from_path(args[1])
+
 --- camera
 local w, h = app.window:getSize()
 local camera = engine.OrbitCamera.new(w, h)
@@ -149,8 +139,6 @@ while app:new_frame() do
     gui:update({ "__root__", loader.gltf }, accessor)
     local width, height = app.window:getFramebufferSize()
     renderer:clear(width, height, gui.clear_color)
-    renderer:render(mesh, {
-        MVP = camera:matrix().array,
-    })
+    renderer:render_recursive(loader.root, maf.mat4.identity(), camera.view, camera.projection)
     app:render()
 end
