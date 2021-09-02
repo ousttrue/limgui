@@ -389,6 +389,13 @@ quat = {
     },
 }
 
+--- R|0
+--- -+-
+--- T|1
+--- * TRS
+--- [x, y, z, w] * S * R * T
+--- * MVP
+--- [x, y, z, w] * M * V * P
 ---@class mat4
 ---@field _11 number
 ---@field _12 number
@@ -580,11 +587,21 @@ mat4 = {
         ---comment
         ---@param q quat
         rotation = function(q)
+            local x = q.x
+            local y = q.y
+            local z = q.z
+            local w = q.w
             local m = mat4()
-            m._11 = 1
-            m._22 = 1
-            m._33 = 1
+            m._11 = 1 - 2 * y * y - 2 * z * z
+            m._22 = 1 - 2 * z * z - 2 * x * x
+            m._33 = 1 - 2 * x * x - 2 * y * y
             m._44 = 1
+            m._13 = 2 * z * x + 2 * w * y
+            m._31 = 2 * z * x - 2 * w * y
+            m._21 = 2 * x * y + 2 * w * z
+            m._12 = 2 * x * y - 2 * w * z
+            m._32 = 2 * y * z + 2 * w * x
+            m._23 = 2 * y * z - 2 * w * x
             return m
         end,
 

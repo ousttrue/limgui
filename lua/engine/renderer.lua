@@ -86,7 +86,7 @@ M.Renderer = {
 
         if node.children then
             for i, child in ipairs(node.children) do
-                self:render_recursive(child, m * child:local_matrix(), v, p)
+                self:render_recursive(child, child:local_matrix() * m, v, p)
             end
         end
     end,
