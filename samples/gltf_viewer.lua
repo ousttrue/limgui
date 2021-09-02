@@ -22,7 +22,7 @@ require("gl_ffi.mod").load(require "gl_ffi.glfw")
 local renderer = engine.Renderer.new()
 
 local src = loader.meshes[1]
-local mesh = scene.SceneMesh.create(
+local mesh = scene.Mesh.create(
     src.vertices,
     src.vertex_count,
     src.vertex_stride,

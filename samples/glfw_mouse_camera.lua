@@ -110,7 +110,7 @@ print(gl_string(gl.GL_SHADING_LANGUAGE_VERSION))
 -- scene setup
 --
 
-local mesh = utils.new(scene.SceneMesh, {
+local mesh = utils.new(scene.Mesh, {
     vertices = vertices,
     vertex_count = 3,
     vertex_stride = 20,

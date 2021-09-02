@@ -16,6 +16,10 @@ local vtmp1
 local vtmp2
 local qtmp1
 
+---@class vec3
+---@field x number
+---@field y number
+---@field z number
 vec3 = {
     __call = function(_, x, y, z)
         return setmetatable({ x = x or 0, y = y or 0, z = z or 0 }, vec3)
@@ -185,6 +189,11 @@ vec3 = {
     },
 }
 
+---@class quat
+---@field x number
+---@field y number
+---@field z number
+---@field w number
 quat = {
     __call = function(_, x, y, z, w)
         return setmetatable({ x = x, y = y, z = z, w = w }, quat)
@@ -381,6 +390,22 @@ quat = {
 }
 
 ---@class mat4
+---@field _11 number
+---@field _12 number
+---@field _13 number
+---@field _14 number
+---@field _21 number
+---@field _22 number
+---@field _23 number
+---@field _24 number
+---@field _31 number
+---@field _32 number
+---@field _33 number
+---@field _34 number
+---@field _41 number
+---@field _42 number
+---@field _43 number
+---@field _44 number
 mat4 = {
     __call = function(
         _, --

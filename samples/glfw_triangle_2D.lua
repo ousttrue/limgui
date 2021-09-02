@@ -88,7 +88,7 @@ local engine = require "engine.mod"
 local renderer = engine.Renderer.new()
 
 local scene = require "scene.init"
-local mesh = utils.new(scene.SceneMesh, {
+local mesh = utils.new(scene.Mesh, {
     vertices = vertices,
     vertex_count = 3,
     vertex_stride = 20,
