@@ -87,7 +87,8 @@ gl.load(glfw)
 local engine = require "engine.mod"
 local renderer = engine.Renderer.new()
 
-local scene = utils.new(engine.Scene, {
+local scene = require "scene.init"
+local mesh = utils.new(scene.SceneMesh, {
     vertices = vertices,
     vertex_count = 3,
     vertex_stride = 20,
@@ -106,11 +107,11 @@ local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()
-    local m = maf.mat4.z_rotation(glfw.getTime())
+    local m = maf.mat4.rotation_z(glfw.getTime() * 30)
 
     -- render
     renderer:clear(width, height, clear_color)
-    renderer:render(scene, {
+    renderer:render(mesh, {
         MVP = m.array,
     })
     window:swapBuffers()

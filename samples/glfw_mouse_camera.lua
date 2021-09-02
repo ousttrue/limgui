@@ -3,6 +3,7 @@ local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
 local utils = require "limgui.utils"
 local engine = require "engine.mod"
+local scene = require "scene.init"
 local maf = require "mafex"
 local math = require "math"
 
@@ -109,7 +110,7 @@ print(gl_string(gl.GL_SHADING_LANGUAGE_VERSION))
 -- scene setup
 --
 
-local scene = utils.new(engine.Scene, {
+local mesh = utils.new(scene.SceneMesh, {
     vertices = vertices,
     vertex_count = 3,
     vertex_stride = 20,
@@ -130,7 +131,7 @@ while not window:shouldClose(window) do
 
     -- render
     renderer:clear(width, height, clear_color)
-    renderer:render(scene, {
+    renderer:render(mesh, {
         MVP = camera:matrix().array,
     })
     window:swapBuffers()

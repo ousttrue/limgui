@@ -6,6 +6,7 @@ local C = imgui_ffi.enums
 local W = require "limgui"
 local utils = require "limgui.utils"
 local engine = require "engine.mod"
+local scene = require "scene.init"
 
 --- Load JSON
 local args = { ... }
@@ -20,8 +21,16 @@ end
 require("gl_ffi.mod").load(require "gl_ffi.glfw")
 local renderer = engine.Renderer.new()
 
-local mesh = loader.meshes[1]
-local scene = engine.Scene.create(mesh.vertices, mesh.vertex_count, mesh.vertex_stride, mesh.indices, mesh.index_count, mesh.index_stride, mesh.shader)
+local src = loader.meshes[1]
+local mesh = scene.SceneMesh.create(
+    src.vertices,
+    src.vertex_count,
+    src.vertex_stride,
+    src.indices,
+    src.index_count,
+    src.index_stride,
+    src.shader
+)
 
 -- GUI
 local JSON = "JSON"
@@ -140,7 +149,7 @@ while app:new_frame() do
     gui:update({ "__root__", loader.gltf }, accessor)
     local width, height = app.window:getFramebufferSize()
     renderer:clear(width, height, gui.clear_color)
-    renderer:render(scene, {
+    renderer:render(mesh, {
         MVP = camera:matrix().array,
     })
     app:render()

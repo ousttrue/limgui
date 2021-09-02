@@ -1,15 +1,11 @@
 local utils = require "limgui.utils"
 local ffi = require "ffi"
 
+local vertex_layout = require "scene.vertex_layout"
+
 local M = {}
 
----@class VertexLayout
-M.VertexLayout = {}
-M.VertexLayout.new = function(layout)
-    return utils.new(M.VertexLayout, layout)
-end
-
----@class Scene
+---@class SceneMesh
 ---@field vertices any
 ---@field vertex_count integer
 ---@field vertex_stride integer
@@ -18,8 +14,9 @@ end
 ---@field index_stride integer
 ---@field shader string|table
 ---@field layout VertexLayout[]
-M.Scene = {}
-M.Scene.triangle = function()
+M.SceneMesh = {}
+
+M.SceneMesh.triangle = function()
     local vertices = ffi.new "float[3][2]"
     -- 0
     vertices[0][0] = -0.6
@@ -31,11 +28,11 @@ M.Scene.triangle = function()
     vertices[2][0] = 0.0
     vertices[2][1] = 0.6
 
-    return utils.new(M.Scene, {
+    return utils.new(M.SceneMesh, {
         vertices = vertices,
         vertex_count = 3,
         shader = "MINIMAL",
-        layout = M.VertexLayout.new {},
+        layout = vertex_layout.VertexLayout.new {},
     })
 end
 
@@ -48,8 +45,8 @@ end
 ---@param index_count any
 ---@param index_stride any
 ---@return table<string, any>
-M.Scene.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
-    return utils.new(M.Scene, {
+M.SceneMesh.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
+    return utils.new(M.SceneMesh, {
         vertices = vertices,
         vertex_count = vertex_count,
         vertex_stride = vertex_stride,
