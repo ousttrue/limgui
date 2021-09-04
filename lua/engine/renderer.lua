@@ -1,74 +1,20 @@
 local utils = require "limgui.utils"
 local M = {}
 local gl = require "gl_ffi.mod"
-local shader_module = require "engine.shader"
-local VertexBuffer = require("engine.vertex_buffer").VertexBuffer
+local EngineDrawable = require "engine.drawable".EngineDrawable
 local maf = require "mafex"
 
----@class SubMesh
----@field index_draw_offset integer
----@field index_draw_count integer
----@field material SceneMaterial
----@field shader Shader
-
----@class Drawable
----@field vbo VertexBuffer
----@field submeshes SubMesh[]
-M.Drawable = {
-    ---@param self Drawable
-    ---@param variables any world and node level variable
-    render = function(self, variables)
-        for _, submesh in ipairs(self.submeshes) do
-            submesh.shader:activate(variables, submesh.material)
-            self.vbo:render(submesh.index_draw_offset, submesh.index_draw_count)
-        end
-    end,
-}
-
----@param mesh SceneMesh
----@return Drawable
-M.Drawable.create = function(mesh)
-    if not mesh.submeshes then
-        mesh.submeshes = {
-            {
-                shader = mesh.shader,
-                index_draw_offset = 0,
-                index_draw_count = mesh.index_count,
-            },
-        }
-    end
-
-    -- submesh
-    for _, submesh in ipairs(mesh.submeshes) do
-        submesh.shader = shader_module.create(submesh.shader)
-    end
-
-    local vbo = VertexBuffer.create(
-        mesh.vertices,
-        mesh.vertex_count,
-        mesh.vertex_stride,
-        mesh.indices,
-        mesh.index_count,
-        mesh.index_stride,
-        mesh.submeshes[1].shader.vertex_attributes
-    )
-
-    return utils.new(M.Drawable, {
-        vbo = vbo,
-        submeshes = mesh.submeshes,
-    })
-end
 
 ---@class Renderer
----@field drawable_map Table<SceneMesh, Drawable>
+---@field drawable_map Table<SceneMesh, EngineDrawable>
 M.Renderer = {
     ---@param self Renderer
     ---@param mesh SceneMesh
-    ---@return Drawable
+    ---@return EngineDrawable
     get_or_create_drawable = function(self, mesh)
         local drawable = self.drawable_map[mesh]
         if not drawable then
-            drawable = M.Drawable.create(mesh)
+            drawable = EngineDrawable.create(mesh)
             self.drawable_map[mesh] = drawable
         end
         return drawable
