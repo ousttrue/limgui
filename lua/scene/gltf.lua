@@ -227,12 +227,21 @@ M.GltfLoader = {
     ---@param image GltfImage
     ---@return Slice
     load_image = function(self, image)
-        local bufferView = self.gltf.bufferViews[image.bufferView + 1]
-        local buffer = self.gltf.buffers[bufferView.buffer + 1]
-        local bufferBytes = self:uri_bytes(buffer.uri)
-        local offset = (bufferView.byteOffset or 0)
+        local bufferBytes
+        local offset = 0
+        local length = 0
+        if image.uri then
+            bufferBytes = self:uri_bytes(image.uri)
+            length = ffi.sizeof(bufferBytes)
+        else
+            local bufferView = self.gltf.bufferViews[image.bufferView + 1]
+            local buffer = self.gltf.buffers[bufferView.buffer + 1]
+            bufferBytes = self:uri_bytes(buffer.uri)
+            offset = (bufferView.byteOffset or 0)
+            length = bufferView.byteLength
+        end
         local slice = ffi.cast("uint8_t*", bufferBytes + offset)
-        return { slice = slice, count = bufferView.byteLength }
+        return { slice = slice, count = length }
     end,
 
     ---comment

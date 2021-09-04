@@ -4,7 +4,7 @@ local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
 local W = require "limgui"
-local engine = require "engine.mod"
+local engine = require "engine.init"
 local scene = require "scene.init"
 local maf = require "mafex"
 

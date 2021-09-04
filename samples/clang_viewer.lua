@@ -233,7 +233,7 @@ local accessor = {
 -- local profiler = require("profiler")
 -- profiler.start()
 
-local renderer = require("engine.mod").Renderer.new()
+local renderer = require("engine.init").Renderer.new()
 
 local idle = uv.new_idle()
 idle:start(function()

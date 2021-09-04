@@ -1,6 +1,6 @@
 local M = {}
 
-M.Renderer = require("engine.renderer").Renderer
+M.Renderer = require("engine.renderer").EngineRenderer
 M.OrbitCamera = require("engine.camera").OrbitCamera
 
 -- like GLAD

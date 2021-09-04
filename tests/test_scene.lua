@@ -1,6 +1,6 @@
 local luaunit = require "luaunit"
 package.path = package.path .. ";lua/?.lua"
-local engine = require "engine.mod"
+local engine = require "engine.init"
 
 function TestCamera()
     local camera = engine.OrbitCamera.new()

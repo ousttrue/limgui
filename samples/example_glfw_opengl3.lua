@@ -60,7 +60,7 @@ if not app:initialize(1200, 900, TITLE) then
     os.exit(1)
 end
 
-local render = require("engine.mod").Renderer.new()
+local render = require("engine.init").Renderer.new()
 
 -- Main loop
 while app:new_frame() do

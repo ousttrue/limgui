@@ -84,7 +84,7 @@ glfw.swapInterval(1)
 local gl = require "gl_ffi.mod"
 gl.load(glfw)
 
-local engine = require "engine.mod"
+local engine = require "engine.init"
 local renderer = engine.Renderer.new()
 
 local scene = require "scene.init"

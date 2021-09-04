@@ -5,10 +5,10 @@ local EngineDrawable = require "engine.drawable".EngineDrawable
 local maf = require "mafex"
 
 
----@class Renderer
+---@class EngineRenderer
 ---@field drawable_map Table<SceneMesh, EngineDrawable>
-M.Renderer = {
-    ---@param self Renderer
+M.EngineRenderer = {
+    ---@param self EngineRenderer
     ---@param mesh SceneMesh
     ---@return EngineDrawable
     get_or_create_drawable = function(self, mesh)
@@ -21,7 +21,7 @@ M.Renderer = {
     end,
 
     --- clear active RenderBuffer
-    ---@param self Renderer
+    ---@param self EngineRenderer
     ---@param w any
     ---@param h any
     ---@param clear_color table
@@ -37,7 +37,7 @@ M.Renderer = {
     end,
 
     ---render scene
-    ---@param self Renderer
+    ---@param self EngineRenderer
     ---@param mesh SceneMesh
     render = function(self, mesh, variables)
         local drawable = self:get_or_create_drawable(mesh)
@@ -45,7 +45,7 @@ M.Renderer = {
     end,
 
     ---comment
-    ---@param self Renderer
+    ---@param self EngineRenderer
     ---@param node SceneNode
     ---@param world SceneWorld
     ---@param parent mat4
@@ -72,8 +72,8 @@ M.Renderer = {
         end
     end,
 }
-M.Renderer.new = function()
-    return utils.new(M.Renderer, {
+M.EngineRenderer.new = function()
+    return utils.new(M.EngineRenderer, {
         drawable_map = {},
     })
 end
