@@ -1,5 +1,4 @@
 local utils = require "limgui.utils"
-local shader_module = require "engine.shader"
 local VertexBuffer = require("engine.vertex_buffer").VertexBuffer
 
 local M = {}
@@ -8,7 +7,6 @@ local M = {}
 ---@field index_draw_offset integer
 ---@field index_draw_count integer
 ---@field material SceneMaterial
----@field shader Shader
 
 ---@class EngineDrawable
 ---@field vbo VertexBuffer
@@ -18,30 +16,16 @@ M.EngineDrawable = {
     ---@param variables any world and node level variable
     render = function(self, variables)
         for _, submesh in ipairs(self.submeshes) do
-            submesh.shader:activate(variables, submesh.material)
+            submesh.material:activate(variables)
             self.vbo:render(submesh.index_draw_offset, submesh.index_draw_count)
         end
     end,
 }
 
 ---@param mesh SceneMesh
+---@param vertex_attributes VertexAttribute[]
 ---@return EngineDrawable
-M.EngineDrawable.create = function(mesh)
-    if not mesh.submeshes then
-        mesh.submeshes = {
-            {
-                shader = mesh.shader,
-                index_draw_offset = 0,
-                index_draw_count = mesh.index_count,
-            },
-        }
-    end
-
-    -- submesh
-    for _, submesh in ipairs(mesh.submeshes) do
-        submesh.shader = shader_module.create(submesh.shader)
-    end
-
+M.EngineDrawable.create = function(mesh, vertex_attributes)
     local vbo = VertexBuffer.create(
         mesh.vertices,
         mesh.vertex_count,
@@ -49,12 +33,12 @@ M.EngineDrawable.create = function(mesh)
         mesh.indices,
         mesh.index_count,
         mesh.index_stride,
-        mesh.submeshes[1].shader.vertex_attributes
+        vertex_attributes
     )
 
     return utils.new(M.EngineDrawable, {
         vbo = vbo,
-        submeshes = mesh.submeshes,
+        submeshes = {},
     })
 end
 

@@ -5,6 +5,8 @@ local M = {}
 
 ---@class SceneTexture
 ---@field name string
+---@field bytes ffi.cdata*
+---@field length integer
 M.SceneTexture = {}
 
 ---comment
@@ -14,6 +16,8 @@ M.SceneTexture = {}
 M.SceneTexture.new = function(name, image_slice)
     return utils.new(M.SceneTexture, {
         name = name,
+        bytes = image_slice.slice,
+        length = image_slice.count,
     })
 end
 

@@ -10,8 +10,9 @@ local SceneTexture = require("scene.material").SceneTexture
 -- assets/gltf.vs
 ffi.cdef [[
 typedef struct {
-    vec3 position;
-    vec3 normal;
+    vec3 POSITION;
+    vec3 NORMAL;
+    vec2 TEXCOORD_0;
 } vertex;
 ]]
 
@@ -44,7 +45,9 @@ local M = {}
 ---@return string cdef in mafex
 local function accessor_type(accessor)
     if accessor.componentType == 5126 then
-        if accessor.type == "VEC3" then
+        if accessor.type == "VEC2" then
+            return "vec2"
+        elseif accessor.type == "VEC3" then
             return "vec3"
         else
             error "not implemented"
@@ -63,6 +66,12 @@ end
 ---@class GltfAttributes
 ---@field POSITION integer
 ---@field NORMAL integer
+---@field TEXCOORD_0 integer
+---@field TEXCOORD_1 integer
+---@field TANGENT integer
+---@field COLOR_0 integer
+---@field JOINTS_0 integer
+---@field WEIGHTS_0 integer
 
 ---@class GltfPrimitive
 ---@field attributes GltfAttributes
@@ -236,7 +245,11 @@ M.GltfLoader = {
         else
             local bufferView = self.gltf.bufferViews[image.bufferView + 1]
             local buffer = self.gltf.buffers[bufferView.buffer + 1]
-            bufferBytes = self:uri_bytes(buffer.uri)
+            if buffer.uri then
+                assert(false)
+            else
+                bufferBytes = self.bin
+            end
             offset = (bufferView.byteOffset or 0)
             length = bufferView.byteLength
         end
@@ -260,6 +273,7 @@ M.GltfLoader = {
     ---@return SceneMaterial
     load_material = function(self, material)
         local scene_material = SceneMaterial.new(material.name)
+        scene_material.shader = "GLTF"
         if material.pbrMetallicRoughness then
             if material.pbrMetallicRoughness.baseColorFactor then
                 scene_material.base_color = maf.vec4(material.pbrMetallicRoughness.baseColorFactor)
@@ -284,8 +298,10 @@ M.GltfLoader = {
         for _, prim in ipairs(mesh.primitives) do
             -- vertex
             local buffer = {
-                position = self:typed_slice(prim.attributes.POSITION),
-                normal = self:typed_slice(prim.attributes.NORMAL),
+                POSITION = self:typed_slice(prim.attributes.POSITION),
+                NORMAL = self:typed_slice(prim.attributes.NORMAL),
+                TEXCOORD_0 = self:typed_slice(prim.attributes.TEXCOORD_0),
+                TEXCOORD_1 = self:typed_slice(prim.attributes.TEXCOORD_1),
                 indices = self:typed_slice(prim.indices),
             }
             table.insert(buffers, buffer)
@@ -293,46 +309,39 @@ M.GltfLoader = {
             -- submesh
             local material = self.materials[prim.material + 1]
             table.insert(submeshes, {
-                shader = "GLTF",
                 material = material,
                 index_draw_count = buffer.indices.count,
                 index_draw_offset = index_count,
             })
 
-            vertex_count = vertex_count + buffer.position.count
+            vertex_count = vertex_count + buffer.POSITION.count
             index_count = index_count + buffer.indices.count
         end
 
         -- concat vertex buffer
         local vertices = ffi.new("vertex[?]", vertex_count)
-        local vertex_stride = 24
+        local vertex_stride = 32
         local indices = ffi.new("uint32_t[?]", index_count)
         local index_stride = 4
         local vertex_offset = 0
         local index_offset = 0
         for _, buffer in ipairs(buffers) do
-            -- position
-            do
-                local slice = buffer.position.slice
-                for j = 0, buffer.position.count - 1 do
-                    vertices[vertex_offset + j].position = slice[j]
+            for k, v in pairs(buffer) do
+                if k == "indices" then
+                    local slice = v.slice
+                    for j = 0, v.count - 1 do
+                        indices[index_offset + j] = vertex_offset + slice[j]
+                    end
+                else
+                    assert(v.count == buffer.POSITION.count)
+                    local slice = v.slice
+                    for j = 0, v.count - 1 do
+                        vertices[vertex_offset + j][k] = slice[j]
+                    end
                 end
             end
-            if buffer.normal then
-                assert(buffer.position.count == buffer.normal.count)
-                local slice = buffer.normal.slice
-                for j = 0, buffer.normal.count - 1 do
-                    vertices[vertex_offset + j].normal = slice[j]
-                end
-            end
-            -- indices
-            do
-                local slice = buffer.indices.slice
-                for j = 0, buffer.indices.count - 1 do
-                    indices[index_offset + j] = vertex_offset + slice[j]
-                end
-            end
-            vertex_offset = vertex_offset + buffer.position.count
+
+            vertex_offset = vertex_offset + buffer.POSITION.count
             index_offset = index_offset + buffer.indices.count
         end
 
@@ -361,7 +370,12 @@ M.GltfLoader = {
         local accessor = self.gltf.accessors[accessor_index + 1]
         local bufferView = self.gltf.bufferViews[accessor.bufferView + 1]
         local buffer = self.gltf.buffers[bufferView.buffer + 1]
-        local bufferBytes = self:uri_bytes(buffer.uri)
+        local bufferBytes
+        if buffer.uri then
+            bufferBytes = self:uri_bytes(buffer.uri)
+        else
+            bufferBytes = self.bin
+        end
         local offset = (bufferView.byteOffset or 0) + (accessor.byteOoffset or 0)
         local maf_type = accessor_type(accessor)
 
@@ -383,7 +397,7 @@ M.GltfLoader = {
     uri_bytes = function(self, uri)
         if not uri then
             -- return glb chunk
-            return self.bin
+            assert(false)
         end
 
         local bytes = self.uri_map[uri]

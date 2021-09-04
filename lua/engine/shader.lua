@@ -68,7 +68,7 @@ M.VertexAttribute.new = function(location, layout, offset)
     return utils.new(M.VertexAttribute, instance)
 end
 
----@class Shader
+---@class EngineShader
 ---@field program any
 ---@field vertex_attributes VertexAttribute[]
 M.Shader = {
