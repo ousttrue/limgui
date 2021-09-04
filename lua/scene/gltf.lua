@@ -266,7 +266,7 @@ M.GltfLoader = {
 
 ---load GLTF
 ---@param path string glTF file path
----@return table<string, any>
+---@return GltfLoader
 M.GltfLoader.from_path = function(path)
     local r = io.open(path, "rb")
     local src = r:read "*a"
