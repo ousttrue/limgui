@@ -46,25 +46,25 @@ end
 ---@field stride number
 M.VertexAttribute = {
     activate = function(self)
+        gl.glEnableVertexAttribArray(self.location)
         gl.glVertexAttribPointer(
             self.location,
             self.element_count,
             self.element_type,
             self.normalized,
             self.stride,
-            self.offset
+            ffi.cast("void*", self.offset)
         )
     end,
 }
-M.VertexAttribute.new = function(location, layout, stride, offset)
+M.VertexAttribute.new = function(location, layout, offset)
     local instance = {
         location = location,
-        offset = ffi.cast("void*", offset),
+        offset = offset,
     }
     for k, v in pairs(layout) do
         instance[k] = v
     end
-    instance.stride = stride
     return utils.new(M.VertexAttribute, instance)
 end
 
@@ -83,13 +83,6 @@ M.Shader = {
                 self.location_map[k] = location
             end
             gl.glUniformMatrix4fv(location, 1, gl.GL_FALSE, ffi.cast("float *", v))
-        end
-
-        for i, va in ipairs(self.vertex_attributes) do
-            -- activate vertex slot
-            gl.glEnableVertexAttribArray(va.location)
-            -- VBO layout
-            va:activate()
         end
     end,
 }
@@ -167,15 +160,14 @@ M.create = function(shader)
     local shader = M.Shader.create(vs, fs)
 
     local layouts = parse_vs(vs)
-    local stride = 0
-    for i, layout in ipairs(layouts) do
-        stride = stride + layout.stride
-    end
     local offset = 0
     for i, layout in ipairs(layouts) do
-        local position_location = gl.glGetAttribLocation(shader.program, layout.name)
-        table.insert(shader.vertex_attributes, M.VertexAttribute.new(position_location, layout, stride, offset))
+        local location = gl.glGetAttribLocation(shader.program, layout.name)
+        table.insert(shader.vertex_attributes, M.VertexAttribute.new(location, layout, offset))
         offset = offset + layout.stride
+    end
+    for _, va in ipairs(shader.vertex_attributes) do
+        va.stride = offset
     end
 
     return shader
