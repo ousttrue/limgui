@@ -76,19 +76,27 @@ M.Renderer = {
     ---comment
     ---@param self Renderer
     ---@param node SceneNode
+    ---@param world SceneWorld
     ---@param parent mat4
-    render_recursive = function(self, node, parent, v, p)
+    ---@param parent_inverse mat3
+    render_recursive = function(self, node, world, parent, parent_inverse)
         parent = parent or maf.mat4.identity()
-        local m = node:local_matrix() * parent
+        local m = node:matrix() * parent
+
+        parent_inverse = parent_inverse or maf.mat3.identity()
+        local inv = parent_inverse * node:inverse_matrix()
+
         if node.mesh then
             self:render(node.mesh, {
-                MVP = m * v * p,
+                MVP = m * world.View * world.Projection,
+                NormalMatrix = inv:transpose(),
+                LightDirection = world.LightDirection,
             })
         end
 
         if node.children then
             for i, child in ipairs(node.children) do
-                self:render_recursive(child, m, v, p)
+                self:render_recursive(child, world, m, inv)
             end
         end
     end,

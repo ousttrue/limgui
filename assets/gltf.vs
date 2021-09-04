@@ -4,7 +4,7 @@ layout(location = 1) in vec3 VertexNormal;
 out vec3 LightIntensity;
 
 uniform mat4 MVP;
-uniform vec3 LightDirection = vec3(0, 0, -1);
+uniform vec3 LightDirection = vec3(0, -1, 0);
 uniform mat3 NormalMatrix = mat3(1, 0, 0, 0, 1, 0, 0, 0, 1);
 
 void main() {

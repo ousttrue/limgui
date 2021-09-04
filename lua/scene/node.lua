@@ -26,12 +26,29 @@ M.SceneNode = {
 
     ---comment
     ---@param self SceneNode
-    local_matrix = function(self)
+    matrix = function(self)
         if self.transform.matrix then
             return self.transform.matrix
         else
             return maf.mat4.trs(self.transform.t, self.transform.r, self.transform.s)
         end
+    end,
+
+    ---comment
+    ---@param self SceneNode
+    ---@return mat3
+    inverse_matrix = function(self)
+        if self.transform.matrix then
+            assert(false, "not implemented")
+        else
+            return maf.mat3.rotation(self.transform.r):transpose() * maf.mat3.scale(-self.transform.s)
+        end
+    end,
+
+    ---inverse transpose
+    ---@param self any
+    normal_matrix = function(self)
+        return maf.mat4.scale(-self.transform.s) * maf.mat4.rotation(self.transform.r)
     end,
 }
 

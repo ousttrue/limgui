@@ -7,7 +7,7 @@
 -- * array
 
 local ffi = type(jit) == "table" and jit.status() and require "ffi"
-local vec3, quat, mat4
+local vec3, quat, mat3, mat4
 
 local M = {}
 
@@ -389,6 +389,162 @@ quat = {
     },
 }
 
+---@class mat3
+---@field _11 number
+---@field _12 number
+---@field _13 number
+---@field _21 number
+---@field _22 number
+---@field _23 number
+---@field _31 number
+---@field _32 number
+---@field _33 number
+mat3 = {
+    __call = function(
+        _, --
+        _11,
+        _12,
+        _13,
+        _21,
+        _22,
+        _23,
+        _31,
+        _32,
+        _33
+    )
+        return setmetatable({
+            _11 = _11,
+            _12 = _12,
+            _13 = _13,
+            _21 = _21,
+            _22 = _22,
+            _23 = _23,
+            _31 = _31,
+            _32 = _32,
+            _33 = _33,
+        }, mat3)
+    end,
+    __mul = function(self, rhs)
+        local m = mat3()
+
+        m._11 = self._11 * rhs._11 + self._12 * rhs._21 + self._13 * rhs._31
+        m._12 = self._11 * rhs._12 + self._12 * rhs._22 + self._13 * rhs._32
+        m._13 = self._11 * rhs._13 + self._12 * rhs._23 + self._13 * rhs._33
+        m._21 = self._21 * rhs._11 + self._22 * rhs._21 + self._23 * rhs._31
+        m._22 = self._21 * rhs._12 + self._22 * rhs._22 + self._23 * rhs._32
+        m._23 = self._21 * rhs._13 + self._22 * rhs._23 + self._23 * rhs._33
+        m._31 = self._31 * rhs._11 + self._32 * rhs._21 + self._33 * rhs._31
+        m._32 = self._31 * rhs._12 + self._32 * rhs._22 + self._33 * rhs._32
+        m._33 = self._31 * rhs._13 + self._32 * rhs._23 + self._33 * rhs._33
+
+        return m
+    end,
+
+    __index = {
+        identity = function()
+            local m = mat3()
+            m._11 = 1
+            m._22 = 1
+            m._33 = 1
+            return m
+        end,
+
+        ---@param s vec3
+        ---@return mat3
+        scale = function(s)
+            local m = mat3()
+            m._11 = s.x
+            m._22 = s.y
+            m._33 = s.z
+            return m
+        end,
+
+        ---comment
+        ---@param q quat
+        rotation = function(q)
+            local x = q.x
+            local y = q.y
+            local z = q.z
+            local w = q.w
+            local m = mat3()
+            m._11 = 1 - 2 * y * y - 2 * z * z
+            m._22 = 1 - 2 * z * z - 2 * x * x
+            m._33 = 1 - 2 * x * x - 2 * y * y
+            m._31 = 2 * z * x + 2 * w * y
+            m._13 = 2 * z * x - 2 * w * y
+            m._12 = 2 * x * y + 2 * w * z
+            m._21 = 2 * x * y - 2 * w * z
+            m._23 = 2 * y * z + 2 * w * x
+            m._32 = 2 * y * z - 2 * w * x
+            return m
+        end,
+
+        ---1
+        --- cS
+        --- sc
+        rotation_x = function(degree)
+            local rad = degree / 180.0 * math.pi
+            local c = math.cos(rad)
+            local s = math.sin(rad)
+            local m = mat3()
+
+            m._11 = 1
+            m._22 = c
+            m._33 = c
+            m._23 = -s
+            m._32 = s
+
+            return m
+        end,
+
+        ---c S
+        --- 1
+        ---s c
+        rotation_y = function(degree)
+            local rad = degree / 180.0 * math.pi
+            local c = math.cos(rad)
+            local s = math.sin(rad)
+            local m = mat3()
+
+            m._11 = c
+            m._22 = 1
+            m._33 = c
+            m._13 = -s
+            m._31 = s
+
+            return m
+        end,
+
+        ---comment
+        ---@param self mat3
+        ---@return mat3
+        transpose = function(self)
+            local m = mat3()
+            m._11 = self._11
+            m._12 = self._21
+            m._13 = self._31
+            m._21 = self._12
+            m._22 = self._22
+            m._23 = self._32
+            m._31 = self._13
+            m._32 = self._23
+            m._33 = self._33
+            return m
+        end,
+
+        ---vec3 * mat3
+        ---@param self mat3
+        ---@param v vec3
+        ---@return vec3
+        apply = function(self, v)
+            local x = v.x * self._11 + v.y * self._21 + v.z * self._31
+            local y = v.y * self._12 + v.y * self._22 + v.z * self._32
+            local z = v.z * self._13 + v.y * self._23 + v.z * self._33
+            return vec3(x, y, z)
+        end,
+    },
+}
+
 --- R|0
 --- -+-
 --- T|1
@@ -480,24 +636,12 @@ mat4 = {
     end,
 
     __index = {
-        transpose = function(self)
+        identity = function()
             local m = mat4()
-            m._11 = self._11
-            m._12 = self._21
-            m._13 = self._31
-            m._14 = self._41
-            m._21 = self._12
-            m._22 = self._22
-            m._23 = self._32
-            m._24 = self._42
-            m._31 = self._13
-            m._32 = self._23
-            m._33 = self._33
-            m._34 = self._43
-            m._41 = self._14
-            m._42 = self._24
-            m._43 = self._34
-            m._44 = self._44
+            m._11 = 1
+            m._22 = 1
+            m._33 = 1
+            m._44 = 1
             return m
         end,
 
@@ -529,15 +673,6 @@ mat4 = {
             local t = scale
             local b = -t
             return mat4.frustum(b, t, l, r, near, far)
-        end,
-
-        identity = function()
-            local m = mat4()
-            m._11 = 1
-            m._22 = 1
-            m._33 = 1
-            m._44 = 1
-            return m
         end,
 
         translation = function(t)
@@ -645,6 +780,27 @@ mat4 = {
         trs = function(t, r, s)
             return mat4.scale(s) * mat4.rotation(r) * mat4.translation(t)
         end,
+
+        transpose = function(self)
+            local m = mat4()
+            m._11 = self._11
+            m._12 = self._21
+            m._13 = self._31
+            m._14 = self._41
+            m._21 = self._12
+            m._22 = self._22
+            m._23 = self._32
+            m._24 = self._42
+            m._31 = self._13
+            m._32 = self._23
+            m._33 = self._33
+            m._34 = self._43
+            m._41 = self._14
+            m._42 = self._24
+            m._43 = self._34
+            m._44 = self._44
+            return m
+        end,
     },
 }
 
@@ -652,6 +808,14 @@ if ffi then
     ffi.cdef [[
     typedef struct { float x, y, z; } vec3;
     typedef struct { float x, y, z, w; } quat;
+    typedef union {
+        struct {
+            float _11, _12, _13;
+            float _21, _22, _23;
+            float _31, _32, _33;
+        };
+        float array[9];
+    } mat3;
     typedef union {
         struct {
             float _11, _12, _13, _14;
@@ -665,10 +829,12 @@ if ffi then
 
     vec3 = ffi.metatype("vec3", vec3)
     quat = ffi.metatype("quat", quat)
+    mat3 = ffi.metatype("mat3", mat3)
     mat4 = ffi.metatype("mat4", mat4)
 else
     setmetatable(vec3, vec3)
     setmetatable(quat, quat)
+    setmetatable(mat3, mat3)
     setmetatable(mat4, mat4)
 end
 
@@ -678,6 +844,7 @@ vtmp2 = vec3()
 qtmp1 = quat()
 M.vec3 = vec3
 M.quat = quat
+M.mat3 = mat3
 M.mat4 = mat4
 
 return M

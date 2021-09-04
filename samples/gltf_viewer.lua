@@ -21,17 +21,23 @@ local renderer = engine.Renderer.new()
 -- GUI
 local JSON = "JSON"
 local VIEW = "View"
+local SCENE = "Scene"
 local gui = {
 
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
     use_work_area = ffi.new("bool[1]", true),
+    light_yaw = ffi.new("float[1]", 30),
+    light_pitch = ffi.new("float[1]", 60),
 
     dockspace = W.GuiDockSpace.new(
         "dockspace",
         -- dock node tree
-        W.DockNode.new("Root", C.ImGuiDir_.Left, 0.5, {
+        W.DockNode.new("Root", C.ImGuiDir_.Left, 0.3, {
             W.DockNode.new(JSON),
-            W.DockNode.new(VIEW),
+            W.DockNode.new("RIGHT", C.ImGuiDir_.Right, 0.4, {
+                W.DockNode.new(SCENE),
+                W.DockNode.new(VIEW),
+            }),
         })
     ):passthru(true),
 
@@ -46,6 +52,11 @@ local gui = {
 
         imgui.Begin(JSON)
         self.table:draw(root, accessor)
+        imgui.End()
+
+        imgui.Begin(SCENE)
+        imgui.SliderFloat("light_yaw", self.light_yaw, -180, 180)
+        imgui.SliderFloat("light_pitch", self.light_pitch, -90, 90)
         imgui.End()
     end,
 }
@@ -63,7 +74,7 @@ local accessor = {
             if #v > 0 then
                 -- array
                 for i, x in ipairs(v) do
-                    callback { tostring(i-1), x }
+                    callback { tostring(i - 1), x }
                 end
             else
                 -- dict
@@ -136,11 +147,22 @@ app.window:setSizeCallback(function(window, w, h)
     camera:resize(w, h)
 end)
 
+local world = scene.World.new()
+local light_direction = maf.vec3(0, 0, -1)
+
 -- Main loop
 while app:new_frame() do
+    -- update
     gui:update({ "__root__", loader.gltf }, accessor)
     local width, height = app.window:getFramebufferSize()
+    world.Projection = camera.projection
+    world.View = camera.view
+    world.LightDirection = (maf.mat3.rotation_y(gui.light_yaw[0]) * maf.mat3.rotation_x(gui.light_pitch[0])):apply(
+        light_direction
+    )
+
+    -- render
     renderer:clear(width, height, gui.clear_color)
-    renderer:render_recursive(loader.root, maf.mat4.identity(), camera.view, camera.projection)
+    renderer:render_recursive(loader.root, world)
     app:render()
 end

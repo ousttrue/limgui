@@ -85,7 +85,17 @@ M.Shader = {
                 location = gl.glGetUniformLocation(self.program, k)
                 self.location_map[k] = location
             end
-            gl.glUniformMatrix4fv(location, 1, gl.GL_FALSE, ffi.cast("float *", v))
+
+            local s = ffi.sizeof(v)
+            if s == 12 then
+                gl.glUniform3fv(location, 1, ffi.cast("float *", v))
+            elseif s == 64 then
+                gl.glUniformMatrix4fv(location, 1, gl.GL_FALSE, ffi.cast("float *", v))
+            elseif s == 36 then
+                gl.glUniformMatrix3fv(location, 1, gl.GL_FALSE, ffi.cast("float *", v))
+            else
+                assert(false, "not implemented")
+            end
         end
     end,
 }
