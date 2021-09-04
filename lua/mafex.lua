@@ -69,7 +69,7 @@ vec3 = {
         end
     end,
     __unm = function(v)
-        return v:scale(-1)
+        return v:scale(-1, vec3())
     end,
     __len = function(v)
         return v:length()
