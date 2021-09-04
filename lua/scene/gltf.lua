@@ -106,60 +106,17 @@ M.GltfLoader = {
     ---@param self GltfLoader
     load = function(self)
         self.uri_map = {}
+
+        -- mesh
         self.meshes = {}
-        for i, mesh in ipairs(self.gltf.meshes) do
-            local buffers = {}
-            local vertex_count = 0
-            local index_count = 0
-            -- local index_stride = componentTypeMap[self.gltf.accessors[mesh.primitives[1].indices + 1].componentType]
-            for j, prim in ipairs(mesh.primitives) do
-                local buffer = {
-                    position = self:typed_slice(prim.attributes.POSITION),
-                    normal = self:typed_slice(prim.attributes.NORMAL),
-                    indices = self:typed_slice(prim.indices),
-                }
-                vertex_count = vertex_count + buffer.position.count
-                index_count = index_count + buffer.indices.count
-                table.insert(buffers, buffer)
-            end
-
-            local vertices = ffi.new("vertex[?]", vertex_count)
-            local indices = ffi.new("uint32_t[?]", index_count)
-
-            local vertex_offset = 0
-            local index_offset = 0
-            for i, buffer in ipairs(buffers) do
-                -- position
-                do
-                    local slice = buffer.position.slice
-                    for j = 0, buffer.position.count - 1 do
-                        vertices[vertex_offset + j].position = slice[j]
-                    end
-                end
-                if buffer.normal then
-                    assert(buffer.position.count == buffer.normal.count)
-                    local slice = buffer.normal.slice
-                    for j = 0, buffer.normal.count - 1 do
-                        vertices[vertex_offset + j].normal = slice[j]
-                    end
-                end
-                -- indices
-                do
-                    local slice = buffer.indices.slice
-                    for j = 0, buffer.indices.count - 1 do
-                        indices[index_offset + j] = vertex_offset + slice[j]
-                    end
-                end
-                vertex_offset = vertex_offset + buffer.position.count
-                index_offset = index_offset + buffer.indices.count
-            end
-
-            local scene_mesh = SceneMesh.new(vertices, vertex_count, 24, indices, index_count, 4, "GLTF")
+        for _, mesh in ipairs(self.gltf.meshes) do
+            local scene_mesh = self:load_mesh(mesh)
             table.insert(self.meshes, scene_mesh)
         end
 
+        -- node
         self.nodes = {}
-        for i, node in ipairs(self.gltf.nodes) do
+        for _, node in ipairs(self.gltf.nodes) do
             local scene_node = SceneNode.new(node.name)
             if node.matrix then
                 scene_node.transform.matrix = maf.mat4(node.matrix)
@@ -182,12 +139,77 @@ M.GltfLoader = {
             end
         end
 
-        for i, node in ipairs(self.nodes) do
+        for _, node in ipairs(self.nodes) do
             if not node.parent then
                 assert(not self.root)
                 self.root = node
             end
         end
+    end,
+
+    ---comment
+    ---@param self GltfLoader
+    ---@param mesh GltfMesh
+    ---@return SceneMesh
+    load_mesh = function(self, mesh)
+        -- get buffer slices
+        local buffers = {}
+        local vertex_count = 0
+        local index_count = 0
+        for _, prim in ipairs(mesh.primitives) do
+            local buffer = {
+                position = self:typed_slice(prim.attributes.POSITION),
+                normal = self:typed_slice(prim.attributes.NORMAL),
+                indices = self:typed_slice(prim.indices),
+            }
+            vertex_count = vertex_count + buffer.position.count
+            index_count = index_count + buffer.indices.count
+            table.insert(buffers, buffer)
+        end
+
+        -- concat vertex buffer
+        local vertices = ffi.new("vertex[?]", vertex_count)
+        local vertex_stride = 24
+        local indices = ffi.new("uint32_t[?]", index_count)
+        local index_stride = 4
+        local vertex_offset = 0
+        local index_offset = 0
+        for _, buffer in ipairs(buffers) do
+            -- position
+            do
+                local slice = buffer.position.slice
+                for j = 0, buffer.position.count - 1 do
+                    vertices[vertex_offset + j].position = slice[j]
+                end
+            end
+            if buffer.normal then
+                assert(buffer.position.count == buffer.normal.count)
+                local slice = buffer.normal.slice
+                for j = 0, buffer.normal.count - 1 do
+                    vertices[vertex_offset + j].normal = slice[j]
+                end
+            end
+            -- indices
+            do
+                local slice = buffer.indices.slice
+                for j = 0, buffer.indices.count - 1 do
+                    indices[index_offset + j] = vertex_offset + slice[j]
+                end
+            end
+            vertex_offset = vertex_offset + buffer.position.count
+            index_offset = index_offset + buffer.indices.count
+        end
+
+        local scene_mesh = SceneMesh.new(
+            vertices,
+            vertex_count,
+            vertex_stride,
+            indices,
+            index_count,
+            index_stride,
+            "GLTF"
+        )
+        return scene_mesh
     end,
 
     uri_to_path = function(self, uri)

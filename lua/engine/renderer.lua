@@ -15,17 +15,17 @@ M.Drawable = {
         self.vbo:render(self.shader.vertex_attributes)
     end,
 }
----@param scene Scene
+---@param mesh SceneMesh
 ---@return Drawable
-M.Drawable.create = function(scene)
-    local shader = shader.create(scene.shader)
+M.Drawable.create = function(mesh)
+    local shader = shader.create(mesh.shader)
     local vbo = VBO.create(
-        scene.vertices,
-        scene.vertex_count,
-        scene.vertex_stride,
-        scene.indices,
-        scene.index_count,
-        scene.index_stride
+        mesh.vertices,
+        mesh.vertex_count,
+        mesh.vertex_stride,
+        mesh.indices,
+        mesh.index_count,
+        mesh.index_stride
     )
     return utils.new(M.Drawable, {
         vbo = vbo,
@@ -34,16 +34,16 @@ M.Drawable.create = function(scene)
 end
 
 ---@class Renderer
----@field drawable_map Table<Scene, Drawable>
+---@field drawable_map Table<SceneMesh, Drawable>
 M.Renderer = {
     ---@param self Renderer
-    ---@param scene Scene
+    ---@param mesh SceneMesh
     ---@return Drawable
-    get_or_create_drawable = function(self, scene)
-        local drawable = self.drawable_map[scene]
+    get_or_create_drawable = function(self, mesh)
+        local drawable = self.drawable_map[mesh]
         if not drawable then
-            drawable = M.Drawable.create(scene)
-            self.drawable_map[scene] = drawable
+            drawable = M.Drawable.create(mesh)
+            self.drawable_map[mesh] = drawable
         end
         return drawable
     end,
@@ -61,7 +61,7 @@ M.Renderer = {
             clear_color[2] * clear_color[3],
             clear_color[3]
         )
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+        gl.glClear(bit.bor(gl.GL_COLOR_BUFFER_BIT, gl.GL_DEPTH_BUFFER_BIT))
     end,
 
     ---render scene

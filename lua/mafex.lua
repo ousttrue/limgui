@@ -480,6 +480,27 @@ mat4 = {
     end,
 
     __index = {
+        transpose = function(self)
+            local m = mat4()
+            m._11 = self._11
+            m._12 = self._21
+            m._13 = self._31
+            m._14 = self._41
+            m._21 = self._12
+            m._22 = self._22
+            m._23 = self._32
+            m._24 = self._42
+            m._31 = self._13
+            m._32 = self._23
+            m._33 = self._33
+            m._34 = self._43
+            m._41 = self._14
+            m._42 = self._24
+            m._43 = self._34
+            m._44 = self._44
+            return m
+        end,
+
         frustum = function(b, t, l, r, n, f)
             local m = mat4()
             m._11 = 2 * n / (r - l)
