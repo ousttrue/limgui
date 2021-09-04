@@ -10,3 +10,6 @@
 [submodule "luv"]
 	path = _external/luv/luv
 	url = https://github.com/luvit/luv.git
+[submodule "_external/stb/stb"]
+	path = _external/stb/stb
+	url = https://github.com/nothings/stb.git
