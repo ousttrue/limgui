@@ -24,32 +24,19 @@ $ invoke build
 
 clear: remove build folder.
 
+## build/Release/bin
+
+* glad.dll
+* glfw3.dll
+* imgui.dll
+* luajit.exe
+* luv.dll
+
 # directory
 
 ## _external
 
 submodules. build to `build/Release/bin`
-
-### glfw
-
-* glad.dll
-* glfw3.dll
-
-### imgui
-
-* imgui.dll
-
-### luv
-
-* luajit.exe
-* luv.dll
-
-### luajitffi
-lua utility.
-
-* generate imgui_ffi
-* generate gl_ffi
-
 
 ## lua
 
@@ -61,3 +48,15 @@ lua utility.
 ## tests
 
 luaunit.lua
+
+## samples
+
+### gltf_viewer.lua
+
+* [ ] texture load
+* [ ] MikkTangent
+* [ ] GRID gizmo
+* [ ] glTF-2.0 PBR shader
+* [ ] animation
+* [ ] skinning
+* [ ] morph-target
