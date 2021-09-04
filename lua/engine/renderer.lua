@@ -12,7 +12,7 @@ M.Drawable = {
     ---@param self Drawable
     render = function(self, variables)
         self.shader:activate(variables)
-        self.vbo:render(self.shader.vertex_attributes)
+        self.vbo:render()
     end,
 }
 ---@param mesh SceneMesh
@@ -25,7 +25,8 @@ M.Drawable.create = function(mesh)
         mesh.vertex_stride,
         mesh.indices,
         mesh.index_count,
-        mesh.index_stride
+        mesh.index_stride,
+        shader.vertex_attributes
     )
     return utils.new(M.Drawable, {
         vbo = vbo,

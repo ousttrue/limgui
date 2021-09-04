@@ -73,6 +73,9 @@ end
 ---@field vertex_attributes VertexAttribute[]
 M.Shader = {
     activate = function(self, variables)
+        -- state
+        gl.glEnable(gl.GL_DEPTH_TEST)
+
         -- set shader
         gl.glUseProgram(self.program)
 
