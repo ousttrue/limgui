@@ -2,7 +2,7 @@ local utils = require "limgui.utils"
 local M = {}
 local gl = require "gl_ffi.mod"
 local shader = require "engine.shader"
-local VBO = require("engine.vbo").VBO
+local VertexBuffer = require("engine.vertex_buffer").VertexBuffer
 local maf = require "mafex"
 
 ---@class Drawable
@@ -19,7 +19,7 @@ M.Drawable = {
 ---@return Drawable
 M.Drawable.create = function(mesh)
     local shader = shader.create(mesh.shader)
-    local vbo = VBO.create(
+    local vbo = VertexBuffer.create(
         mesh.vertices,
         mesh.vertex_count,
         mesh.vertex_stride,

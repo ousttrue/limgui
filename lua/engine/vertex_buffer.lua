@@ -17,7 +17,7 @@ local M = {}
 ---@field vertex_stride integer
 ---@field index_count integer
 ---@field index_stride integer
-M.VBO = {
+M.VertexBuffer = {
     ---@param self VertexBuffer
     ---@param attributes VertexAttribute[]
     render = function(self, attributes)
@@ -75,11 +75,11 @@ M.VBO = {
     end,
 }
 
-M.VBO.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride)
+M.VertexBuffer.create = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride)
     local vbo_ibo = ffi.new "GLuint[2]"
     gl.glGenBuffers(2, vbo_ibo)
 
-    local buffer = utils.new(M.VBO, {
+    local buffer = utils.new(M.VertexBuffer, {
         vbo_ibo = vbo_ibo,
     })
 
