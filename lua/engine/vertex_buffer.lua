@@ -20,12 +20,12 @@ local M = {}
 ---@field index_stride integer
 M.VertexBuffer = {
     ---@param self VertexBuffer
-    render = function(self)
+    render = function(self, offset, count)
         -- use vao
         gl.glBindVertexArray(self.vao[0])
-        if self.index_count then
+        if self.ibo then
             -- with index
-            gl.glDrawElements(gl.GL_TRIANGLES, self.index_count, self.index_stride, nil)
+            gl.glDrawElements(gl.GL_TRIANGLES, count, self.index_stride, ffi.cast("void*", offset))
         else
             -- without index
             gl.glDrawArrays(gl.GL_TRIANGLES, 0, self.vertex_count)

@@ -5,6 +5,11 @@ local vertex_layout = require "scene.vertex_layout"
 
 local M = {}
 
+---@class SceneSubMesh
+---@field index_draw_offset integer
+---@field index_draw_count integer
+---@field material SceneMaterial
+
 ---@class SceneMesh
 ---@field vertices any
 ---@field vertex_count integer
@@ -14,6 +19,7 @@ local M = {}
 ---@field index_stride integer
 ---@field shader string|table
 ---@field layout VertexLayout[]
+---@field submeshes SceneSubMesh[]
 M.SceneMesh = {}
 
 M.SceneMesh.triangle = function()
@@ -45,7 +51,7 @@ end
 ---@param index_count any
 ---@param index_stride any
 ---@return table<string, any>
-M.SceneMesh.new = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader)
+M.SceneMesh.new = function(vertices, vertex_count, vertex_stride, indices, index_count, index_stride, shader, submeshes)
     return utils.new(M.SceneMesh, {
         vertices = vertices,
         vertex_count = vertex_count,
@@ -53,7 +59,8 @@ M.SceneMesh.new = function(vertices, vertex_count, vertex_stride, indices, index
         indices = indices,
         index_count = index_count,
         index_stride = index_stride,
-        shader = shader or "MINIMAL",
+        shader = shader,
+        submeshes = submeshes,
     })
 end
 

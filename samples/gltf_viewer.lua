@@ -26,7 +26,7 @@ local gui = {
     clear_color = ffi.new("float[4]", 0.45, 0.55, 0.6, 1),
     use_work_area = ffi.new("bool[1]", true),
     light_yaw = ffi.new("float[1]", 30),
-    light_pitch = ffi.new("float[1]", 60),
+    light_pitch = ffi.new("float[1]", -60),
 
     dockspace = W.GuiDockSpace.new(
         "dockspace",

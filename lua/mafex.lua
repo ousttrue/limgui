@@ -4,10 +4,11 @@
 --
 -- [extended]
 -- * mat4
--- * array
+-- * mat3
+-- * vec4
 
 local ffi = type(jit) == "table" and jit.status() and require "ffi"
-local vec3, quat, mat3, mat4
+local vec3, quat, vec4, mat3, mat4
 
 local M = {}
 
@@ -187,6 +188,21 @@ vec3 = {
             return o:add(u:add(c))
         end,
     },
+}
+
+---@class vec4
+---@field x number
+---@field y number
+---@field z number
+---@field w number
+vec4 = {
+    __call = function(_, x, y, z, w)
+        return setmetatable({ x = x or 0, y = y or 0, z = z or 0, w = w or 0 }, vec3)
+    end,
+
+    __tostring = function(v)
+        return string.format("(%f, %f, %f, %f)", v.x, v.y, v.z, v.w)
+    end,
 }
 
 ---@class quat
@@ -807,6 +823,7 @@ mat4 = {
 if ffi then
     ffi.cdef [[
     typedef struct { float x, y, z; } vec3;
+    typedef struct { float x, y, z, w; } vec4;
     typedef struct { float x, y, z, w; } quat;
     typedef union {
         struct {
@@ -828,11 +845,13 @@ if ffi then
 ]]
 
     vec3 = ffi.metatype("vec3", vec3)
+    vec4 = ffi.metatype("vec4", vec4)
     quat = ffi.metatype("quat", quat)
     mat3 = ffi.metatype("mat3", mat3)
     mat4 = ffi.metatype("mat4", mat4)
 else
     setmetatable(vec3, vec3)
+    setmetatable(vec4, vec4)
     setmetatable(quat, quat)
     setmetatable(mat3, mat3)
     setmetatable(mat4, mat4)
@@ -843,6 +862,7 @@ vtmp1 = vec3()
 vtmp2 = vec3()
 qtmp1 = quat()
 M.vec3 = vec3
+M.vec4 = vec4
 M.quat = quat
 M.mat3 = mat3
 M.mat4 = mat4

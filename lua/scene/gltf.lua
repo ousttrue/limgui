@@ -4,6 +4,8 @@ local ffi = require "ffi"
 local maf = require "mafex"
 local SceneMesh = require("scene.mesh").SceneMesh
 local SceneNode = require("scene.node").SceneNode
+local SceneMaterial = require("scene.material").SceneMaterial
+local SceneTexture = require("scene.material").SceneTexture
 
 -- assets/gltf.vs
 ffi.cdef [[
@@ -13,12 +15,20 @@ typedef struct {
 } vertex;
 ]]
 
+---@class Slice
+---@field slice ffi.cdata* pointer to T
+---@field count integer count of T
+
+--
+-- https://github.com/KhronosGroup/glTF/tree/master/specification/2.0/schema
+--
 local M = {}
 
 ---@class GltfBuffer
 ---@field uri string
 
 ---@class GltfBufferView
+---@field buffer integer
 ---@field byteOffset integer
 ---@field byteLength integer
 
@@ -72,12 +82,54 @@ end
 ---@field mesh integer
 ---@field skin integer
 
+---@class GltfTextureInfo
+---@field index integer
+
+---@class GltfPbrMetallicRoughness
+---@field baseColorFactor number[]
+---@field baseColorTexture GltfTextureInfo
+---@field metallicFactor number
+---@field roughnessFactor number
+---@field metallicRoughnessTexture GltfTextureInfo
+
+---@class GltfMaterial
+---@field name string
+---@field pbrMetallicRoughness GltfPbrMetallicRoughness
+---@field normalTexture GltfTextureInfo
+---@field occlusionTexture GltfTextureInfo
+---@field emissiveTexture GltfTextureInfo
+---@field emissiveFactor number[]
+---@field alphaMode string ["OPAQUE", "MASK", "BLEND"]
+---@field alphaCutoff number
+---@field doubleSided boolean
+
+---@class GltfSampler
+---@field magFilter integer [9728:NEAREST, 9729:LINEAR]
+---@field minFilter integer [9728:NEAREST, 9729:LINEAR, 9984:NEAREST_MIPMAP_NEAREST, 9985:LINEAR_MIPMAP_NEAREST, 9986:NEAREST_MIPMAP_LINEAR, 9987:LINEAR_MIPMAP_LINEAR]
+---@field wrapS integer [33071:CLAMP_TO_EDGE, 33648:MIRRORED_REPEAT, 10497:REPEAT]
+---@field wrapT integer [33071:CLAMP_TO_EDGE, 33648:MIRRORED_REPEAT, 10497:REPEAT]
+
+---@class GltfImage
+---@field name string
+---@field uri string
+---@field mimeType string
+---@field bufferView integer
+
+---@class GltfTexture
+---@field name string
+---@field sampler integer
+---@field source integer
+
 ---@class Gltf
 ---@field buffers GltfBuffer[]
 ---@field bufferViews GltfBufferView[]
 ---@field accessors GltfAccessor[]
 ---@field meshes GltfMesh[]
 ---@field nodes GltfNode[]
+---@field materials GltfMaterial[]
+---@field textures GltfTexture[]
+---@field samplers GltfSampler[]
+---@field images GltfImage[]
 
 --
 -- caution !! lua is 1 origin, but gltf all index is 0 origin.
@@ -98,6 +150,9 @@ local componentTypeMap = {
 ---@field gltf Gltf
 ---@field bin ffi.cdata* glb chunk
 ---@field uri_map table<string, ffi.cdata*>
+---@field images Slice[]
+---@field textures SceneTexture[]
+---@field materials SceneMaterial[]
 ---@field meshes SceneMesh[]
 ---@field nodes SceneNode[]
 ---@field root SceneNode
@@ -106,6 +161,26 @@ M.GltfLoader = {
     ---@param self GltfLoader
     load = function(self)
         self.uri_map = {}
+
+        self.images = {}
+        for _, image in ipairs(self.gltf.images) do
+            local scene_image = self:load_image(image)
+            table.insert(self.images, scene_image)
+        end
+
+        -- textures
+        self.textures = {}
+        for _, texture in ipairs(self.gltf.textures) do
+            local scene_texture = self:load_texture(texture)
+            table.insert(self.textures, scene_texture)
+        end
+
+        -- materials
+        self.materials = {}
+        for _, material in ipairs(self.gltf.materials) do
+            local scene_material = self:load_material(material)
+            table.insert(self.materials, scene_material)
+        end
 
         -- mesh
         self.meshes = {}
@@ -149,22 +224,74 @@ M.GltfLoader = {
 
     ---comment
     ---@param self GltfLoader
+    ---@param image GltfImage
+    ---@return Slice
+    load_image = function(self, image)
+        local bufferView = self.gltf.bufferViews[image.bufferView + 1]
+        local buffer = self.gltf.buffers[bufferView.buffer + 1]
+        local bufferBytes = self:uri_bytes(buffer.uri)
+        local offset = (bufferView.byteOffset or 0)
+        local slice = ffi.cast("uint8_t*", bufferBytes + offset)
+        return { slice = slice, count = bufferView.byteLength }
+    end,
+
+    ---comment
+    ---@param self GltfLoader
+    ---@param texture GltfTexture
+    ---@return SceneTexture
+    load_texture = function(self, texture)
+        local image = self.images[texture.source + 1]
+        local gltf_image = self.gltf.images[texture.source + 1]
+        return SceneTexture.new(texture.name or gltf_image.name, image)
+    end,
+
+    ---comment
+    ---@param self GltfLoader
+    ---@param material GltfMaterial
+    ---@return SceneMaterial
+    load_material = function(self, material)
+        local scene_material = SceneMaterial.new(material.name)
+        if material.pbrMetallicRoughness then
+            if material.pbrMetallicRoughness.baseColorFactor then
+                scene_material.base_color = maf.vec4(material.pbrMetallicRoughness.baseColorFactor)
+            end
+            if material.pbrMetallicRoughness.baseColorTexture then
+                local texture = self.textures[material.pbrMetallicRoughness.baseColorTexture.index + 1]
+                scene_material.base_texture = texture
+            end
+        end
+        return scene_material
+    end,
+
+    ---comment
+    ---@param self GltfLoader
     ---@param mesh GltfMesh
     ---@return SceneMesh
     load_mesh = function(self, mesh)
-        -- get buffer slices
         local buffers = {}
         local vertex_count = 0
         local index_count = 0
+        local submeshes = {}
         for _, prim in ipairs(mesh.primitives) do
+            -- vertex
             local buffer = {
                 position = self:typed_slice(prim.attributes.POSITION),
                 normal = self:typed_slice(prim.attributes.NORMAL),
                 indices = self:typed_slice(prim.indices),
             }
+            table.insert(buffers, buffer)
+
+            -- submesh
+            local material = self.materials[prim.material + 1]
+            table.insert(submeshes, {
+                shader = "GLTF",
+                material = material,
+                index_draw_count = buffer.indices.count,
+                index_draw_offset = index_count,
+            })
+
             vertex_count = vertex_count + buffer.position.count
             index_count = index_count + buffer.indices.count
-            table.insert(buffers, buffer)
         end
 
         -- concat vertex buffer
@@ -207,9 +334,33 @@ M.GltfLoader = {
             indices,
             index_count,
             index_stride,
-            "GLTF"
+            nil,
+            submeshes
         )
+
         return scene_mesh
+    end,
+
+    ---get accessor bytes
+    ---@param accessor_index integer
+    ---@return Slice
+    typed_slice = function(self, accessor_index)
+        if not accessor_index then
+            return
+        end
+
+        local accessor = self.gltf.accessors[accessor_index + 1]
+        local bufferView = self.gltf.bufferViews[accessor.bufferView + 1]
+        local buffer = self.gltf.buffers[bufferView.buffer + 1]
+        local bufferBytes = self:uri_bytes(buffer.uri)
+        local offset = (bufferView.byteOffset or 0) + (accessor.byteOoffset or 0)
+        local maf_type = accessor_type(accessor)
+
+        local slice = ffi.cast(maf_type .. "*", bufferBytes + offset)
+        return {
+            slice = slice,
+            count = accessor.count,
+        }
     end,
 
     uri_to_path = function(self, uri)
@@ -240,27 +391,6 @@ M.GltfLoader = {
         r:close()
         self.uri_map[uri] = bytes
         return bytes
-    end,
-
-    ---get accessor bytes
-    ---@param accessor_index integer
-    typed_slice = function(self, accessor_index)
-        if not accessor_index then
-            return
-        end
-
-        local accessor = self.gltf.accessors[accessor_index + 1]
-        local bufferView = self.gltf.bufferViews[accessor.bufferView + 1]
-        local buffer = self.gltf.buffers[bufferView.buffer + 1]
-        local buffer_bytes = self:uri_bytes(buffer.uri)
-        local offset = (bufferView.byteOffset or 0) + (accessor.byteOoffset or 0)
-        local maf_type = accessor_type(accessor)
-
-        local slice = ffi.cast(maf_type .. "*", buffer_bytes + offset)
-        return {
-            slice = slice,
-            count = accessor.count,
-        }
     end,
 }
 
