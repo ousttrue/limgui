@@ -1,7 +1,7 @@
 local utils = require "limgui.utils"
 local M = {}
 local gl = require "gl_ffi.mod"
-local shaders = require "engine.shaders"
+local shader = require "engine.shader"
 local VBO = require("engine.vbo").VBO
 local maf = require "mafex"
 
@@ -18,7 +18,7 @@ M.Drawable = {
 ---@param scene Scene
 ---@return Drawable
 M.Drawable.create = function(scene)
-    local shader = shaders.create(scene.shader)
+    local shader = shader.create(scene.shader)
     local vbo = VBO.create(
         scene.vertices,
         scene.vertex_count,
