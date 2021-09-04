@@ -61,10 +61,12 @@ local accessor = {
         local t = type(v)
         if t == "table" then
             if #v > 0 then
+                -- array
                 for i, x in ipairs(v) do
-                    callback { tostring(i), x }
+                    callback { tostring(i-1), x }
                 end
             else
+                -- dict
                 local keys = {}
                 for k, v in pairs(v) do
                     table.insert(keys, k)
