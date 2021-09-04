@@ -4,7 +4,6 @@ local imgui_ffi = require "imgui_ffi.mod"
 local imgui = imgui_ffi.libs.imgui
 local C = imgui_ffi.enums
 local W = require "limgui"
-local utils = require "limgui.utils"
 local engine = require "engine.mod"
 local scene = require "scene.init"
 local maf = require "mafex"
@@ -63,12 +62,18 @@ local gui = {
 
 -- tree accessor
 local accessor = {
-    has_child = function(kv)
-        return type(kv[2]) == "table"
+    ---comment
+    ---@param node table
+    ---@return boolean
+    has_child = function(node)
+        return type(node[2]) == "table"
     end,
-    each = function(kv, callback)
+    ---comment
+    ---@param node table
+    ---@param callback fun(node: table):nil
+    each = function(node, callback)
         -- local k = kv[1]
-        local v = kv[2]
+        local v = node[2]
         local t = type(v)
         if t == "table" then
             if #v > 0 then
@@ -89,13 +94,17 @@ local accessor = {
             end
         end
     end,
-    column = function(kv, i)
+    ---comment
+    ---@param node table
+    ---@param i any Name, Type, Value
+    ---@return string
+    column = function(node, i)
         if i == 1 then
-            return kv[1]
+            return node[1]
         elseif i == 2 then
-            local t = type(kv[2])
+            local t = type(node[2])
             if t == "table" then
-                if #kv[2] > 0 then
+                if #node[2] > 0 then
                     return "array"
                 else
                     return "object"
@@ -103,17 +112,21 @@ local accessor = {
             end
             return t
         elseif i == 3 then
-            local t = type(kv[2])
+            local t = type(node[2])
             if t == "table" then
-                if #kv[2] > 0 then
+                if #node[2] > 0 then
                     return "[]"
                 else
                     return "{}"
                 end
             end
-            return tostring(kv[2])
+            return tostring(node[2])
         end
     end,
+    ---comment
+    ---@param a table
+    ---@param b table
+    ---@return boolean
     equal = function(a, b)
         if a and b then
             return (a and a[2]) == (b and b[2])

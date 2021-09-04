@@ -31,6 +31,7 @@ clear: remove build folder.
 * imgui.dll
 * luajit.exe
 * luv.dll
+* stb.dll
 
 # directory
 
