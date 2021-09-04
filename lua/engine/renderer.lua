@@ -76,9 +76,10 @@ M.Renderer = {
     ---comment
     ---@param self Renderer
     ---@param node SceneNode
-    ---@param m mat4
-    render_recursive = function(self, node, m, v, p)
-        m = m or maf.mat4.identity()
+    ---@param parent mat4
+    render_recursive = function(self, node, parent, v, p)
+        parent = parent or maf.mat4.identity()
+        local m = node:local_matrix() * parent
         if node.mesh then
             self:render(node.mesh, {
                 MVP = m * v * p,
@@ -87,7 +88,7 @@ M.Renderer = {
 
         if node.children then
             for i, child in ipairs(node.children) do
-                self:render_recursive(child, child:local_matrix() * m, v, p)
+                self:render_recursive(child, m, v, p)
             end
         end
     end,
