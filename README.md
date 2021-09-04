@@ -54,7 +54,7 @@ luaunit.lua
 
 ### gltf_viewer.lua
 
-* [ ] texture load
+* [x] texture load
 * [ ] MikkTangent
 * [ ] GRID gizmo
 * [ ] glTF-2.0 PBR shader
