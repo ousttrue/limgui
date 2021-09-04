@@ -128,7 +128,7 @@ M.EngineRenderer = {
         end
 
         if node.children then
-            for i, child in ipairs(node.children) do
+            for _, child in ipairs(node.children) do
                 self:render_recursive(child, world, m, inv)
             end
         end

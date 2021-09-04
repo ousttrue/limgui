@@ -26,17 +26,19 @@ M.EngineTexture.load = function(src)
         id = id,
     }
 
-    local w = io.open(src.name or "tmp.png", "wb")
-    w:write(ffi.string(src.bytes, src.length))
-    w:close()
+    -- debug
+    -- local w = io.open(src.name or "tmp.png", "wb")
+    -- w:write(ffi.string(src.bytes, src.length))
+    -- w:close()
 
     local x = ffi.new "int[1]"
     local y = ffi.new "int[1]"
     local channels = ffi.new "int[1]"
     local image = M.stb.stbi_load_from_memory(src.bytes, src.length, x, y, channels, 4)
-
-    print(x[0], y[0], channels[0])
-    do
+    if image == ffi.NULL then
+        print "fail to load image"
+    else
+        print(x[0], y[0], channels[0])
         gl.glGenTextures(1, id)
         gl.glBindTexture(gl.GL_TEXTURE_2D, id[0])
 
