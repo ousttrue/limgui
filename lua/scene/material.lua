@@ -11,7 +11,7 @@ M.SceneTexture = {}
 
 ---comment
 ---@param name string
----@param image_slice Slice
+---@param image_slice LoaderSlice
 ---@return SceneTexture
 M.SceneTexture.new = function(name, image_slice)
     return utils.new(M.SceneTexture, {

@@ -6,6 +6,7 @@ local SceneMesh = require("scene.mesh").SceneMesh
 local SceneNode = require("scene.node").SceneNode
 local SceneMaterial = require("scene.material").SceneMaterial
 local SceneTexture = require("scene.material").SceneTexture
+local mikktspace = require "scene.mikktspace"
 
 -- assets/gltf.vs
 ffi.cdef [[
@@ -17,9 +18,20 @@ typedef struct {
 } vertex;
 ]]
 
----@class Slice
+---@class LoaderSlice
 ---@field slice ffi.cdata* pointer to T
 ---@field count integer count of T
+
+---@class LoaderBuffer
+---@field indices LoaderSlice
+---@field POSITION LoaderSlice
+---@field NORMAL LoaderSlice
+---@field TEXCOORD_0 LoaderSlice
+---@field TEXCOORD_1 LoaderSlice
+---@field TANGENT LoaderSlice
+---@field COLOR_0 LoaderSlice
+---@field JOINTS_0 LoaderSlice
+---@field WEIGHTS_0 LoaderSlice
 
 --
 -- https://github.com/KhronosGroup/glTF/tree/master/specification/2.0/schema
@@ -160,7 +172,7 @@ local componentTypeMap = {
 ---@field gltf Gltf
 ---@field bin ffi.cdata* glb chunk
 ---@field uri_map table<string, ffi.cdata*>
----@field images Slice[]
+---@field images LoaderSlice[]
 ---@field textures SceneTexture[]
 ---@field materials SceneMaterial[]
 ---@field meshes SceneMesh[]
@@ -235,7 +247,7 @@ M.GltfLoader = {
     ---comment
     ---@param self GltfLoader
     ---@param image GltfImage
-    ---@return Slice
+    ---@return LoaderSlice
     load_image = function(self, image)
         local bufferBytes
         local offset = 0
@@ -321,6 +333,10 @@ M.GltfLoader = {
                 index_draw_count = buffer.indices.count,
                 index_draw_offset = index_count,
             })
+            if material.normal_texture and not buffer.TANGENT then
+                -- calc tangent
+                buffer.TANGENT = mikktspace.make_tangent(buffer)
+            end
 
             vertex_count = vertex_count + buffer.POSITION.count
             index_count = index_count + buffer.indices.count
@@ -369,7 +385,7 @@ M.GltfLoader = {
 
     ---get accessor bytes
     ---@param accessor_index integer
-    ---@return Slice
+    ---@return LoaderSlice
     typed_slice = function(self, accessor_index)
         if not accessor_index then
             return
