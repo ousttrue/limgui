@@ -1,11 +1,9 @@
 local ffi = require "ffi"
 local glfw = require "gl_ffi.glfw"
 local glfwc = glfw.glfwc
-local utils = require "limgui.utils"
 local engine = require "engine.init"
 local scene = require "scene.init"
 local maf = require "mafex"
-local math = require "math"
 
 --
 -- glfw setup
@@ -80,7 +78,7 @@ end
 
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
 local world = scene.World.new()
-world.LightDirection = maf.vec3(-1, -1, -1):normalize()
+world.LightDirection = maf.vec3(1, 1, 1):normalize()
 
 --
 -- main loop

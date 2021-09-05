@@ -324,7 +324,6 @@ M.GltfLoader = {
                 TEXCOORD_1 = self:typed_slice(prim.attributes.TEXCOORD_1),
                 TANGENT = self:typed_slice(prim.attributes.TANGENT),
             }
-            table.insert(buffers, buffer)
 
             -- submesh
             local material = self.materials[prim.material + 1]
@@ -335,8 +334,10 @@ M.GltfLoader = {
             })
             if material.normal_texture and not buffer.TANGENT then
                 -- calc tangent
-                buffer.TANGENT = mikktspace.make_tangent(buffer)
+                mikktspace.make_tangent(buffer)
             end
+
+            table.insert(buffers, buffer)
 
             vertex_count = vertex_count + buffer.POSITION.count
             index_count = index_count + buffer.indices.count

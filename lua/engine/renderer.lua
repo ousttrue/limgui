@@ -128,6 +128,7 @@ M.EngineRenderer = {
         if node.mesh then
             self:render(node.mesh, {
                 MVP = m * world.View * world.Projection,
+                ModelViewMatrix = m * world.View,
                 NormalMatrix = inv:transpose(),
                 LightDirection = world.LightDirection,
             })

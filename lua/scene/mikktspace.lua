@@ -67,9 +67,9 @@ M.make_tangent = function(buffer)
     local context = ffi.new "SMikkTSpaceContext[1]"
     local interface = ffi.new "SMikkTSpaceInterface[1]"
     interface[0].m_getNumFaces = function(pContext)
-        return buffer.POSITION.count / 3
+        return buffer.indices.count / 3
     end
-    interface[0].m_getNumVerticesOfFace = function(pContext)
+    interface[0].m_getNumVerticesOfFace = function(pContext, iFace)
         return 3
     end
     interface[0].m_getPosition = function(pContext, fvPosOut, iFace, iVert)
@@ -109,7 +109,7 @@ M.make_tangent = function(buffer)
     context[0].m_pInterface = interface
     M.mikktspace.genTangSpaceDefault(context)
 
-    return { slice = tangent, count = buffer.POSITION.count }
+    buffer.TANGENT = { slice = tangent, count = buffer.POSITION.count }
 end
 
 return M
