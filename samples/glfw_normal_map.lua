@@ -12,15 +12,16 @@ local math = require "math"
 --
 
 local vs = [[#version 400
-in vec2 vPos;
-in vec3 vCol;
+layout(location = 0) in vec3 VertexPosition;
+layout(location = 1) in vec3 VertexNormal;
+layout(location = 2) in vec2 VertexTexCoord;
 uniform mat4 MVP;
 out vec3 Color;
 
 void main()
 {
-    gl_Position = MVP * vec4(vPos, 0.0, 1.0);
-    Color = vCol;
+    gl_Position = MVP * vec4(VertexPosition, 1.0);
+    Color = VertexNormal;
 };
 ]]
 
@@ -44,7 +45,7 @@ end)
 if glfw.init() == 0 then
     assert(false)
 end
-local window = glfw.Window:__new(640, 480, "MouseCamera", nil, nil)
+local window = glfw.Window:__new(400, 400, "MouseCamera", nil, nil)
 if not window then
     glfw.terminate()
     assert(false)
@@ -59,6 +60,9 @@ end)
 --- camera
 local w, h = window:getSize()
 local camera = engine.OrbitCamera.new(w, h)
+camera.shift.z = -3
+camera.yaw_degree = -40
+camera:update_view()
 
 -- bind event
 window:setCursorPosCallback(function(window, x, y)
@@ -94,9 +98,20 @@ print(gl_string(gl.GL_SHADING_LANGUAGE_VERSION))
 --
 -- scene setup
 --
-local path = os.getenv('GLTF_SAMPLE_MODELS') .. '/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb'
+local path = os.getenv "GLTF_SAMPLE_MODELS" .. "/2.0/DamagedHelmet/glTF-Binary/DamagedHelmet.glb"
 local loader = scene.GltfLoader.from_path(path)
+for _, m in ipairs(loader.meshes) do
+    for _, submesh in ipairs(m.submeshes) do
+        submesh.material.shader = {
+            vs = vs,
+            fs = fs            
+        }
+    end
+end
+
 local clear_color = ffi.new("float[4]", 0.2, 0.3, 0.4, 1.0)
+local world = scene.World.new()
+world.LightDirection = maf.vec3(-1, -1, -1):normalize()
 
 --
 -- main loop
@@ -105,12 +120,11 @@ local renderer = engine.Renderer.new()
 while not window:shouldClose(window) do
     -- update
     local width, height = window:getFramebufferSize()
-
+    world.Projection = camera.projection
+    world.View = camera.view
     -- render
     renderer:clear(width, height, clear_color)
-    renderer:render(loader.root.mesh, {
-        MVP = camera:matrix().array,
-    })
+    renderer:render_recursive(loader.root, world)
     window:swapBuffers()
     glfw.pollEvents()
 end

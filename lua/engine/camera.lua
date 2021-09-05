@@ -4,6 +4,9 @@ local utils = require "limgui.utils"
 local M = {}
 
 ---@class Camera
+---@field shift vec3
+---@field yaw_degree number
+---@field pietch_degree number
 ---@field view mat4
 ---@field projection mat4
 M.OrbitCamera = {
