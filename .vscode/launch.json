@@ -33,6 +33,20 @@
             }
         },
         {
+            "name": "glfw: normal map",
+            "type": "lua-local",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": {
+                "lua": "${workspaceFolder}/build/Release/bin/luajit.exe",
+                "file": "${workspaceFolder}/samples/glfw_normal_map.lua"
+            },
+            "env": {
+                "PATH": "${env:PATH};${workspaceFolder}\\build\\Release\\bin",
+                "LUA_PATH": ";;${workspaceFolder}\\lua\\?.lua",
+            }
+        },
+        {
             "name": "imgui: example_glfw_opengl3",
             "type": "lua-local",
             "request": "launch",

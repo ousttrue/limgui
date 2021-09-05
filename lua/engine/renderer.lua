@@ -60,7 +60,9 @@ M.EngineRenderer = {
         if not src.submeshes then
             src.submeshes = {
                 {
-                    shader = src.shader,
+                    material = {
+                        shader = src.shader,
+                    },
                     index_draw_offset = 0,
                     index_draw_count = src.index_count,
                 },
