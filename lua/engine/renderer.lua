@@ -43,6 +43,10 @@ M.EngineRenderer = {
             local texture = self:get_or_create_texture(src.base_texture)
             material.base_texture = texture
         end
+        if src.normal_texture then
+            local texture = self:get_or_create_texture(src.normal_texture)
+            material.normal_texture = texture
+        end
         self.material_map[src] = material
         return material
     end,

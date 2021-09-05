@@ -26,6 +26,7 @@ end
 ---@field shader string|table
 ---@field base_color ffi.cdata* RGBA
 ---@field base_texture SceneTexture
+---@field normal_texture SceneTexture
 M.SceneMaterial = {}
 
 ---comment

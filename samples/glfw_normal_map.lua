@@ -17,22 +17,28 @@ layout(location = 1) in vec3 VertexNormal;
 layout(location = 2) in vec2 VertexTexCoord;
 layout(location = 3) in vec4 VertexTangent;
 uniform mat4 MVP;
-out vec3 Color;
+
+out vec2 TexCoord;
 
 void main()
 {
+    TexCoord = VertexTexCoord;
     gl_Position = MVP * vec4(VertexPosition, 1.0);
-    Color = vec3(VertexTangent);
 };
 ]]
 
 local fs = [[#version 400
-in vec3 Color;
+#extension GL_ARB_shading_language_420pack: enable
+in vec2 TexCoord;
 out vec4 FragColor;
+layout(binding = 0) uniform sampler2D Tex0;
+layout(binding = 1) uniform sampler2D Tex1;
 
 void main()
 {
-    FragColor = vec4(Color, 1.0);
+    vec4 texColor = texture2D(Tex0, TexCoord);
+    vec4 normal = texture2D(Tex1, TexCoord);
+    FragColor = normal;
 };
 ]]
 
@@ -46,7 +52,7 @@ end)
 if glfw.init() == 0 then
     assert(false)
 end
-local window = glfw.Window:__new(400, 400, "MouseCamera", nil, nil)
+local window = glfw.Window:__new(400, 400, "NormalMap", nil, nil)
 if not window then
     glfw.terminate()
     assert(false)

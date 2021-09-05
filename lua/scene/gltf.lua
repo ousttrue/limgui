@@ -275,6 +275,7 @@ M.GltfLoader = {
     load_material = function(self, material)
         local scene_material = SceneMaterial.new(material.name)
         scene_material.shader = "GLTF"
+        -- metallic roughness
         if material.pbrMetallicRoughness then
             if material.pbrMetallicRoughness.baseColorFactor then
                 scene_material.base_color = maf.vec4(material.pbrMetallicRoughness.baseColorFactor)
@@ -283,6 +284,11 @@ M.GltfLoader = {
                 local texture = self.textures[material.pbrMetallicRoughness.baseColorTexture.index + 1]
                 scene_material.base_texture = texture
             end
+        end
+        -- normalmap
+        if material.normalTexture then
+            local texture = self.textures[material.normalTexture.index + 1]
+            scene_material.normal_texture = texture
         end
         return scene_material
     end,

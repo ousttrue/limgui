@@ -13,18 +13,23 @@ local M = {}
 
 ---@class EngineTexture
 ---@field id ffi.cdata*
-M.EngineTexture = {}
+M.EngineTexture = {
+    __tostring = function(self)
+        return string.format("tex: %d", self.id[0])
+    end,
+}
 
 ---comment
 ---@param src SceneTexture
-M.EngineTexture.load = function(src)
+M.EngineTexture.load = function(src, unit)
     if not M.stb then
         M.stb = ffi.load "stb"
     end
     local id = ffi.new "GLuint[1]"
-    local texture = {
+    gl.glGenTextures(1, id)
+    local texture = utils.new(M.EngineTexture, {
         id = id,
-    }
+    })
 
     -- debug
     -- local w = io.open(src.name or "tmp.png", "wb")
@@ -39,15 +44,11 @@ M.EngineTexture.load = function(src)
         print "fail to load image"
     else
         print(x[0], y[0], channels[0])
-        gl.glGenTextures(1, id)
         gl.glBindTexture(gl.GL_TEXTURE_2D, id[0])
-
-        gl.glEnable(gl.GL_TEXTURE_2D)
         gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA, x[0], y[0], 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, image)
         gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
         gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
         gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
-        gl.glDisable(gl.GL_TEXTURE_2D)
     end
     M.stb.stbi_image_free(image)
 
@@ -57,6 +58,7 @@ end
 ---@class EngineMaterial
 ---@field shader EngineShader
 ---@field base_texture EngineTexture
+---@field normal_texture EngineTexture
 M.EngineMaterial = {
     ---comment
     ---@param self EngineMaterial
@@ -66,11 +68,18 @@ M.EngineMaterial = {
 
         if self.base_texture then
             gl.glActiveTexture(gl.GL_TEXTURE0)
-            gl.glEnable(gl.GL_TEXTURE_2D)
             gl.glBindTexture(gl.GL_TEXTURE_2D, self.base_texture.id[0])
         else
             gl.glActiveTexture(gl.GL_TEXTURE0)
-            gl.glDisable(gl.GL_TEXTURE_2D)
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
+        end
+
+        if self.normal_texture then
+            gl.glActiveTexture(gl.GL_TEXTURE1)
+            gl.glBindTexture(gl.GL_TEXTURE_2D, self.normal_texture.id[0])
+        else
+            gl.glActiveTexture(gl.GL_TEXTURE1)
+            gl.glBindTexture(gl.GL_TEXTURE_2D, 0)
         end
     end,
 }
