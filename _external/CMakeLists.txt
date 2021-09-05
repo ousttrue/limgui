@@ -1,1 +1,1 @@
-subdirs(glad glfw imgui stb luv/luv)
+subdirs(glad glfw imgui stb luv/luv MikkTSpace)

@@ -1,0 +1,4 @@
+LIBRARY	mikktspace
+EXPORTS
+	genTangSpaceDefault
+    genTangSpace
