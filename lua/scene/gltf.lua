@@ -13,6 +13,7 @@ typedef struct {
     vec3 POSITION;
     vec3 NORMAL;
     vec2 TEXCOORD_0;
+    vec4 TANGENT;
 } vertex;
 ]]
 
@@ -298,11 +299,12 @@ M.GltfLoader = {
         for _, prim in ipairs(mesh.primitives) do
             -- vertex
             local buffer = {
+                indices = self:typed_slice(prim.indices),
                 POSITION = self:typed_slice(prim.attributes.POSITION),
                 NORMAL = self:typed_slice(prim.attributes.NORMAL),
                 TEXCOORD_0 = self:typed_slice(prim.attributes.TEXCOORD_0),
                 TEXCOORD_1 = self:typed_slice(prim.attributes.TEXCOORD_1),
-                indices = self:typed_slice(prim.indices),
+                TANGENT = self:typed_slice(prim.attributes.TANGENT),
             }
             table.insert(buffers, buffer)
 
@@ -320,9 +322,9 @@ M.GltfLoader = {
 
         -- concat vertex buffer
         local vertices = ffi.new("vertex[?]", vertex_count)
-        local vertex_stride = 32
+        local vertex_stride = ffi.sizeof "vertex"
         local indices = ffi.new("uint32_t[?]", index_count)
-        local index_stride = 4
+        local index_stride = ffi.sizeof "uint32_t"
         local vertex_offset = 0
         local index_offset = 0
         for _, buffer in ipairs(buffers) do

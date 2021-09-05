@@ -15,13 +15,14 @@ local vs = [[#version 400
 layout(location = 0) in vec3 VertexPosition;
 layout(location = 1) in vec3 VertexNormal;
 layout(location = 2) in vec2 VertexTexCoord;
+layout(location = 3) in vec4 VertexTangent;
 uniform mat4 MVP;
 out vec3 Color;
 
 void main()
 {
     gl_Position = MVP * vec4(VertexPosition, 1.0);
-    Color = VertexNormal;
+    Color = vec3(VertexTangent);
 };
 ]]
 

@@ -28,6 +28,12 @@ local function parse_vs(vs)
                     layout.element_count = 3
                     layout.stride = 12
                     layout.normalized = gl.GL_FALSE
+                elseif t == "vec4" then
+                    layout.name = name
+                    layout.element_type = gl.GL_FLOAT
+                    layout.element_count = 4
+                    layout.stride = 16
+                    layout.normalized = gl.GL_FALSE
                 else
                     assert(false)
                 end
