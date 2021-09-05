@@ -8,45 +8,6 @@ local maf = require "mafex"
 local math = require "math"
 
 --
--- scene
---
-
-local vs = [[#version 400
-layout(location = 0) in vec3 VertexPosition;
-layout(location = 1) in vec3 VertexNormal;
-layout(location = 2) in vec2 VertexTexCoord;
-layout(location = 3) in vec4 VertexTangent;
-uniform mat4 MVP;
-
-out vec2 TexCoord;
-out vec3 Color;
-
-void main()
-{
-    TexCoord = VertexTexCoord;
-    Color = vec3(VertexTangent);
-    gl_Position = MVP * vec4(VertexPosition, 1.0);
-};
-]]
-
-local fs = [[#version 400
-#extension GL_ARB_shading_language_420pack: enable
-in vec2 TexCoord;
-in vec3 Color;
-out vec4 FragColor;
-layout(binding = 0) uniform sampler2D Tex0;
-layout(binding = 1) uniform sampler2D Tex1;
-
-void main()
-{
-    vec4 texColor = texture2D(Tex0, TexCoord);
-    vec4 normal = texture2D(Tex1, TexCoord);
-    FragColor = normal;
-    FragColor = vec4(Color, 1);
-};
-]]
-
---
 -- glfw setup
 --
 
@@ -113,10 +74,7 @@ local path = os.getenv "GLTF_SAMPLE_MODELS" .. "/2.0/DamagedHelmet/glTF-Binary/D
 local loader = scene.GltfLoader.from_path(path)
 for _, m in ipairs(loader.meshes) do
     for _, submesh in ipairs(m.submeshes) do
-        submesh.material.shader = {
-            vs = vs,
-            fs = fs            
-        }
+        submesh.material.shader = "normal_map"
     end
 end
 
